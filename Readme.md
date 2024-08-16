@@ -32,3 +32,5 @@ An example of an response from the authentication endpoints:
 **Tip:** Use the site https://www.jwt.io if you wish to inspect the contents of the `access_token`.
 
 ## API Actions
+
+This library
