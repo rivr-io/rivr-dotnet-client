@@ -25,20 +25,22 @@ jobs:
         id: read_version
         run: |
           VERSION=$(cat VERSION)
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          BUILD_NUMBER=${{ github.run_number }}
+          FULL_VERSION="${VERSION}.${BUILD_NUMBER}"
+          echo "FULL_VERSION=$FULL_VERSION" >> $GITHUB_ENV
         shell: bash
 
       - name: Restore dependencies
         run: dotnet restore
 
       - name: Build
-        run: dotnet build --configuration Release /p:Version=${{ env.VERSION }}
+        run: dotnet build --configuration Release /p:Version=${{ env.FULL_VERSION }}
 
       - name: Run tests
         run: dotnet test ./Rivr.Test/Rivr.Test.csproj --verbosity detailed
 
       - name: Package
-        run: dotnet pack --configuration Release --output ./artifacts /p:PackageVersion=${{ env.VERSION }}
+        run: dotnet pack --configuration Release --output ./artifacts /p:PackageVersion=${{ env.FULL_VERSION }}
 
       - name: Publish to NuGet
         env:
