@@ -1,5 +1,7 @@
 # Rivr .NET Client
 
+[![nuget](https://img.shields.io/nuget/v/rivr.svg)](https://www.nuget.org/packages/rivr/) [![nuget](https://img.shields.io/nuget/dt/rivr.svg)](https://www.nuget.org/packages/rivr/) [![Build and tests](https://github.com/rivr-io/rivr-dotnet-client/actions/workflows/build-and-publish.yml/badge.svg)](https://github.com/rivr-io/rivr-dotnet-client/actions/workflows/build-and-publish.yml)
+
 ## Security
 
 The industry-standard [OAuth2](https://oauth.net/2/) security protocol is used for authorization.
