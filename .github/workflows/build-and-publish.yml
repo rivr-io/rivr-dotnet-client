@@ -1,0 +1,49 @@
+name: Build and Publish NuGet Package
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "v*.*.*"
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: "8.x"
+
+      - name: Read version
+        id: read_version
+        run: |
+          VERSION=$(cat VERSION)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration Release /p:Version=${{ env.VERSION }}
+
+      - name: Run tests
+        run: dotnet test ./Rivr.Test/Rivr.Test.csproj --verbosity detailed
+
+      - name: Package
+        run: dotnet pack --configuration Release --output ./artifacts /p:PackageVersion=${{ env.VERSION }}
+
+      - name: Publish to NuGet
+        if: github.ref_type == 'tag'
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: dotnet nuget push ./artifacts/*.nupkg --api-key $NUGET_API_KEY --source https://api.nuget.org/v3/index.json
