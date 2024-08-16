@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+    tags:
+      - "v*.*.*"
   pull_request:
     branches:
       - main
@@ -21,28 +23,28 @@ jobs:
         with:
           dotnet-version: "8.x"
 
-      - name: Read version
-        id: read_version
+      - name: Extract version from tag
+        if: startsWith(github.ref, 'refs/tags/')
+        id: extract_version
         run: |
-          VERSION=$(cat VERSION)
-          BUILD_NUMBER=${{ github.run_number }}
-          FULL_VERSION="${VERSION}.${BUILD_NUMBER}"
-          echo "FULL_VERSION=$FULL_VERSION" >> $GITHUB_ENV
+          TAG=${GITHUB_REF#refs/tags/}
+          echo "VERSION=$TAG" >> $GITHUB_ENV
         shell: bash
 
       - name: Restore dependencies
         run: dotnet restore
 
       - name: Build
-        run: dotnet build --configuration Release /p:Version=${{ env.FULL_VERSION }}
+        run: dotnet build --configuration Release /p:Version=${{ env.VERSION }}
 
       - name: Run tests
         run: dotnet test ./Rivr.Test/Rivr.Test.csproj --verbosity detailed
 
       - name: Package
-        run: dotnet pack --configuration Release --output ./artifacts /p:PackageVersion=${{ env.FULL_VERSION }}
+        run: dotnet pack --configuration Release --output ./artifacts /p:PackageVersion=${{ env.VERSION }}
 
       - name: Publish regular package to NuGet
+        if: startsWith(github.ref, 'refs/tags/')
         env:
           NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
         run: dotnet nuget push ./artifacts/*.nupkg --api-key $NUGET_API_KEY --source https://api.nuget.org/v3/index.json --skip-duplicate
