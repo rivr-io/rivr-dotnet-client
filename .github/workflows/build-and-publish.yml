@@ -31,9 +31,8 @@ jobs:
             echo "Using tag version: $TAG"
             echo "VERSION=$TAG" >> $GITHUB_ENV
           else
-            VERSION=$(cat VERSION)
-            echo "Using version from VERSION file: $VERSION"
-            echo "VERSION=$VERSION" >> $GITHUB_ENV
+            echo "No version tag found, skipping publish."
+            echo "VERSION=0.0.0" >> $GITHUB_ENV  # Dummy version to ensure build can still proceed
           fi
         shell: bash
 
