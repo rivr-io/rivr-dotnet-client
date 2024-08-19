@@ -1,20 +1,12 @@
-﻿// See https://aka.ms/new-console-template for more information
-
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Rivr.Extensions;
 
-Console.WriteLine("Hello, World!");
-
-var host = Host.CreateDefaultBuilder(args).ConfigureServices(
+await Host.CreateDefaultBuilder(args).ConfigureServices(
         (context, services) =>
         {
             services.AddRivrClient(context.Configuration, configBuilder =>
             {
-                configBuilder.UseClientId("enter-client-id-here");
-                configBuilder.UseClientSecret("enter-client-secret-here");
-                configBuilder.UseTestEnvironment();
-
                 /*
 
                 To run this sample, you need to provide your client ID and client secret.
@@ -40,6 +32,4 @@ var host = Host.CreateDefaultBuilder(args).ConfigureServices(
             services.AddHostedService<MyService>();
         }
     )
-    .Build();
-
-host.Run();
+    .RunConsoleAsync();

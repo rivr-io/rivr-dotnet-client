@@ -62,13 +62,51 @@ var memoryCache = new MemoryCache(new MemoryCacheOptions());
 var client = new Client(config, memoryCache);
 ```
 
+### Using Dependency Injection
+
+```C#
+await Host.CreateDefaultBuilder(args).ConfigureServices(
+        (context, services) =>
+        {
+            services.AddRivrClient(context.Configuration, configBuilder =>
+            {
+                /*
+
+                To run this sample, you need to provide your client ID and client secret.
+
+                1. Either use explicit configuration like this:
+
+                configBuilder.UseClientId("enter-client-id-here");
+                configBuilder.UseClientSecret("enter-client-secret-here");
+                configBuilder.UseTestEnvironment();
+
+                2. Or add the following to your appSettings.json:
+
+                "Rivr": {
+                    "ClientId": "enter-client-id-here",
+                    "ClientSecret": "enter-client-secret-here",
+                    "Environment": "Test"
+                }
+
+                The explicit configuration will take precedence.
+
+                */
+            });
+            services.AddHostedService<MyService>();
+        }
+    )
+    .RunConsoleAsync();
+```
+
+### Operations
+
 #### Check API health (unauthenticated)
 
 Check that the API is online and operational using the `GetHealthAsync` method.
 
 ```C#
 var result = await client.GetHealthAsync();
-// result is "OK"
+// result.Message is "OK"
 ```
 
 ### Platform operations
@@ -83,7 +121,7 @@ Check that the API is online and operational using the `GetHealthSecureAsync` me
 var result = await client
     .AsPlatform()
     .GetHealthSecureAsync();
-// result is "OK"
+// result.Message is "OK"
 ```
 
 #### Fetch merchants
@@ -112,7 +150,7 @@ var merchantId = Guid.Parse("...");
 var result = await client
     .OnBehalfOfMerchant(merchantId)
     .GetHealthSecureAsync();
-// result is "OK"
+// result.Message is "OK"
 ```
 
 #### Fetch devices for a merchant

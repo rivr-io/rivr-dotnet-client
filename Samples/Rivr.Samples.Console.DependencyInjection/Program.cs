@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Hosting;
 using Rivr.Extensions;
 
-var host = Host.CreateDefaultBuilder(args).ConfigureServices(
+await Host.CreateDefaultBuilder(args).ConfigureServices(
         (context, services) =>
         {
             services.AddRivrClient(context.Configuration, configBuilder =>
@@ -32,6 +32,4 @@ var host = Host.CreateDefaultBuilder(args).ConfigureServices(
             services.AddHostedService<MyService>();
         }
     )
-    .Build();
-
-host.Run();
+    .RunConsoleAsync();
