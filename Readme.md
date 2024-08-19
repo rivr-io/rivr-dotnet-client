@@ -6,35 +6,39 @@
 
 This is an API Client library for Rivr Order API. This library enables an application to send orders for processing.
 
-## Compability
+### Compability
 
-This library is built with support with .NET Standard 2.1 which provides compability with .NET and .NET Core versions 3.0, 3.1, 5.0, 6.0, 7.0, 8.0 and 9.0. If you require support for .NET Framework, please feel free to reach out to support@rivr.io.
+This library is built with support with [.NET Standard 2.0](https://learn.microsoft.com/en-us/dotnet/standard/net-standard?tabs=net-standard-2-0) which provides compability with .NET and .NET Core versions 2.0, 2.1, 2.2, 3.0, 3.1, 5.0, 6.0, 7.0, 8.0, 9.0 and .NET Framework 4.6.1, 4.6.2, 4.7, 4.7.1, 4.7.2, 4.8, 4.8.1. If you require support for and earlier version of .NET Framework, please feel free to reach out to support@rivr.io to see what we can do.
 
-## Installation
+### Contribute
 
-This libary is published on Nuget. Use your favourite package manager to add it to your project.
+If you see something that can be improved, feel free to raise an issue or submit a pull request at [Github](https://github.com/rivr-io/rivr-dotnet-client).
+
+### Installation
+
+This libary is published on [Nuget](https://www.nuget.org/packages/Rivr). Use your favourite package manager to add it to your project.
 
 ```
 dotnet add package Rivr
 ```
 
-## Security
+### Security
 
 The industry-standard [OAuth2](https://oauth.net/2/) security protocol is used for authorization.
 
-### Credentials
+#### Credentials
 
 You will need a `client_id` and `client_secret`. Reach out to support@rivr.io and we will setup your application and provide you with the credentials you need.
 
-### Security contexts
+#### Security contexts
 
 As a consumer of this library you will be able to perform actions as a platform or on behalf of the merchants you manage. Using this library, we have taken care of the authentication for you.
 
-#### Platform level
+##### Platform level
 
 The platform level authentication utilizes a simplified version of OAuth2 and uses `grant_type = client_credentials`, which uses `client_id` and `client_secret` to fetch an `access_token`.
 
-#### Merchant level
+##### Merchant level
 
 The merchant level authentication is a variant of OAuth2 which allows the system to act on behalf of a merchant. It is very similar to the system level authentication, but uses our own `grant_type = merchant_credentials`. With this, the `client_id` and the `client_secret` along with a `merchant_id` are used to fetch an `access_token` that includes the `merchant_id`. This allows for the system to perform actions on behalf of the authorized merchant.
 
