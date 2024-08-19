@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Net.Http;
 using System.Runtime.Serialization;
 using System.Text.Json;
@@ -29,7 +28,7 @@ public static class HttpContentExtensions
 
         try
         {
-            await using var stream = await content.ReadAsStreamAsync().ConfigureAwait(false);
+            using var stream = await content.ReadAsStreamAsync().ConfigureAwait(false);
             return await JsonSerializer.DeserializeAsync<T>(stream, options ?? new JsonSerializerOptions(), cancellationToken) ?? throw new Exception("Could not deserialise into the expected type");
         }
         catch (Exception e)
