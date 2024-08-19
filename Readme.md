@@ -219,8 +219,23 @@ Using the `order.Id`, the order can be retrieved.
 var merchantId = Guid.Parse("...");
 var result = await client
     .OnBehalfOfMerchant(merchantId)
-    .GetOrderAsync(order);
+    .GetOrderAsync(order.Id);
 // result contains an instance of an Order object
+```
+
+#### Refund or Cancel an order
+
+And order can be either refunded or cancelled depending on the current status.
+If the status is `OrderStatus.Completed`, the order will be refunded.
+If the status is `OrderStatus.Created`, the order will be cancelled.
+The calling system does not need to know the current status of the order.
+Note: There are certain payment methods that do not support refunds (some instalment products).
+
+```C#
+var merchantId = Guid.Parse("...");
+await client
+    .OnBehalfOfMerchant(merchantId)
+    .RefundAsync(order.Id);
 ```
 
 ## Callbacks
