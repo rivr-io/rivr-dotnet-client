@@ -157,6 +157,8 @@ public class ClientTests
         result.Id.ShouldNotBe(Guid.Empty);
         result.Reference.ShouldBe(order.Reference);
         result.Amount.ShouldBe(order.Amount);
+
+        Console.WriteLine($"Order ID: {result.Id}");
     }
 
     [Test]
