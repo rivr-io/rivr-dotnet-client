@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Threading;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace Rivr.Extensions;
 

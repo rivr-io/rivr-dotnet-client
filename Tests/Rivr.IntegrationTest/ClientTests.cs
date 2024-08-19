@@ -1,6 +1,5 @@
 using Microsoft.Extensions.Caching.Memory;
 using NSubstitute;
-using Rivr.Models;
 using Rivr.Models.Orders;
 using Shouldly;
 using Environment = Rivr.Models.Environment;

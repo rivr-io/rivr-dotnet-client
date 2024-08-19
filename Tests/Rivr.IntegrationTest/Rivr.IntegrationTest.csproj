@@ -8,7 +8,7 @@
 		<IsPackable>false</IsPackable>
 		<IsTestProject>true</IsTestProject>
 		<SignAssembly>True</SignAssembly>
-		<AssemblyOriginatorKeyFile>..\rivr-dotnet-client-key.snk</AssemblyOriginatorKeyFile>
+		<AssemblyOriginatorKeyFile>..\..\rivr-dotnet-client-key.snk</AssemblyOriginatorKeyFile>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -22,7 +22,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Rivr\Rivr.csproj" />
+		<ProjectReference Include="..\..\Rivr\Rivr.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
