@@ -43,7 +43,10 @@ jobs:
         run: dotnet build --configuration Release /p:Version=${{ env.VERSION }}
 
       - name: Run tests
-        run: dotnet test ./Rivr.Test/Rivr.Test.csproj --verbosity detailed
+        run: dotnet test ./Tests/Rivr.Test/Rivr.Test.csproj --verbosity detailed
+
+      - name: Run sample tests
+        run: dotnet test ./Samples/Rivr.Samples.CallbackHandler.Test/Rivr.Samples.CallbackHandler.Test.csproj --verbosity detailed
 
       - name: Package
         run: dotnet pack --configuration Release --output ./artifacts /p:PackageVersion=${{ env.VERSION }}

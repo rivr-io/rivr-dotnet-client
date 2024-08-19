@@ -5,6 +5,9 @@
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<LangVersion>latest</LangVersion>
+
+		<SignAssembly>True</SignAssembly>
+		<AssemblyOriginatorKeyFile>..\..\rivr-dotnet-client-key.snk</AssemblyOriginatorKeyFile>
 	</PropertyGroup>
 
 	<ItemGroup>
