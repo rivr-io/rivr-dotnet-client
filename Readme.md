@@ -184,3 +184,200 @@ var result = await client
     .GetOrderAsync(order);
 // result contains an instance of an Order object
 ```
+
+## Callbacks
+
+The integration is based on the calling system being able to receive callbacks (webhooks). The callback contains the orderId and the `OrderStatus` describing the event that occurred. Depending on the event, there may be more information provided. The callback is delivered to the `callbackUrl` that is set when creating the order.
+
+Example of a callback body:
+
+```json
+{
+  "id": "84c3c4ad-63d8-4d49-a4ff-ed57bbd40a39",
+  "type": "Order",
+  "status": "Created",
+  "data": {
+    "createdDate": "2024-08-19 14:58:21"
+  }
+}
+```
+
+If the system is unable to receive callbacks, the `GetOrderAsync` operation can be used periodically to check the status of an order.
+
+### Callback details
+
+Callbacks from the Rivr systems are delivered using a HTTP POST to the URL supplied in the initial creation of the object.
+
+If the request is receiving a response having HTTP Status Code in the range 200-299 it will be considered successful and no more attempts will be made.
+
+However, if the callback isn't successful, a retry will be scheduled. A maximum of seven retries will be performed according to this schema:
+
+| Iteration | Delay      |
+| --------- | ---------- |
+| 1         | 1 minute   |
+| 2         | 5 minutes  |
+| 3         | 30 minutes |
+| 4         | 60 minutes |
+| 5         | 4 hours    |
+| 6         | 12 hours   |
+| 7         | 24 hours   |
+
+If the last iteration is not successful, no more attempts will be made.
+
+Note: If the Callback URL is empty or malformatted there will be no attempts at all.
+
+#### Order
+
+Here follows a detailed overview of the callbacks related to the Order entity.
+
+##### Created
+
+Immediately after an order is created a callback is issued.
+
+```json
+{
+  "id": "84c3c4ad-63d8-4d49-a4ff-ed57bbd40a39",
+  "type": "Order",
+  "status": "Created"
+}
+```
+
+##### Completed
+
+A order is considered `Completed` when it has been paid. An Order can be paid with a different payment methods. The different variants of callbacks are listed here.
+
+###### Card
+
+```json
+{
+  "id": "84c3c4ad-63d8-4d49-a4ff-ed57bbd40a39",
+  "type": "Order",
+  "status": "Completed",
+  "data": {
+    "CreatedDate": "2024-04-24T16:45:30.582Z",
+    "CompletedDate": "2024-04-24T16:45:52.54Z",
+    "PaymentMethod": "Card"
+  }
+}
+```
+
+###### Apple Pay / Google Pay
+
+```json
+{
+  "id": "84c3c4ad-63d8-4d49-a4ff-ed57bbd40a39",
+  "type": "Order",
+  "status": "Completed",
+  "data": {
+    "CreatedDate": "2024-04-24T16:45:30.582Z",
+    "CompletedDate": "2024-04-24T16:45:52.54Z",
+    "PaymentMethod": "DigitalWallet"
+  }
+}
+```
+
+###### Swish
+
+```json
+{
+  "id": "84c3c4ad-63d8-4d49-a4ff-ed57bbd40a39",
+  "type": "Order",
+  "status": "Completed",
+  "data": {
+    "CreatedDate": "2024-04-24T16:45:30.582Z",
+    "CompletedDate": "2024-04-24T16:45:52.54Z",
+    "PaymentMethod": "Swish"
+  }
+}
+```
+
+###### Invoice
+
+```json
+{
+  "id": "84c3c4ad-63d8-4d49-a4ff-ed57bbd40a39",
+  "type": "Order",
+  "status": "Completed",
+  "data": {
+    "CreatedDate": "2024-04-24T16:45:30.582Z",
+    "CompletedDate": "2024-04-24T16:45:52.54Z",
+    "PaymentMethod": "Invoice"
+  }
+}
+```
+
+###### Instalment
+
+Instalment comes in three flavours, Default, Full KYC and Interest Free.
+
+```json
+{
+  "id": "84c3c4ad-63d8-4d49-a4ff-ed57bbd40a39",
+  "type": "Order",
+  "status": "Completed",
+  "data": {
+    "CreatedDate": "2024-04-24T16:45:30.582Z",
+    "CompletedDate": "2024-04-24T16:45:52.54Z",
+    "PaymentMethod": "InstalmentDefault"
+  }
+}
+```
+
+```json
+{
+  "id": "84c3c4ad-63d8-4d49-a4ff-ed57bbd40a39",
+  "type": "Order",
+  "status": "Completed",
+  "data": {
+    "CreatedDate": "2024-04-24T16:45:30.582Z",
+    "CompletedDate": "2024-04-24T16:45:52.54Z",
+    "PaymentMethod": "InstalmentFullKyc"
+  }
+}
+```
+
+```json
+{
+  "id": "84c3c4ad-63d8-4d49-a4ff-ed57bbd40a39",
+  "type": "Order",
+  "status": "Completed",
+  "data": {
+    "CreatedDate": "2024-04-24T16:45:30.582Z",
+    "CompletedDate": "2024-04-24T16:45:52.54Z",
+    "PaymentMethod": "InstalmentInterestFree"
+  }
+}
+```
+
+##### Cancelled
+
+Orders can be cancelled.
+
+```json
+{
+  "id": "84c3c4ad-63d8-4d49-a4ff-ed57bbd40a39",
+  "type": "Order",
+  "status": "Cancelled",
+  "data": {
+    "CreatedDate": "2024-04-24T16:45:30.582Z",
+    "CancelledDate": "2024-04-24T16:45:52.54Z",
+    "Reason": "Timeout | UserCancelled | MerchantCancelled"
+  }
+}
+```
+
+##### Refunded
+
+An order can be refunded and when successful this callback is sent.
+
+```json
+{
+  "id": "84c3c4ad-63d8-4d49-a4ff-ed57bbd40a39",
+  "type": "Order",
+  "status": "Refunded",
+  "data": {
+    "CreatedDate": "2024-04-24T16:45:30.582Z",
+    "RefundedDate": "2024-04-24T16:45:52.54Z"
+  }
+}
+```
