@@ -8,7 +8,14 @@ This is an API Client library for Rivr Order API. This library enables an applic
 
 ### Compability
 
-This library is built with support with [.NET Standard 2.0](https://learn.microsoft.com/en-us/dotnet/standard/net-standard?tabs=net-standard-2-0) which provides compability with .NET and .NET Core versions 2.0, 2.1, 2.2, 3.0, 3.1, 5.0, 6.0, 7.0, 8.0, 9.0 and .NET Framework 4.6.1, 4.6.2, 4.7, 4.7.1, 4.7.2, 4.8, 4.8.1. If you require support for and earlier version of .NET Framework, please feel free to reach out to support@rivr.io to see what we can do.
+This library is built with support with [.NET Standard 2.0](https://learn.microsoft.com/en-us/dotnet/standard/net-standard?tabs=net-standard-2-0) which provides the following compability:
+
+| .NET implementation | Version support                                  |
+| ------------------- | ------------------------------------------------ |
+| .NET and .NET Core  | 2.0, 2.1, 2.2, 3.0, 3.1, 5.0, 6.0, 7.0, 8.0, 9.0 |
+| .NET Framework      | 4.6.1, 4.6.2, 4.7, 4.7.1, 4.7.2, 4.8, 4.8.1.     |
+
+If you require support for and earlier version of .NET Framework, please feel free to reach out to support@rivr.io to see what we can do.
 
 ### Contribute
 
