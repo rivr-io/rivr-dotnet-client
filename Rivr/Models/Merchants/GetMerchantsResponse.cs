@@ -1,7 +1,17 @@
 ﻿namespace Rivr.Models.Merchants;
 
+/// <summary>
+/// Represents the response from the GetMerchants operation.
+/// </summary>
 public class GetMerchantsResponse
 {
-    public Merchant[] Merchants { get; set; } = null!;
+    /// <summary>
+    /// The merchants.
+    /// </summary>
+    public Merchant[] Merchants { get; set; } = [];
+
+    /// <summary>
+    /// The metadata of the response.
+    /// </summary>
     public Metadata Metadata { get; set; } = new();
 }

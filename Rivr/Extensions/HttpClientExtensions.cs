@@ -7,8 +7,22 @@ using System.Threading.Tasks;
 
 namespace Rivr.Extensions;
 
+/// <summary>
+/// Represents the operations that can be  
+/// </summary>
 public static class HttpClientExtensions
 {
+    /// <summary>
+    /// Sends a POST request to the specified URL as JSON.
+    /// </summary>
+    /// <param name="client"></param>
+    /// <param name="url"></param>
+    /// <param name="value"></param>
+    /// <param name="options"></param>
+    /// <param name="cancellationToken"></param>
+    /// <typeparam name="TValue"></typeparam>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
     public static async Task<HttpResponseMessage> PostAsJsonAsync<TValue>(this HttpClient client, string? url, TValue value, JsonSerializerOptions? options = null, CancellationToken cancellationToken = default)
     {
         if (client is null)
@@ -20,6 +34,17 @@ public static class HttpClientExtensions
         return await client.PostAsync(url, content, cancellationToken);
     }
 
+    /// <summary>
+    /// Sends a PUT request to the specified URL as JSON.
+    /// </summary>
+    /// <param name="client"></param>
+    /// <param name="url"></param>
+    /// <param name="value"></param>
+    /// <param name="options"></param>
+    /// <param name="cancellationToken"></param>
+    /// <typeparam name="TValue"></typeparam>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
     public static async Task<HttpResponseMessage> PutAsJsonAsync<TValue>(this HttpClient client, string? url, TValue value, JsonSerializerOptions? options = null, CancellationToken cancellationToken = default)
     {
         if (client is null)

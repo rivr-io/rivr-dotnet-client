@@ -44,7 +44,9 @@ public class GetMerchantsTests
         var client = new Client(authHttpHandler, apiHttpClient, _config, memoryCache);
 
         // Act
-        var result = await client.AsPlatform.GetMerchantsAsync();
+        var result = await client
+            .AsPlatform()
+            .GetMerchantsAsync();
 
         // Assert
         authHandler.PerformedRequestsCount.ShouldBe(1);

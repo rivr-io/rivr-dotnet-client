@@ -8,8 +8,21 @@ using System.Threading.Tasks;
 
 namespace Rivr.Extensions;
 
+/// <summary>
+/// Extension methods for <see cref="HttpContent"/>.
+/// </summary>
 public static class HttpContentExtensions
 {
+    /// <summary>
+    /// Deserialise the content of the HttpContent into the specified type.
+    /// </summary>
+    /// <param name="content"></param>
+    /// <param name="options"></param>
+    /// <param name="cancellationToken"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
+    /// <exception cref="SerializationException"></exception>
     public static async Task<T> DeserialiseAsync<T>([NotNull] this HttpContent content, JsonSerializerOptions? options = null, CancellationToken cancellationToken = default)
     {
         options ??= new JsonSerializerOptions(JsonSerializerDefaults.Web);

@@ -14,7 +14,7 @@ public class ClientTests
     [SetUp]
     public void Setup()
     {
-        _config = new Config(clientId: "insert-client-id-here", clientSecret: "insert-client-secret-here")
+        _config = new Config(clientId: TestConstants.ClientId, clientSecret: TestConstants.ClientSecret)
         {
             Environment = Environment.Test
         };
@@ -44,7 +44,7 @@ public class ClientTests
 
         // Act
         var result = await client
-            .AsPlatform
+            .AsPlatform()
             .GetHealthSecureAsync();
 
         // Assert
@@ -61,7 +61,7 @@ public class ClientTests
 
         // Act
         var result = await client
-            .AsPlatform
+            .AsPlatform()
             .GetMerchantsAsync();
 
         // Assert
@@ -75,11 +75,11 @@ public class ClientTests
         var memoryCache = Substitute.For<IMemoryCache>();
         var client = new Client(_config, memoryCache);
 
-        var sdkMerchantId = Guid.Parse("insert-merchant-id-here");
+        var merchantId = TestConstants.MerchantId;
 
         // Act
         var result = await client
-            .OnBehalfOfMerchant(sdkMerchantId)
+            .OnBehalfOfMerchant(merchantId)
             .GetHealthSecureAsync();
 
         // Assert
@@ -94,11 +94,11 @@ public class ClientTests
         var memoryCache = Substitute.For<IMemoryCache>();
         var client = new Client(_config, memoryCache);
 
-        var sdkMerchantId = Guid.Parse("insert-merchant-id-here");
+        var merchantId = TestConstants.MerchantId;
 
         // Act
         var result = await client
-            .OnBehalfOfMerchant(sdkMerchantId)
+            .OnBehalfOfMerchant(merchantId)
             .GetDevicesAsync();
 
         // Assert
@@ -166,13 +166,13 @@ public class ClientTests
         var memoryCache = Substitute.For<IMemoryCache>();
         var client = new Client(_config, memoryCache);
 
-        var sdkMerchantId = Guid.Parse("insert-merchant-id-here");
+        var merchantId = TestConstants.MerchantId;
 
         var orderId = Guid.Parse("insert-order-id-here");
 
         // Act
         var result = await client
-            .OnBehalfOfMerchant(sdkMerchantId)
+            .OnBehalfOfMerchant(merchantId)
             .GetOrderAsync(orderId);
 
         // Assert

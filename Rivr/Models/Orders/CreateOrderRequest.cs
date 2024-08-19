@@ -21,6 +21,9 @@ public class CreateOrderRequest
     /// <example>c3073b9d-edd0-49f2-a28d-b7ded8ff9a8b</example>
     public Guid MerchantId { get; set; }
 
+    /// <summary>
+    /// The order lines that the payment request is for.
+    /// </summary>
     public OrderLine[] OrderLines { get; set; } = [];
 
     /// <summary>
@@ -50,10 +53,13 @@ public class CreateOrderRequest
     /// </summary>
     public string? Phone { get; set; }
 
+    /// <summary>
+    /// The checkout hints that the payment request is for.
+    /// </summary>
     public CheckoutHint[] CheckoutHints { get; set; } = [];
 
     /// <summary>
-    /// URL that Baase will use to notify caller about the outcome of the <see cref="PaymentRequest"/>. The URL has to use HTTPS. Baase will perform a HTTP POST with <see cref="Callback"/>
+    /// URL that Rivr will use to notify caller about the outcome of the <see cref="CreateOrderRequest"/>. The URL has to use HTTPS.
     /// </summary>
     /// <example>https://www.example.com/my/callback</example>
     public string? CallbackUrl { get; set; }

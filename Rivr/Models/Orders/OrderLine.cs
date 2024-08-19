@@ -1,7 +1,10 @@
 ﻿using System;
 
-namespace Rivr.Models;
+namespace Rivr.Models.Orders;
 
+/// <summary>
+/// Represents a line in an order.
+/// </summary>
 public class OrderLine
 {
     private int _vatPercentage;
@@ -44,8 +47,20 @@ public class OrderLine
         }
     }
 
+    /// <summary>
+    /// The price of the product or service excluding VAT
+    /// </summary>
     public decimal UnitPriceInclVat => UnitPriceExclVat * (1 + VatPercentage / 100m);
+
+    /// <summary>
+    /// The total price of the product or service including VAT
+    /// </summary>
     public decimal AmountInclVat => UnitPriceInclVat * Quantity;
+
+    /// <summary>
+    /// The total price of the product or service excluding VAT
+    /// </summary>
     public decimal AmountExclVat => AmountInclVat / (1 + VatPercentage);
+
     private decimal VatAmount => AmountInclVat - AmountExclVat;
 }

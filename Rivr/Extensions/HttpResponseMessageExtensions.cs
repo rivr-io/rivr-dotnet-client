@@ -8,8 +8,16 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace Rivr.Extensions;
 
+/// <summary>
+/// Represents the operations that can be performed as a platform.
+/// </summary>
 public static class HttpResponseMessageExtensions
 {
+    /// <summary>
+    /// Ensures that the response is successful.
+    /// </summary>
+    /// <param name="message"></param>
+    /// <exception cref="HttpRequestException"></exception>
     public static async Task EnsureSuccessfulResponseAsync(this HttpResponseMessage message)
     {
         if (message.IsSuccessStatusCode)
@@ -29,6 +37,15 @@ public static class HttpResponseMessageExtensions
         throw new HttpRequestException(errorMessage);
     }
 
+    /// <summary>
+    /// Deserialises the content of the <see cref="HttpResponseMessage"/> as the specified type.
+    /// </summary>
+    /// <param name="message"></param>
+    /// <param name="options"></param>
+    /// <param name="cancellationToken"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
     public static async Task<T> DeserialiseAsync<T>([NotNull] this HttpResponseMessage message, JsonSerializerOptions? options = null, CancellationToken cancellationToken = default)
     {
         return message.Content is not null

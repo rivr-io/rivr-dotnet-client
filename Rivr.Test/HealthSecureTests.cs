@@ -34,7 +34,9 @@ public class HealthSecureTests
         var client = new Client(authHttpHandler, apiHttpClient, _config, memoryCache);
 
         // Act
-        var result = await client.AsPlatform.GetHealthSecureAsync();
+        var result = await client
+            .AsPlatform()
+            .GetHealthSecureAsync();
 
         // Assert
         var authRequestContent = authHandler.GetRequestContent<ClientCredentialsTokenRequest>();
