@@ -39,7 +39,7 @@ You will need a `client_id` and `client_secret`. Reach out to support@rivr.io an
 
 #### Security contexts
 
-As a consumer of this library you will be able to perform actions as a platform or on behalf of the merchants you manage. Using this library, we have taken care of the authentication for you.
+A consumer of this library will be able to perform actions as a platform or on behalf of the managed merchants. While using this library, we have taken care of the authentication for you along with caching of access tokens.
 
 ##### Platform level
 
@@ -47,7 +47,7 @@ The platform level authentication utilizes a simplified version of OAuth2 and us
 
 ##### Merchant level
 
-The merchant level authentication is a variant of OAuth2 which allows the system to act on behalf of a merchant. It is very similar to the system level authentication, but uses our own `grant_type = merchant_credentials`. With this, the `client_id` and the `client_secret` along with a `merchant_id` are used to fetch an `access_token` that includes the `merchant_id`. This allows for the system to perform actions on behalf of the authorized merchant.
+The merchant level authentication is a variant of OAuth2 which allows the system to act on behalf of a merchant. It is very similar to the platform level authentication, but uses our own `grant_type = merchant_credentials`. With this, the `client_id` and the `client_secret` along with a `merchant_id` are used to fetch an `access_token` that includes the `merchant_id`. This allows for the platform to perform actions on behalf of the merchant.
 
 ## Using the client
 
