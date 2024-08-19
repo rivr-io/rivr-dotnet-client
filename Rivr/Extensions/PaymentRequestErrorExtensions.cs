@@ -4,7 +4,7 @@ using Rivr.Models;
 namespace Rivr.Extensions;
 
 /// <summary>
-/// Contains extension methods for <see cref="PaymentRequestError"/>.
+/// Contains extension methods for <see cref="OrderRequestError"/>.
 /// </summary>
 public static class PaymentRequestErrorExtensions
 {
@@ -13,7 +13,7 @@ public static class PaymentRequestErrorExtensions
     /// </summary>
     /// <param name="errors"></param>
     /// <returns></returns>
-    public static string CombineToString(this PaymentRequestError[] errors)
+    public static string CombineToString(this OrderRequestError[] errors)
     {
         return string.Join(", ", errors.Select(e => $"{e.PropertyName}: {e.Message}"));
     }

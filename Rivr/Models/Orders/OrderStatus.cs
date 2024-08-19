@@ -16,7 +16,7 @@ public enum OrderStatus
     Created = 1 << 0,
 
     /// <summary>
-    /// The order has been completed (paid or transfered to an invoice).
+    /// The order has been completed (paid or transferred to an invoice).
     /// </summary>
     Completed = 1 << 2,
 

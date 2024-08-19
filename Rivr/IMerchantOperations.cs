@@ -36,4 +36,15 @@ public interface IMerchantOperations
     /// <param name="orderId"></param>
     /// <returns></returns>
     Task<Order> GetOrderAsync(Guid orderId);
+
+    /// <summary>
+    /// Refunds or cancels an order depending on the current status.
+    /// From the status <see cref="OrderStatus.Completed"/>, the order will be refunded.
+    /// From the status <see cref="OrderStatus.Created"/>, the order will be cancelled.
+    /// The calling system does not need to know the current status of the order.
+    /// Note: There are certain payment methods that do not support refunds (some instalment products).
+    /// </summary>
+    /// <param name="orderId"></param>
+    /// <returns></returns>
+    Task RefundAsync(Guid orderId);
 }

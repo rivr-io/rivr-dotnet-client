@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Net;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
 using Rivr.Extensions;
@@ -62,6 +64,20 @@ public class MerchantClient(Client client, Guid merchantId) : IMerchantOperation
         return await response.DeserialiseAsync<Order>();
     }
 
+    public async Task RefundAsync(Guid orderId)
+    {
+        await RefreshMerchantCredentialsAsync();
+
+        var response = await client.ApiHttpClient.PostAsync($"orders/{orderId}/refund", null);
+        if (response.StatusCode == HttpStatusCode.BadRequest)
+        {
+            var error = await response.DeserialiseAsync<ApiErrorResponse>();
+            throw new ApiCallException(error.Message);
+        }
+
+        await response.EnsureSuccessfulResponseAsync();
+    }
+
 
     private async Task RefreshMerchantCredentialsAsync()
     {
@@ -85,13 +101,13 @@ public class MerchantClient(Client client, Guid merchantId) : IMerchantOperation
         client.ApiHttpClient.DefaultRequestHeaders.Authorization = new("Bearer", response.AccessToken);
     }
 
-    static PaymentRequestError[] Validate(CreateOrderRequest? createOrderRequest)
+    static OrderRequestError[] Validate(CreateOrderRequest? createOrderRequest)
     {
-        var errorMessages = new List<PaymentRequestError>();
+        var errorMessages = new List<OrderRequestError>();
 
         if (createOrderRequest is null)
         {
-            errorMessages.Add(new PaymentRequestError
+            errorMessages.Add(new OrderRequestError
             {
                 Message = "Request is required",
                 PropertyName = nameof(createOrderRequest)
@@ -101,7 +117,7 @@ public class MerchantClient(Client client, Guid merchantId) : IMerchantOperation
 
         if (createOrderRequest.Id == Guid.Empty)
         {
-            errorMessages.Add(new PaymentRequestError
+            errorMessages.Add(new OrderRequestError
             {
                 Message = "Id must be a valid UUID",
                 PropertyName = nameof(createOrderRequest.Id)
@@ -110,7 +126,7 @@ public class MerchantClient(Client client, Guid merchantId) : IMerchantOperation
 
         if (string.IsNullOrEmpty(createOrderRequest.PersonalNumber))
         {
-            errorMessages.Add(new PaymentRequestError
+            errorMessages.Add(new OrderRequestError
             {
                 Message = "PersonalNumber is required",
                 PropertyName = nameof(createOrderRequest.PersonalNumber)
@@ -119,7 +135,7 @@ public class MerchantClient(Client client, Guid merchantId) : IMerchantOperation
 
         if (createOrderRequest.Amount <= 0)
         {
-            errorMessages.Add(new PaymentRequestError
+            errorMessages.Add(new OrderRequestError
                 {
                     Message = "Amount must be greater than 0",
                     PropertyName = nameof(createOrderRequest.Amount)
@@ -129,7 +145,7 @@ public class MerchantClient(Client client, Guid merchantId) : IMerchantOperation
 
         if (string.IsNullOrEmpty(createOrderRequest.Email))
         {
-            errorMessages.Add(new PaymentRequestError
+            errorMessages.Add(new OrderRequestError
             {
                 Message = "Email is required",
                 PropertyName = nameof(createOrderRequest.Email)
@@ -138,7 +154,7 @@ public class MerchantClient(Client client, Guid merchantId) : IMerchantOperation
 
         if (createOrderRequest.MerchantId == Guid.Empty)
         {
-            errorMessages.Add(new PaymentRequestError
+            errorMessages.Add(new OrderRequestError
             {
                 Message = "MerchantId is required",
                 PropertyName = nameof(createOrderRequest.MerchantId)
@@ -147,7 +163,7 @@ public class MerchantClient(Client client, Guid merchantId) : IMerchantOperation
 
         if (string.IsNullOrEmpty(createOrderRequest.Phone))
         {
-            errorMessages.Add(new PaymentRequestError
+            errorMessages.Add(new OrderRequestError
             {
                 Message = "Phone is required",
                 PropertyName = nameof(createOrderRequest.Phone)
@@ -156,7 +172,7 @@ public class MerchantClient(Client client, Guid merchantId) : IMerchantOperation
 
         if (string.IsNullOrEmpty(createOrderRequest.Reference))
         {
-            errorMessages.Add(new PaymentRequestError
+            errorMessages.Add(new OrderRequestError
             {
                 Message = "Reference is required",
                 PropertyName = nameof(createOrderRequest.Reference)
@@ -167,7 +183,7 @@ public class MerchantClient(Client client, Guid merchantId) : IMerchantOperation
         {
             if (orderLine.Quantity <= 0)
             {
-                errorMessages.Add(new PaymentRequestError
+                errorMessages.Add(new OrderRequestError
                 {
                     Message = "Quantity must be greater than 0",
                     PropertyName = nameof(orderLine.Quantity)
@@ -176,7 +192,7 @@ public class MerchantClient(Client client, Guid merchantId) : IMerchantOperation
 
             if (orderLine.VatPercentage < 0)
             {
-                errorMessages.Add(new PaymentRequestError
+                errorMessages.Add(new OrderRequestError
                 {
                     Message = "VatPercentage must be greater than or equal to 0",
                     PropertyName = nameof(orderLine.VatPercentage)

@@ -169,7 +169,7 @@ public class ClientTests
 
         var merchantId = TestConstants.MerchantId;
 
-        var orderId = Guid.Parse("insert-order-id-here");
+        var orderId = Guid.Parse("65738986-e888-47f9-b7b7-050de7823b8d");
 
         // Act
         var result = await client
@@ -178,5 +178,22 @@ public class ClientTests
 
         // Assert
         result.ShouldNotBeNull();
+    }
+
+    [Test]
+    public async Task ShouldRefundOrder()
+    {
+        // Arrange
+        var memoryCache = Substitute.For<IMemoryCache>();
+        var client = new Client(_config, memoryCache);
+
+        var merchantId = TestConstants.MerchantId;
+
+        var orderId = Guid.Parse("65738986-e888-47f9-b7b7-050de7823b8d");
+
+        // Act
+        await client
+            .OnBehalfOfMerchant(merchantId)
+            .RefundAsync(orderId);
     }
 }

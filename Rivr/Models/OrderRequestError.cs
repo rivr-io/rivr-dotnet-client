@@ -3,7 +3,7 @@
 /// <summary>
 /// Validation errors 
 /// </summary>
-public class PaymentRequestError
+public class OrderRequestError
 {
     /// <summary>
     /// The name of the property that was causing errors.

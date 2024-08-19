@@ -1,6 +1,5 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
-using System.Diagnostics;
 using Microsoft.Extensions.Caching.Memory;
 using Rivr;
 using Rivr.Models.Orders;
@@ -95,19 +94,28 @@ var order = new CreateOrderRequest
     ]
 };
 
-var result = await client
+var orderResult = await client
     .OnBehalfOfMerchant(merchantId)
     .CreateOrderAsync(order);
-Console.WriteLine("Order created with ID: " + result.Id);
+Console.WriteLine("Order created with ID: " + orderResult.Id);
 Console.WriteLine();
 
 
 Console.WriteLine("Getting order");
 var orderResponse = await client
     .OnBehalfOfMerchant(merchantId)
-    .GetOrderAsync(result.Id);
+    .GetOrderAsync(orderResult.Id);
 Console.WriteLine("Order ID: " + orderResponse.Id);
 Console.WriteLine();
+
+
+Console.WriteLine("Refund order");
+await client
+    .OnBehalfOfMerchant(merchantId)
+    .RefundAsync(orderResult.Id);
+Console.WriteLine("Order refunded");
+Console.WriteLine();
+
 
 Console.WriteLine("Press any key to exit");
 Console.ReadKey(true);
