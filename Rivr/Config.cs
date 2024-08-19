@@ -7,7 +7,7 @@ namespace Rivr;
 /// </summary>
 /// <param name="clientId"></param>
 /// <param name="clientSecret"></param>
-public class Config(string? clientId, string? clientSecret)
+public class Config(string? clientId, string? clientSecret, Environment? environment = Environment.Production)
 {
     /// <summary>
     /// The client_id used to authenticate with the Rivr API.
@@ -22,7 +22,7 @@ public class Config(string? clientId, string? clientSecret)
     /// <summary>
     /// The environment to use (Production is default).
     /// </summary>
-    public Environment Environment { get; set; } = Environment.Production;
+    public Environment Environment { get; set; } = environment ?? Environment.Production;
 
     /// <summary>
     /// The base URI for the authentication endpoint. (Has a default value)
