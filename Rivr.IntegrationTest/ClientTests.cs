@@ -112,12 +112,12 @@ public class ClientTests
         var memoryCache = Substitute.For<IMemoryCache>();
         var client = new Client(_config, memoryCache);
 
-        var sdkMerchantId = Guid.Parse("insert-merchant-id-here");
+        var merchantId = TestConstants.MerchantId;
 
         var order = new CreateOrderRequest
         {
             Id = Guid.NewGuid(),
-            PersonalNumber = "190001010101",
+            PersonalNumber = TestConstants.PersonalNumber,
             Email = "test@example.com",
             Phone = "0700000000",
             CheckoutHints =
@@ -149,7 +149,7 @@ public class ClientTests
 
         // Act
         var result = await client
-            .OnBehalfOfMerchant(sdkMerchantId)
+            .OnBehalfOfMerchant(merchantId)
             .CreateOrderAsync(order);
 
         // Assert

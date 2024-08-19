@@ -74,5 +74,7 @@ public class Client : IClient
     public IPlatformOperations AsPlatform() => _platformOperations ??= new PlatformApi(this);
 
     /// <inheritdoc />
-    public IMerchantOperations OnBehalfOfMerchant(Guid merchantId) => _merchantClients[merchantId] ??= new MerchantClient(this, merchantId);
+    public IMerchantOperations OnBehalfOfMerchant(Guid merchantId) => _merchantClients.ContainsKey(merchantId)
+        ? _merchantClients[merchantId]
+        : _merchantClients[merchantId] = new MerchantClient(this, merchantId);
 }
