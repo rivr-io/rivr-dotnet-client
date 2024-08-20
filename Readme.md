@@ -72,7 +72,7 @@ await Host.CreateDefaultBuilder(args).ConfigureServices(
             {
                 /*
 
-                To run this sample, you need to provide your client ID and client secret.
+                To run service, you need to provide your client ID and client secret.
 
                 1. Either use explicit configuration like this:
 
