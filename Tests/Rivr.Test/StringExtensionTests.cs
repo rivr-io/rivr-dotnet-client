@@ -23,8 +23,8 @@ public class StringExtensionTests
 
         // Assert
         orderCompleted.ShouldNotBeNull();
-        orderCompleted.CreatedDate.ShouldBe(new DateTime(2024, 8, 24, 7, 59, 43, 613, DateTimeKind.Local));
-        orderCompleted.CompletedDate.ShouldBe(new DateTime(2024, 8, 24, 8, 59, 43, 613, DateTimeKind.Local));
+        orderCompleted.CreatedDate.ShouldBe(new DateTime(2024, 8, 24, 7, 59, 43, 613));
+        orderCompleted.CompletedDate.ShouldBe(new DateTime(2024, 8, 24, 8, 59, 43, 613));
         orderCompleted.PaymentMethod.ShouldBe(PaymentMethod.Card);
     }
 }
