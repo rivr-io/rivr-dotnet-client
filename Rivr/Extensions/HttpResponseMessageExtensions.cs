@@ -36,7 +36,7 @@ public static class HttpResponseMessageExtensions
     }
 
     /// <summary>
-    /// Deserialises the content of the <see cref="HttpResponseMessage"/> as the specified type.
+    /// Deserialise the content of the <see cref="HttpResponseMessage"/> as the specified type.
     /// </summary>
     /// <param name="message"></param>
     /// <param name="options"></param>

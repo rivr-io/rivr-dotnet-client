@@ -289,7 +289,10 @@ Immediately after an order is created a callback is issued.
 {
   "id": "84c3c4ad-63d8-4d49-a4ff-ed57bbd40a39",
   "type": "Order",
-  "status": "Created"
+  "status": "Created",
+  "data": {
+    "CreatedDate": "2024-04-24T16:45:30.582Z"
+  }
 }
 ```
 

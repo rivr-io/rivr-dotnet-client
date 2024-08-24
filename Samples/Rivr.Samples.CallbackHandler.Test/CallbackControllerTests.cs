@@ -1,7 +1,8 @@
 using System.Net.Http.Json;
 using System.Text.Json;
+using Rivr.Models.Callbacks;
 using Rivr.Models.Orders;
-using Rivr.Samples.CallbackHandler.Models;
+using OrderStatus = Rivr.Models.Orders.OrderStatus;
 
 namespace Rivr.Samples.CallbackHandler.Test
 {
@@ -28,7 +29,7 @@ namespace Rivr.Samples.CallbackHandler.Test
             var response = await Client.PostAsJsonAsync("/callback", new Callback
             {
                 Id = Guid.NewGuid(),
-                Type = nameof(Order),
+                Type = CallbackType.Order,
                 Status = OrderStatus.Completed.ToString(),
                 Data = JsonSerializer.Serialize(new
                 {
