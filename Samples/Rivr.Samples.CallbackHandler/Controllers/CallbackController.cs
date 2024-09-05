@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Rivr.Extensions;
 using Rivr.Models.Callbacks;
+using Rivr.Models.Orders;
 
 namespace Rivr.Samples.CallbackHandler.Controllers
 {
@@ -35,6 +36,10 @@ namespace Rivr.Samples.CallbackHandler.Controllers
                 case OrderStatus.Created:
                     var orderCreated = callback.Data.Deserialise<OrderCreated>();
                     logger.LogInformation("Order created: {orderCreated}", orderCreated);
+                    break;
+                case OrderStatus.Pending:
+                    var orderPending = callback.Data.Deserialise<OrderPending>();
+                    logger.LogInformation("Order pending: {orderPending}", orderPending);
                     break;
                 case OrderStatus.Completed:
                     var orderCompleted = callback.Data.Deserialise<OrderCompleted>();

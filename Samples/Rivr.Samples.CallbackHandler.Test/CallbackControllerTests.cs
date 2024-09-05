@@ -24,7 +24,7 @@ namespace Rivr.Samples.CallbackHandler.Test
         }
 
         [Test]
-        public async Task ShouldPerformCallback()
+        public async Task ShouldPerformCallbackForCompleted()
         {
             var response = await Client.PostAsJsonAsync("/callback", new Callback
             {
@@ -36,6 +36,23 @@ namespace Rivr.Samples.CallbackHandler.Test
                     CreatedDate = DateTime.Now.AddHours(-1),
                     CompletedDate = DateTime.Now,
                     PaymentMethod = PaymentMethod.Card.ToString()
+                })
+            });
+
+            response.EnsureSuccessStatusCode();
+        }
+
+        [Test]
+        public async Task ShouldPerformCallbackForPending()
+        {
+            var response = await Client.PostAsJsonAsync("/callback", new Callback
+            {
+                Id = Guid.NewGuid(),
+                Type = CallbackType.Order,
+                Status = OrderStatus.Pending.ToString(),
+                Data = JsonSerializer.Serialize(new
+                {
+                    CreatedDate = DateTime.Now.AddHours(-1),
                 })
             });
 

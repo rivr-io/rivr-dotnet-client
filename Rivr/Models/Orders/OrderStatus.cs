@@ -11,6 +11,11 @@ public enum OrderStatus
     None = 0,
 
     /// <summary>
+    /// The order is pending.
+    /// </summary>
+    Pending = 1 << 1,
+
+    /// <summary>
     /// The order has been created.
     /// </summary>
     Created = 1 << 0,

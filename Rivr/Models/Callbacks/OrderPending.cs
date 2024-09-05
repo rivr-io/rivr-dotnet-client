@@ -1,12 +1,11 @@
 ﻿using System;
-using Rivr.Models.Orders;
 
 namespace Rivr.Models.Callbacks;
 
 /// <summary>
-/// Represents the order created.
+/// Represents the order pending.
 /// </summary>
-public class OrderCreated
+public class OrderPending
 {
     /// <summary>
     /// Gets or sets the created date.
