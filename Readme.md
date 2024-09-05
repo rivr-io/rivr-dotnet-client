@@ -296,6 +296,21 @@ Immediately after an order is created a callback is issued.
 }
 ```
 
+##### Pending
+
+If an order is tranferred to an invoice with recourse, the order state is set to pending meaning that there has been an action on it but it is not completed yet. The order will be completed when the invoice is paid in full.
+
+```json
+{
+  "id": "84c3c4ad-63d8-4d49-a4ff-ed57bbd40a39",
+  "type": "Order",
+  "status": "Pending",
+  "data": {
+    "CreatedDate": "2024-04-24T16:45:30.582Z"
+  }
+}
+```
+
 ##### Completed
 
 A order is considered `Completed` when it has been paid. An Order can be paid with a different payment methods. The different variants of callbacks are listed here.
