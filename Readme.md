@@ -225,7 +225,7 @@ var result = await client
 
 #### Refund or Cancel an order
 
-And order can be either refunded or cancelled depending on the current status. If the status is `OrderStatus.Completed`, the order will be refunded. If the status is `OrderStatus.Created`, the order will be cancelled. The calling system does not need to know the current status of the order.
+An order can be either refunded or cancelled depending on the current status. If the status is `OrderStatus.Completed`, the order will be refunded. If the status is `OrderStatus.Created`, the order will be cancelled. The calling system does not need to know the current status of the order.
 
 Note: There are certain payment methods that do not support refunds (some instalment products).
 
@@ -330,21 +330,6 @@ A order is considered `Completed` when it has been paid. An Order can be paid wi
 }
 ```
 
-###### Apple Pay / Google Pay
-
-```json
-{
-  "id": "84c3c4ad-63d8-4d49-a4ff-ed57bbd40a39",
-  "type": "Order",
-  "status": "Completed",
-  "data": {
-    "CreatedDate": "2024-04-24T16:45:30.582Z",
-    "CompletedDate": "2024-04-24T16:45:52.54Z",
-    "PaymentMethod": "DigitalWallet"
-  }
-}
-```
-
 ###### Swish
 
 ```json
@@ -387,33 +372,7 @@ Instalment comes in three flavours, Default, Full KYC and Interest Free.
   "data": {
     "CreatedDate": "2024-04-24T16:45:30.582Z",
     "CompletedDate": "2024-04-24T16:45:52.54Z",
-    "PaymentMethod": "InstalmentDefault"
-  }
-}
-```
-
-```json
-{
-  "id": "84c3c4ad-63d8-4d49-a4ff-ed57bbd40a39",
-  "type": "Order",
-  "status": "Completed",
-  "data": {
-    "CreatedDate": "2024-04-24T16:45:30.582Z",
-    "CompletedDate": "2024-04-24T16:45:52.54Z",
-    "PaymentMethod": "InstalmentFullKyc"
-  }
-}
-```
-
-```json
-{
-  "id": "84c3c4ad-63d8-4d49-a4ff-ed57bbd40a39",
-  "type": "Order",
-  "status": "Completed",
-  "data": {
-    "CreatedDate": "2024-04-24T16:45:30.582Z",
-    "CompletedDate": "2024-04-24T16:45:52.54Z",
-    "PaymentMethod": "InstalmentInterestFree"
+    "PaymentMethod": "Instalment"
   }
 }
 ```
