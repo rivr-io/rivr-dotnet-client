@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Net;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Threading;
+using Rivr.Models.Authentication;
 
 namespace Rivr.Extensions;
 
@@ -21,6 +23,11 @@ public static class HttpResponseMessageExtensions
         if (message.IsSuccessStatusCode)
         {
             return;
+        }
+
+        if (message.StatusCode == HttpStatusCode.Unauthorized)
+        {
+            throw new UnauthorizedException("Unauthorized. Please check your credentials.");
         }
 
         var request = string.Empty;
