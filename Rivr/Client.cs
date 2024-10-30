@@ -48,6 +48,16 @@ public class Client : IClient
         ClientId = config.ClientId ?? throw new ArgumentNullException(nameof(config.ClientId));
         ClientSecret = config.ClientSecret ?? throw new ArgumentNullException(nameof(config.ClientSecret));
 
+        if (string.IsNullOrEmpty(ClientId))
+        {
+            throw new ArgumentNullException(nameof(ClientId), "ClientId is mandatory");
+        }
+
+        if (string.IsNullOrEmpty(ClientSecret))
+        {
+            throw new ArgumentNullException(nameof(ClientSecret), "ClientSecret is mandatory");
+        }
+
         AuthHttpClient = authHttpClient;
         ApiHttpClient = apiHttpClient;
         MemoryCache = memoryCache;
