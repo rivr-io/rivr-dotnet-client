@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Rivr.Extensions;
+using Rivr.Samples.Console.DependencyInjection;
 
 await Host.CreateDefaultBuilder(args).ConfigureServices(
         (context, services) =>

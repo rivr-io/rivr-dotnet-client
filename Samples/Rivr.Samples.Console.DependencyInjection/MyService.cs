@@ -1,7 +1,9 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Rivr;
-using Rivr.Models.Orders;
+using Rivr.Core;
+using Rivr.Core.Models.Orders;
+
+namespace Rivr.Samples.Console.DependencyInjection;
 
 public class MyService(IClient client, ILogger<MyService> logger) : IHostedService
 {
@@ -98,7 +100,7 @@ public class MyService(IClient client, ILogger<MyService> logger) : IHostedServi
 
 
         logger.LogInformation("Press any key to exit");
-        Console.ReadKey(true);
+        System.Console.ReadKey(true);
         Environment.Exit(0);
     }
 

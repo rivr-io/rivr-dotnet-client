@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using NSubstitute;
-using Rivr.Models;
+using Rivr.Core.Models;
 using Rivr.Models.Authentication;
 using Shouldly;
 

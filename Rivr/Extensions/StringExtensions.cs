@@ -15,7 +15,6 @@ public static class StringExtensions
     /// </summary>
     /// <param name="content"></param>
     /// <param name="options"></param>
-    /// <param name="cancellationToken"></param>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>

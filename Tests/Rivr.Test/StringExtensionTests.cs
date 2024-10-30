@@ -1,6 +1,6 @@
-﻿using Rivr.Extensions;
-using Rivr.Models.Callbacks;
-using Rivr.Models.Orders;
+﻿using Rivr.Core.Models.Callbacks;
+using Rivr.Core.Models.Orders;
+using Rivr.Extensions;
 using Shouldly;
 
 namespace Rivr.Test;

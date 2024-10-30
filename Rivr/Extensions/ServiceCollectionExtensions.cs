@@ -3,7 +3,10 @@ using System.Net.Http;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Rivr.Models.Setup;
+using Rivr.Core;
+using Rivr.Core.Constants;
+using Rivr.Core.Models.Setup;
+using Environment = Rivr.Core.Models.Environment;
 
 namespace Rivr.Extensions;
 
@@ -35,23 +38,26 @@ public static class ServiceCollectionExtensions
 
         services.AddHttpClient("AuthClient", client =>
         {
-            client.BaseAddress = rivrClientBuilder.Environment == Models.Environment.Production
-                ? new Uri(Constants.ClientConfig.AuthBaseUri)
-                : new Uri(Constants.ClientConfig.AuthBaseUriTest);
+            client.BaseAddress = rivrClientBuilder.Environment == Environment.Production
+                ? new Uri(ClientConfig.AuthBaseUri)
+                : new Uri(ClientConfig.AuthBaseUriTest);
         });
 
         services.AddHttpClient("ApiClient", client =>
         {
-            client.BaseAddress = rivrClientBuilder.Environment == Models.Environment.Production
-                ? new Uri(Constants.ClientConfig.ApiBaseUri)
-                : new Uri(Constants.ClientConfig.ApiBaseUriTest);
+            client.BaseAddress = rivrClientBuilder.Environment == Environment.Production
+                ? new Uri(ClientConfig.ApiBaseUri)
+                : new Uri(ClientConfig.ApiBaseUriTest);
         });
 
         services.AddSingleton<IClient>(provider =>
         {
             var memoryCache = provider.GetRequiredService<IMemoryCache>();
             var options = provider.GetService<RivrClientOptions>();
-            rivrClientBuilder.UseOptions(options);
+            if (options != null)
+            {
+                rivrClientBuilder.UseOptions(options);
+            }
 
             var authHttpClient = provider.GetRequiredService<IHttpClientFactory>().CreateClient("AuthClient");
             var apiHttpClient = provider.GetRequiredService<IHttpClientFactory>().CreateClient("ApiClient");

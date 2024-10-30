@@ -1,7 +1,8 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using NSubstitute;
+using Rivr.Core.Models;
+using Rivr.Core.Models.Merchants;
 using Rivr.Models.Authentication;
-using Rivr.Models.Merchants;
 using Shouldly;
 
 namespace Rivr.Test;

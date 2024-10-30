@@ -1,8 +1,10 @@
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
 using NSubstitute;
-using Rivr.Models.Orders;
+using Rivr.Core.Models;
+using Rivr.Core.Models.Orders;
 using Shouldly;
-using Environment = Rivr.Models.Environment;
+using Environment = Rivr.Core.Models.Environment;
 
 namespace Rivr.IntegrationTest;
 
@@ -13,7 +15,10 @@ public class ClientTests
     [SetUp]
     public void Setup()
     {
-        _config = new Config(clientId: TestConstants.ClientId, clientSecret: TestConstants.ClientSecret)
+        _config = new Config(
+            clientId: TestConstants.ClientId!,
+            clientSecret: TestConstants.ClientSecret!
+        )
         {
             Environment = Environment.Test
         };
@@ -38,7 +43,8 @@ public class ClientTests
     public async Task ShouldGetHealthSecureAsPlatform()
     {
         // Arrange
-        var memoryCache = Substitute.For<IMemoryCache>();
+        var options = Options.Create(new MemoryCacheOptions());
+        var memoryCache = new MemoryCache(options);
         var client = new Client(_config, memoryCache);
 
         // Act
@@ -116,7 +122,7 @@ public class ClientTests
         var order = new CreateOrderRequest
         {
             Id = Guid.NewGuid(),
-            PersonalNumber = TestConstants.PersonalNumber,
+            PersonalNumber = TestConstants.PersonalNumber!,
             Email = "test@example.com",
             Phone = "0700000000",
             CheckoutHints =
@@ -169,7 +175,7 @@ public class ClientTests
 
         var merchantId = TestConstants.MerchantId;
 
-        var orderId = Guid.Parse("65738986-e888-47f9-b7b7-050de7823b8d");
+        var orderId = Guid.Parse("fd4cc3c6-b7ad-48a9-bc66-b1b224449de5");
 
         // Act
         var result = await client
@@ -189,7 +195,7 @@ public class ClientTests
 
         var merchantId = TestConstants.MerchantId;
 
-        var orderId = Guid.Parse("65738986-e888-47f9-b7b7-050de7823b8d");
+        var orderId = Guid.Parse("fd4cc3c6-b7ad-48a9-bc66-b1b224449de5");
 
         // Act
         await client
@@ -213,5 +219,23 @@ public class ClientTests
 
         // Assert
         result.ShouldNotBeNull();
+    }
+
+    [Test]
+    public async Task ShouldNotThrowObjectDisposedExceptionWhenHavingWrongCredentials()
+    {
+        // Arrange
+        var memoryCache = Substitute.For<IMemoryCache>();
+        var client = new Client(new Config(clientId: Guid.NewGuid().ToString(), clientSecret: "wrong"), memoryCache);
+
+        // Act
+        var health = await client
+            .GetHealthAsync();
+
+        var healthSecure = await client
+            .AsPlatform()
+            .GetHealthSecureAsync();
+
+        // Assert
     }
 }

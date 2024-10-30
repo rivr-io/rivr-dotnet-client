@@ -2,10 +2,13 @@
 using System;
 using System.Collections.Concurrent;
 using System.Net.Http;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
-using Environment = Rivr.Models.Environment;
-using Rivr.Models;
+using Rivr.Core;
+using Rivr.Core.Models;
+using Environment = Rivr.Core.Models.Environment;
 
 namespace Rivr;
 
@@ -20,9 +23,14 @@ public class Client : IClient
     internal readonly IMemoryCache MemoryCache;
     internal readonly string ClientId;
     internal readonly string ClientSecret;
-    private PlatformApi? _platformOperations;
+    private PlatformClient? _platformOperations;
     private readonly ConcurrentDictionary<Guid, MerchantClient> _merchantClients = new();
 
+    internal JsonSerializerOptions JsonSerializerOptions => new(JsonSerializerDefaults.Web)
+    {
+        PropertyNameCaseInsensitive = true,
+        Converters = { new JsonStringEnumConverter() }
+    };
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Client"/> class.
@@ -81,7 +89,7 @@ public class Client : IClient
     }
 
     /// <inheritdoc />
-    public IPlatformOperations AsPlatform() => _platformOperations ??= new PlatformApi(this);
+    public IPlatformOperations AsPlatform() => _platformOperations ??= new PlatformClient(this);
 
     /// <inheritdoc />
     public IMerchantOperations OnBehalfOfMerchant(Guid merchantId) => _merchantClients.ContainsKey(merchantId)

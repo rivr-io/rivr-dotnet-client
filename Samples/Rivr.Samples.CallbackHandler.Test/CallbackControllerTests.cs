@@ -1,8 +1,8 @@
 using System.Net.Http.Json;
 using System.Text.Json;
-using Rivr.Models.Callbacks;
-using Rivr.Models.Orders;
-using OrderStatus = Rivr.Models.Orders.OrderStatus;
+using Rivr.Core.Models.Callbacks;
+using Rivr.Core.Models.Orders;
+using OrderStatus = Rivr.Core.Models.Orders.OrderStatus;
 
 namespace Rivr.Samples.CallbackHandler.Test
 {
