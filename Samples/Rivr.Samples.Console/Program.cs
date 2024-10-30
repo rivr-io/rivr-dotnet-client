@@ -2,7 +2,9 @@
 
 using Microsoft.Extensions.Caching.Memory;
 using Rivr;
-using Rivr.Models.Orders;
+using Rivr.Core.Models;
+using Rivr.Core.Models.Orders;
+using Environment = System.Environment;
 
 Console.WriteLine("Testing Rivr API");
 Console.WriteLine();
@@ -10,7 +12,7 @@ Console.WriteLine();
 
 var config = new Config(clientId: "enter-client-id", clientSecret: "enter-client-secret")
 {
-    Environment = Rivr.Models.Environment.Test
+    Environment = Rivr.Core.Models.Environment.Test
 };
 
 var memoryCache = new MemoryCache(new MemoryCacheOptions());

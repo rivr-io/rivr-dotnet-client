@@ -4,12 +4,13 @@ using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
+using Rivr.Core;
+using Rivr.Core.Models;
+using Rivr.Core.Models.Devices;
+using Rivr.Core.Models.Orders;
+using Rivr.Core.Models.OrderSettlements;
 using Rivr.Extensions;
-using Rivr.Models;
 using Rivr.Models.Authentication;
-using Rivr.Models.Devices;
-using Rivr.Models.Orders;
-using Rivr.Models.OrderSettlements;
 
 namespace Rivr;
 
@@ -61,7 +62,7 @@ public class MerchantClient(Client client, Guid merchantId) : IMerchantOperation
 
         var response = await client.ApiHttpClient.GetAsync($"orders/{orderId}");
         await response.EnsureSuccessfulResponseAsync();
-        return await response.DeserialiseAsync<Order>();
+        return await response.DeserialiseAsync<Order>(client.JsonSerializerOptions);
     }
 
     /// <inheritdoc />
@@ -94,7 +95,6 @@ public class MerchantClient(Client client, Guid merchantId) : IMerchantOperation
 
 
     /// <inheritdoc />
-
     public async Task<OrderSettlement> GetLastUnreadOrderSettlementAsync()
     {
         await RefreshMerchantCredentialsAsync();

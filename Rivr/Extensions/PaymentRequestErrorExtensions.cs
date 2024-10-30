@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using Rivr.Models;
+using Rivr.Core.Models;
 
 namespace Rivr.Extensions;
 

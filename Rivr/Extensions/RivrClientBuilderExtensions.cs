@@ -1,5 +1,5 @@
-﻿using Rivr.Models;
-using Rivr.Models.Setup;
+﻿using Rivr.Core.Models;
+using Rivr.Core.Models.Setup;
 
 namespace Rivr.Extensions;
 
@@ -48,7 +48,6 @@ public static class RivrClientBuilderExtensions
     /// Sets the environment to the test environment.
     /// </summary>
     /// <param name="builder"></param>
-    /// <param name="environment"></param>
     /// <returns></returns>
     public static IRivrClientBuilder UseTestEnvironment(this IRivrClientBuilder builder)
     {
@@ -60,7 +59,6 @@ public static class RivrClientBuilderExtensions
     /// Sets the environment to the production environment.
     /// </summary>
     /// <param name="builder"></param>
-    /// <param name="environment"></param>
     /// <returns></returns>
     public static IRivrClientBuilder UseProductionEnvironment(this IRivrClientBuilder builder)
     {

@@ -38,7 +38,7 @@ public static class HttpResponseMessageExtensions
             {
                 throw new ForbiddenException(errorResponse);
             }
-            
+
             throw new ForbiddenException(new ErrorResponse
             {
                 Error = "Forbidden",

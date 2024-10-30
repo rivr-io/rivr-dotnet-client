@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>netstandard2.0</TargetFramework>
+		<TargetFrameworks>netstandard2.0</TargetFrameworks>
 		<RootNamespace>Rivr</RootNamespace>
 		<Nullable>enable</Nullable>
 		<LangVersion>Latest</LangVersion>
@@ -16,7 +16,7 @@
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<IncludeSymbols>true</IncludeSymbols>
 		<IncludeSource>true</IncludeSource>
-		<Description>The Rivr API Library for .NET Standard 2.1 enables you to work with Rivr's APIs from within any .NET application.</Description>
+		<Description>The Rivr API Library for .NET Standard 2.0 enables you to work with Rivr's APIs from within any .NET application.</Description>
 		<PackageProjectUrl>https://github.com/rivr-io/rivr-dotnet-client</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/rivr-io/rivr-dotnet-client</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
@@ -51,12 +51,18 @@
 		<PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.2" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="8.0.1" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
+		<PackageReference Include="Microsoft.Extensions.Primitives" Version="8.0.0" />
 		<PackageReference Include="System.Text.Json" Version="8.0.5" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Include="rivr-logo.png" Pack="true" Visible="false" PackagePath="" />
-		<None Include="..\README.md" Pack="true" PackagePath="" />
+		<None Include="..\rivr-logo.png" Pack="true" Visible="false" PackagePath="" />
+		<None Include="..\README.md" Pack="true" Visible="false" PackagePath="" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Rivr.Core\Rivr.Core.csproj" />
 	</ItemGroup>
 
 </Project>
