@@ -30,6 +30,22 @@ public static class HttpResponseMessageExtensions
             throw new UnauthorizedException("Unauthorized. Please check your credentials.");
         }
 
+        if (message.StatusCode == HttpStatusCode.Forbidden)
+        {
+            var errorResponse = await message.DeserialiseAsync<ErrorResponse>();
+
+            if (errorResponse != null)
+            {
+                throw new ForbiddenException(errorResponse);
+            }
+            
+            throw new ForbiddenException(new ErrorResponse
+            {
+                Error = "Forbidden",
+                ErrorDescription = "The request is forbidden. Unknown reason."
+            });
+        }
+
         var request = string.Empty;
         if (message.RequestMessage is { Content: not null })
         {

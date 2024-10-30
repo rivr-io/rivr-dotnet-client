@@ -62,6 +62,9 @@ public interface IMerchantOperations
     /// <summary>
     /// Get the next unread order settlement as a Nets file.
     /// </summary>
-    /// <returns></returns>
-    Task<string> GetNextUnreadOrderSettlementAsNetsFile();
+    /// <returns>
+    /// The content of the file as a string.
+    /// If there are no more unread order settlements, <see langword="null"/> is returned.
+    /// </returns>
+    Task<string?> GetNextUnreadOrderSettlementAsNetsFile();
 }

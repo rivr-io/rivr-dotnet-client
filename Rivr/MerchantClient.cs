@@ -107,11 +107,16 @@ public class MerchantClient(Client client, Guid merchantId) : IMerchantOperation
     }
 
     /// <inheritdoc />
-    public async Task<string> GetNextUnreadOrderSettlementAsNetsFile()
+    public async Task<string?> GetNextUnreadOrderSettlementAsNetsFile()
     {
         await RefreshMerchantCredentialsAsync();
 
         var response = await client.ApiHttpClient.GetAsync($"order-settlements/next-unread?format=Nets");
+
+        if (response.StatusCode == HttpStatusCode.NotFound)
+        {
+            return null;
+        }
 
         await response.EnsureSuccessfulResponseAsync();
 
