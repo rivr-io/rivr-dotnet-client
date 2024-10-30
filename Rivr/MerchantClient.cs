@@ -81,14 +81,26 @@ public class MerchantClient(Client client, Guid merchantId) : IMerchantOperation
     }
 
     /// <inheritdoc />
-    public async Task GetOrderSettlementsAsync()
+    public async Task<OrderSettlementForLists[]> GetOrderSettlementsAsync()
     {
         await RefreshMerchantCredentialsAsync();
 
-        var response = await client.ApiHttpClient.GetAsync($"orders/settlements");
+        var response = await client.ApiHttpClient.GetAsync($"orders-settlements");
         await response.EnsureSuccessfulResponseAsync();
 
         var result = await response.DeserialiseAsync<GetOrderSettlementsResponse>();
+
+        return result.OrderSettlements;
+    }
+
+    public async Task<OrderSettlement> GetLastUnreadOrderSettlementAsync()
+    {
+        await RefreshMerchantCredentialsAsync();
+
+        var response = await client.ApiHttpClient.GetAsync($"orders-settlements/last-unread");
+        await response.EnsureSuccessfulResponseAsync();
+
+        return await response.DeserialiseAsync<OrderSettlement>();
     }
 
 

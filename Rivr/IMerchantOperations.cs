@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Rivr.Models;
 using Rivr.Models.Devices;
 using Rivr.Models.Orders;
+using Rivr.Models.OrderSettlements;
 
 namespace Rivr;
 
@@ -51,5 +52,10 @@ public interface IMerchantOperations
     /// <summary>
     /// Get a list of order settlements
     /// </summary>
-    Task GetOrderSettlementsAsync();
+    Task<OrderSettlementForLists[]> GetOrderSettlementsAsync();
+
+    /// <summary>
+    /// Get last unread order settlement
+    /// </summary>
+    Task<OrderSettlement> GetLastUnreadOrderSettlementAsync();
 }
