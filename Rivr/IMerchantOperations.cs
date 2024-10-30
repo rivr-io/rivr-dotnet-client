@@ -47,4 +47,9 @@ public interface IMerchantOperations
     /// <param name="orderId"></param>
     /// <returns></returns>
     Task RefundAsync(Guid orderId);
+
+    /// <summary>
+    /// Get a list of order settlements
+    /// </summary>
+    Task GetOrderSettlementsAsync();
 }
