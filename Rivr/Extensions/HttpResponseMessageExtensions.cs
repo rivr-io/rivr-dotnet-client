@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Net;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Threading;
+using Rivr.Models.Authentication;
 
 namespace Rivr.Extensions;
 
@@ -21,6 +23,27 @@ public static class HttpResponseMessageExtensions
         if (message.IsSuccessStatusCode)
         {
             return;
+        }
+
+        if (message.StatusCode == HttpStatusCode.Unauthorized)
+        {
+            throw new UnauthorizedException("Unauthorized. Please check your credentials.");
+        }
+
+        if (message.StatusCode == HttpStatusCode.Forbidden)
+        {
+            var errorResponse = await message.DeserialiseAsync<ErrorResponse>();
+
+            if (errorResponse != null)
+            {
+                throw new ForbiddenException(errorResponse);
+            }
+            
+            throw new ForbiddenException(new ErrorResponse
+            {
+                Error = "Forbidden",
+                ErrorDescription = "The request is forbidden. Unknown reason."
+            });
         }
 
         var request = string.Empty;

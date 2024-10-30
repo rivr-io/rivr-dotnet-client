@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Rivr.Models;
 using Rivr.Models.Devices;
 using Rivr.Models.Orders;
+using Rivr.Models.OrderSettlements;
 
 namespace Rivr;
 
@@ -47,4 +48,23 @@ public interface IMerchantOperations
     /// <param name="orderId"></param>
     /// <returns></returns>
     Task RefundAsync(Guid orderId);
+
+    /// <summary>
+    /// Get a list of order settlements
+    /// </summary>
+    Task<OrderSettlementForLists[]> GetOrderSettlementsAsync();
+
+    /// <summary>
+    /// Get last unread order settlement
+    /// </summary>
+    Task<OrderSettlement> GetLastUnreadOrderSettlementAsync();
+
+    /// <summary>
+    /// Get the next unread order settlement as a Nets file.
+    /// </summary>
+    /// <returns>
+    /// The content of the file as a string.
+    /// If there are no more unread order settlements, <see langword="null"/> is returned.
+    /// </returns>
+    Task<string?> GetNextUnreadOrderSettlementAsNetsFile();
 }

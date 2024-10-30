@@ -196,4 +196,22 @@ public class ClientTests
             .OnBehalfOfMerchant(merchantId)
             .RefundAsync(orderId);
     }
+
+    [Test]
+    public async Task ShouldGetNextUnreadOrderSettlementAsNetsFile()
+    {
+        // Arrange
+        var memoryCache = Substitute.For<IMemoryCache>();
+        var client = new Client(_config, memoryCache);
+
+        var merchantId = TestConstants.MerchantId;
+
+        // Act
+        var result = await client
+            .OnBehalfOfMerchant(merchantId)
+            .GetNextUnreadOrderSettlementAsNetsFile();
+
+        // Assert
+        result.ShouldNotBeNull();
+    }
 }

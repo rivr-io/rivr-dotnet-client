@@ -9,6 +9,7 @@ using Rivr.Models;
 using Rivr.Models.Authentication;
 using Rivr.Models.Devices;
 using Rivr.Models.Orders;
+using Rivr.Models.OrderSettlements;
 
 namespace Rivr;
 
@@ -63,6 +64,7 @@ public class MerchantClient(Client client, Guid merchantId) : IMerchantOperation
         return await response.DeserialiseAsync<Order>();
     }
 
+    /// <inheritdoc />
     public async Task RefundAsync(Guid orderId)
     {
         await RefreshMerchantCredentialsAsync();
@@ -75,6 +77,49 @@ public class MerchantClient(Client client, Guid merchantId) : IMerchantOperation
         }
 
         await response.EnsureSuccessfulResponseAsync();
+    }
+
+    /// <inheritdoc />
+    public async Task<OrderSettlementForLists[]> GetOrderSettlementsAsync()
+    {
+        await RefreshMerchantCredentialsAsync();
+
+        var response = await client.ApiHttpClient.GetAsync($"order-settlements");
+        await response.EnsureSuccessfulResponseAsync();
+
+        var result = await response.DeserialiseAsync<GetOrderSettlementsResponse>();
+
+        return result.OrderSettlements;
+    }
+
+
+    /// <inheritdoc />
+
+    public async Task<OrderSettlement> GetLastUnreadOrderSettlementAsync()
+    {
+        await RefreshMerchantCredentialsAsync();
+
+        var response = await client.ApiHttpClient.GetAsync($"order-settlements/last-unread");
+        await response.EnsureSuccessfulResponseAsync();
+
+        return await response.DeserialiseAsync<OrderSettlement>();
+    }
+
+    /// <inheritdoc />
+    public async Task<string?> GetNextUnreadOrderSettlementAsNetsFile()
+    {
+        await RefreshMerchantCredentialsAsync();
+
+        var response = await client.ApiHttpClient.GetAsync($"order-settlements/next-unread?format=Nets");
+
+        if (response.StatusCode == HttpStatusCode.NotFound)
+        {
+            return null;
+        }
+
+        await response.EnsureSuccessfulResponseAsync();
+
+        return await response.Content.ReadAsStringAsync();
     }
 
 
