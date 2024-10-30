@@ -85,7 +85,7 @@ public class MerchantClient(Client client, Guid merchantId) : IMerchantOperation
     {
         await RefreshMerchantCredentialsAsync();
 
-        var response = await client.ApiHttpClient.GetAsync($"orders-settlements");
+        var response = await client.ApiHttpClient.GetAsync($"order-settlements");
         await response.EnsureSuccessfulResponseAsync();
 
         var result = await response.DeserialiseAsync<GetOrderSettlementsResponse>();
@@ -93,14 +93,29 @@ public class MerchantClient(Client client, Guid merchantId) : IMerchantOperation
         return result.OrderSettlements;
     }
 
+
+    /// <inheritdoc />
+
     public async Task<OrderSettlement> GetLastUnreadOrderSettlementAsync()
     {
         await RefreshMerchantCredentialsAsync();
 
-        var response = await client.ApiHttpClient.GetAsync($"orders-settlements/last-unread");
+        var response = await client.ApiHttpClient.GetAsync($"order-settlements/last-unread");
         await response.EnsureSuccessfulResponseAsync();
 
         return await response.DeserialiseAsync<OrderSettlement>();
+    }
+
+    /// <inheritdoc />
+    public async Task<string> GetNextUnreadOrderSettlementAsNetsFile()
+    {
+        await RefreshMerchantCredentialsAsync();
+
+        var response = await client.ApiHttpClient.GetAsync($"order-settlements/next-unread?format=Nets");
+
+        await response.EnsureSuccessfulResponseAsync();
+
+        return await response.Content.ReadAsStringAsync();
     }
 
 

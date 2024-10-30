@@ -58,4 +58,10 @@ public interface IMerchantOperations
     /// Get last unread order settlement
     /// </summary>
     Task<OrderSettlement> GetLastUnreadOrderSettlementAsync();
+
+    /// <summary>
+    /// Get the next unread order settlement as a Nets file.
+    /// </summary>
+    /// <returns></returns>
+    Task<string> GetNextUnreadOrderSettlementAsNetsFile();
 }
