@@ -41,8 +41,7 @@
 		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
 		<LangVersion>latest</LangVersion>
 	</PropertyGroup>
-
-	<!-- Configuration-specific properties if necessary -->
+	
 	<PropertyGroup Condition="'$(Configuration)' == 'Debug'">
 		<DefineConstants>DEBUG;TRACE</DefineConstants>
 		<Optimize>false</Optimize>
@@ -52,18 +51,15 @@
 		<Optimize>true</Optimize>
 	</PropertyGroup>
 
-	<!-- Content Files -->
 	<ItemGroup>
 		<Content Include="..\rivr-logo.png" Pack="true" PackagePath="" />
 		<None Include="..\README.md" Pack="true" PackagePath="" />
 	</ItemGroup>
-
-	<!-- Project References -->
+	
 	<ItemGroup>
-		<ProjectReference Include="..\Rivr.Core\Rivr.Core.csproj" />
+		<PackageReference Include="Rivr.Core" Version="$(Version)" />
 	</ItemGroup>
 
-	<!-- Package References -->
 	<ItemGroup>
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 	</ItemGroup>
