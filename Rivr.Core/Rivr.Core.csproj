@@ -41,11 +41,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Content Include="..\rivr-logo.png" Link="rivr-logo.png" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <None Include="..\Readme.md" Link="Readme.md" />
+		<None Include="..\rivr-logo.png" Pack="true" Visible="false" PackagePath="" />
+		<None Include="..\README.md" Pack="true" Visible="false" PackagePath="" />
 	</ItemGroup>
 
 </Project>
