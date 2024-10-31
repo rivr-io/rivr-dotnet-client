@@ -41,6 +41,7 @@
 		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
 		<LangVersion>latest</LangVersion>
 	</PropertyGroup>
+
 	
 	<PropertyGroup Condition="'$(Configuration)' == 'Debug'">
 		<DefineConstants>DEBUG;TRACE</DefineConstants>
@@ -55,9 +56,9 @@
 		<Content Include="..\rivr-logo.png" Pack="true" PackagePath="" />
 		<None Include="..\README.md" Pack="true" PackagePath="" />
 	</ItemGroup>
-	
+
 	<ItemGroup>
-		<PackageReference Include="Rivr.Core" Version="$(Version)" />
+		<ProjectReference Include="..\Rivr.Core\Rivr.Core.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

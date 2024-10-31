@@ -62,7 +62,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Rivr.Core" Version="$(Version)" />
+	  <ProjectReference Include="..\Rivr.Core\Rivr.Core.csproj" />
 	</ItemGroup>
 
 </Project>
