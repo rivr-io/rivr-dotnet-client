@@ -51,9 +51,6 @@ jobs:
       - name: Run sample tests
         run: dotnet test ./Samples/Rivr.Samples.CallbackHandler.Test/Rivr.Samples.CallbackHandler.Test.csproj
 
-      - name: Package
-        run: dotnet pack --configuration Release --output ./artifacts /p:PackageVersion=${{ env.VERSION }}
-
       - name: Publish regular package to NuGet
         if: startsWith(github.ref, 'refs/tags/')
         env:
