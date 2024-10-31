@@ -42,20 +42,20 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
 
-      - name: Build .NET 8.0
-        run: dotnet build ./Rivr/Rivr.csproj --configuration Release --output ./artifacts /p:Version=${{ env.VERSION }}
-
-      - name: Build .NET 4.8
-        run: dotnet build ./Rivr.DotNet48/Rivr.DotNet48.csproj --configuration Release --output ./artifacts /p:Version=${{ env.VERSION }}
+      - name: Build
+        run: dotnet build --configuration Release /p:Version=${{ env.VERSION }}
 
       - name: Run tests
-        run: dotnet test ./Tests/Rivr.Test/Rivr.Test.csproj --configuration Release
+        run: dotnet test ./Tests/Rivr.Test/Rivr.Test.csproj
 
       - name: Run sample tests
-        run: dotnet test ./Samples/Rivr.Samples.CallbackHandler.Test/Rivr.Samples.CallbackHandler.Test.csproj --configuration Release
+        run: dotnet test ./Samples/Rivr.Samples.CallbackHandler.Test/Rivr.Samples.CallbackHandler.Test.csproj
 
-      - name: Publish package to NuGet
+      - name: Package
+        run: dotnet pack --configuration Release --output ./artifacts /p:PackageVersion=${{ env.VERSION }}
+
+      - name: Publish regular package to NuGet
         if: startsWith(github.ref, 'refs/tags/')
         env:
           NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
-        run: dotnet nuget push ./artifacts/*.nupkg --api-key $env:NUGET_API_KEY --source https://api.nuget.org/v3/index.json --skip-duplicate
+        run: dotnet nuget push ./artifacts/*.nupkg --api-key $NUGET_API_KEY --source https://api.nuget.org/v3/index.json --skip-duplicate
