@@ -35,19 +35,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="Rivr.Core, Version=1.0.9.0, Culture=neutral, PublicKeyToken=c2b2c3e93c28cea8, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Rivr.Core.1.0.9\lib\netstandard2.0\Rivr.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Rivr.DotNet48, Version=1.0.8.0, Culture=neutral, PublicKeyToken=c2b2c3e93c28cea8, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Rivr.DotNet48.1.0.8\lib\net48\Rivr.DotNet48.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
-    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -62,6 +55,16 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Rivr.Core\Rivr.Core.csproj">
+      <Project>{0DAF7A9C-7CEE-4790-BD19-E78219823DF2}</Project>
+      <Name>Rivr.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Rivr.DotNet48\Rivr.DotNet48.csproj">
+      <Project>{3DA5B130-68F1-4A18-81E1-2CE7BB467201}</Project>
+      <Name>Rivr.DotNet48</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
