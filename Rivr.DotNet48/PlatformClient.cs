@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using Rivr.Core;
 using Rivr.Core.Models;
 using Rivr.Core.Models.Merchants;
+using Rivr.DotNet48.Extensions;
 using Rivr.DotNet48.Models.Authentication;
 
 namespace Rivr.DotNet48;

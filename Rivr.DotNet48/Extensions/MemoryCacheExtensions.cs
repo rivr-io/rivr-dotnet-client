@@ -3,7 +3,7 @@ using System.Runtime.Caching;
 using System.Threading.Tasks;
 using Rivr.DotNet48.Models.Authentication;
 
-namespace Rivr.DotNet48;
+namespace Rivr.DotNet48.Extensions;
 
 /// <summary>
 /// Extension methods for <see cref="MemoryCache"/>.

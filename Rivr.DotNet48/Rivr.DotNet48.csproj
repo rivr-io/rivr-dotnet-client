@@ -7,33 +7,38 @@
 		<OutputType>Library</OutputType>
 		<Deterministic>true</Deterministic>
 
-		<!-- Package Metadata -->
+		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+		<Copyright>Rivr</Copyright>
+
 		<Version>$(Version)</Version>
 		<AssemblyVersion>$(Version)</AssemblyVersion>
 		<FileVersion>$(Version)</FileVersion>
-		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+
+		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 		<IncludeSymbols>true</IncludeSymbols>
 		<IncludeSource>true</IncludeSource>
-		<Description>The Rivr API Library for .NET enables you to work with Rivr's APIs from within any .NET application.</Description>
+		<Description>The Rivr API Library for .NET Framework 4.8 enables you to work with Rivr's API.</Description>
 		<PackageProjectUrl>https://github.com/rivr-io/rivr-dotnet-client</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/rivr-io/rivr-dotnet-client</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
-		<PackageTags>Rivr;API;Client</PackageTags>
+
+		<PackageTags>$(Version)</PackageTags>
+
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<Authors>Rivr</Authors>
 		<Company>Rivr</Company>
+		<Title>rivr-dotnet-client</Title>
 		<Product>Rivr library</Product>
 		<NeutralLanguage>en</NeutralLanguage>
+		<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
 		<SignAssembly>true</SignAssembly>
 		<AssemblyOriginatorKeyFile>..\rivr-dotnet-client-key.snk</AssemblyOriginatorKeyFile>
 		<PackageIcon>rivr-logo.png</PackageIcon>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageVersion>$(Version)</PackageVersion>
 
-		<!-- Documentation -->
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
-
-		<!-- Language Version -->
 		<LangVersion>latest</LangVersion>
 	</PropertyGroup>
 

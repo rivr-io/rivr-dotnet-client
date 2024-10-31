@@ -54,6 +54,9 @@ jobs:
       - name: Pack .NET Standard 2.0
         run: dotnet pack ./Rivr/Rivr.csproj --configuration Release --output ./artifacts /p:PackageVersion=${{ env.VERSION }}
 
+      - name: Pack Rivr Core
+        run: dotnet pack ./Rivr.Core/Rivr.Core.csproj --configuration Release --output ./artifacts /p:PackageVersion=${{ env.VERSION }}
+
       - name: Pack .NET 4.8
         run: dotnet pack ./Rivr.DotNet48/Rivr.DotNet48.csproj --configuration Release --output ./artifacts /p:PackageVersion=${{ env.VERSION }}
 

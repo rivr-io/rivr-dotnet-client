@@ -11,6 +11,7 @@ using Rivr.Core.Models;
 using Rivr.Core.Models.Devices;
 using Rivr.Core.Models.Orders;
 using Rivr.Core.Models.OrderSettlements;
+using Rivr.DotNet48.Extensions;
 using Rivr.DotNet48.Models.Authentication;
 
 namespace Rivr.DotNet48
