@@ -47,7 +47,7 @@ The platform level authentication utilizes a simplified version of OAuth2 and us
 
 ##### Merchant level
 
-The merchant level authentication is a variant of OAuth2 which allows the system to act on behalf of a merchant. It is very similar to the platform level authentication, but uses our own `grant_type = merchant_credentials`. With this, the `client_id` and the `client_secret` along with a `merchant_id` are used to fetch an `access_token` that includes the `merchant_id`. This allows for the platform to perform actions on behalf of the merchant.
+The merchant level authentication is a variant of OAuth2 which allows the system to act on behalf of a merchant. It is very similar to the platform level authentication, but uses our own `grant_type = merchant_token`. With this, the `client_id` and the `client_secret` along with a `merchant_id` are used to fetch an `access_token` that includes the `merchant_id`. This allows for the platform to perform actions on behalf of the merchant.
 
 ## Using the client
 

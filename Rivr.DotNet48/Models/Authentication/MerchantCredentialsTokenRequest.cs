@@ -14,7 +14,7 @@ public class MerchantCredentialsTokenRequest(string clientId, string clientSecre
     /// <summary>
     /// The grant type for merchant credentials.
     /// </summary>
-    public override string GrantType => "merchant_credentials";
+    public override string GrantType => "merchant_token";
 
     /// <summary>
     /// The client ID.
