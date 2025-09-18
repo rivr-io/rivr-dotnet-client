@@ -16,7 +16,7 @@ public interface IPlatformOperations
     /// </summary>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<Health> GetHealthSecureAsync(CancellationToken cancellationToken);
+    Task<Health> GetHealthSecureAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Gets the merchants.

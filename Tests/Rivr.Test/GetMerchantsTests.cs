@@ -36,13 +36,15 @@ public class GetMerchantsTests
 
         var authHandler = new MockHttpMessageHandler(authReponse);
         var apiHandler = new MockHttpMessageHandler(merchantsResponse);
+        var webhookHandler = new MockHttpMessageHandler();
 
         var authHttpHandler = new HttpClient(authHandler);
         var apiHttpClient = new HttpClient(apiHandler);
+        var webhookHttpClient = new HttpClient(webhookHandler);
 
         var memoryCache = Substitute.For<IMemoryCache>();
 
-        var client = new Client(authHttpHandler, apiHttpClient, _config, memoryCache);
+        var client = new Client(authHttpHandler, apiHttpClient, webhookHttpClient, _config, memoryCache);
 
         // Act
         var result = await client

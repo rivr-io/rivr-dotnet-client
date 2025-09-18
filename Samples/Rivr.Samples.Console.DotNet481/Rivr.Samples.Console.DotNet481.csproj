@@ -61,10 +61,6 @@
       <Project>{0DAF7A9C-7CEE-4790-BD19-E78219823DF2}</Project>
       <Name>Rivr.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Rivr.DotNet48\Rivr.DotNet48.csproj">
-      <Project>{3DA5B130-68F1-4A18-81E1-2CE7BB467201}</Project>
-      <Name>Rivr.DotNet48</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
