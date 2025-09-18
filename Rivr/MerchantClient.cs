@@ -9,6 +9,7 @@ using Rivr.Core.Models;
 using Rivr.Core.Models.Devices;
 using Rivr.Core.Models.Orders;
 using Rivr.Core.Models.OrderSettlements;
+using Rivr.Core.Models.Subscriptions;
 using Rivr.Extensions;
 using Rivr.Models.Authentication;
 
@@ -122,6 +123,18 @@ public class MerchantClient(Client client, Guid merchantId) : IMerchantOperation
         return await response.Content.ReadAsStringAsync();
     }
 
+    /// <inheritdoc />
+    public async Task CreateOrUpdateSubscriptionAsync(CreateSubscriptionRequest createSubscriptionRequest)
+    {
+        await RefreshMerchantCredentialsAsync();
+
+        var response = await client.ApiHttpClient.PostAsJsonAsync($"subscriptions", createSubscriptionRequest);
+
+        await response.EnsureSuccessfulResponseAsync();
+    }
+
+    /// <inheritdoc />
+    public IWebhookAggregatorOperations Webhooks => new WebhookAggregatorClient(client, merchantId);
 
     private async Task RefreshMerchantCredentialsAsync()
     {

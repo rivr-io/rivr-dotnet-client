@@ -20,6 +20,7 @@ public class Client : IClient
 
     internal readonly HttpClient AuthHttpClient;
     internal readonly HttpClient ApiHttpClient;
+    internal readonly HttpClient WebhookAggregatorHttpClient;
     internal readonly IMemoryCache MemoryCache;
     internal readonly string ClientId;
     internal readonly string ClientSecret;
@@ -29,7 +30,7 @@ public class Client : IClient
     internal JsonSerializerOptions JsonSerializerOptions => new(JsonSerializerDefaults.Web)
     {
         PropertyNameCaseInsensitive = true,
-        Converters = { new JsonStringEnumConverter() }
+        //Converters = { new JsonStringEnumConverter() }
     };
 
     /// <summary>
@@ -37,7 +38,7 @@ public class Client : IClient
     /// </summary>
     /// <param name="config"></param>
     /// <param name="memoryCache"></param>
-    public Client(Config config, IMemoryCache memoryCache) : this(new HttpClient(), new HttpClient(), config, memoryCache)
+    public Client(Config config, IMemoryCache memoryCache) : this(new HttpClient(), new HttpClient(), new HttpClient(), config, memoryCache)
     {
     }
 
@@ -49,7 +50,7 @@ public class Client : IClient
     /// <param name="config"></param>
     /// <param name="memoryCache"></param>
     /// <exception cref="ArgumentNullException"></exception>
-    public Client(HttpClient authHttpClient, HttpClient apiHttpClient, Config config, IMemoryCache memoryCache)
+    public Client(HttpClient authHttpClient, HttpClient apiHttpClient, HttpClient webhookAggregatorHttpClient, Config config, IMemoryCache memoryCache)
     {
         Config = config ?? throw new ArgumentNullException(nameof(config));
 
@@ -68,6 +69,7 @@ public class Client : IClient
 
         AuthHttpClient = authHttpClient;
         ApiHttpClient = apiHttpClient;
+        WebhookAggregatorHttpClient = webhookAggregatorHttpClient;
         MemoryCache = memoryCache;
 
         AuthHttpClient.BaseAddress = Config.Environment == Environment.Production
@@ -77,6 +79,10 @@ public class Client : IClient
         ApiHttpClient.BaseAddress = Config.Environment == Environment.Production
             ? new Uri(Config.ApiBaseUri)
             : new Uri(Config.ApiBaseUriTest);
+
+        WebhookAggregatorHttpClient.BaseAddress = Config.Environment == Environment.Production
+            ? new Uri(Config.WebhookAggregatorBaseUri)
+            : new Uri(Config.WebhookAggregatorBaseUriTest);
     }
 
 

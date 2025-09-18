@@ -19,4 +19,19 @@ public class RivrClientOptions
     /// Gets or sets the environment.
     /// </summary>
     public Environment? Environment { get; set; }
+
+    /// <summary>
+    /// Gets or sets the API base URI for authentication.
+    /// </summary>
+    public string AuthBaseUri { get; set; }
+
+    /// <summary>
+    /// Gets or sets the API base URI for the Rivr API.
+    /// </summary>
+    public string ApiBaseUri { get; set; }
+
+    /// <summary>
+    /// Gets or sets the Webhook Aggregator base URI.
+    /// </summary>
+    public string WebhookAggregatorBaseUri { get; set; }
 }

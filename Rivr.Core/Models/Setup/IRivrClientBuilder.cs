@@ -6,17 +6,35 @@
 public interface IRivrClientBuilder
 {
     /// <summary>
-    /// Gets or sets the client secret.
+    /// Gets the client secret.
     /// </summary>
     string ClientId { set; }
 
     /// <summary>
-    /// Gets or sets the client secret.
+    /// Gets the client secret.
     /// </summary>
     string ClientSecret { set; }
 
     /// <summary>
-    /// Gets or sets the environment.
+    /// Gets the environment.
     /// </summary>
     Environment? Environment { set; }
+
+    /// <summary>
+    /// Gets the API base URI for authentication.
+    /// There is a default value based on Environment if not set.
+    /// </summary>
+    public string AuthBaseUri { get; }
+
+    /// <summary>
+    /// Gets the API base URI for the Rivr API.
+    /// There is a default value based on Environment if not set.
+    /// </summary>
+    public string ApiBaseUri { get; }
+
+    /// <summary>
+    /// Gets the Webhook Aggregator base URI.
+    /// There is a default value based on Environment if not set.
+    /// </summary>
+    public string WebhookAggregatorBaseUri { get; }
 }

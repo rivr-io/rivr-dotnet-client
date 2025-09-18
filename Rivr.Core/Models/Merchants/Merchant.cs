@@ -16,4 +16,7 @@ public class Merchant
     /// The name of the merchant.
     /// </summary>
     public string Name { get; set; }
+
+    public string ExternalId { get; set; }
+    public string OrganisationNumber { get; set; }
 }

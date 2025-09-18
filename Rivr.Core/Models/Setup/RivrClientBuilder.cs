@@ -14,13 +14,22 @@ public class RivrClientBuilder : IRivrClientBuilder
     /// <inheritdoc />
     public Environment? Environment { get; set; }
 
+    /// <inheritdoc />
+    public string AuthBaseUri { get; set; }
+
+    /// <inheritdoc />
+    public string ApiBaseUri { get; set; }
+
+    /// <inheritdoc />
+    public string WebhookAggregatorBaseUri { get; set; }
+
     /// <summary>
     /// Creates an instance of <see cref="Config"/>.
     /// </summary>
     /// <returns></returns>
     public Config ToConfig()
     {
-        return new Config(ClientId, ClientSecret, Environment);
+        return new Config(ClientId, ClientSecret, AuthBaseUri, ApiBaseUri, WebhookAggregatorBaseUri, Environment);
     }
 
     /// <summary>
@@ -37,5 +46,8 @@ public class RivrClientBuilder : IRivrClientBuilder
         ClientId ??= rivrClientOptions.ClientId;
         ClientSecret ??= rivrClientOptions.ClientSecret;
         Environment ??= rivrClientOptions.Environment;
+        AuthBaseUri ??= rivrClientOptions.AuthBaseUri;
+        ApiBaseUri ??= rivrClientOptions.ApiBaseUri;
+        WebhookAggregatorBaseUri ??= rivrClientOptions.WebhookAggregatorBaseUri;
     }
 }

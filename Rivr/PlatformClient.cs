@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
 using Rivr.Core;
 using Rivr.Core.Models;
+using Rivr.Core.Models.Heartbeats;
 using Rivr.Core.Models.Merchants;
 using Rivr.Extensions;
 using Rivr.Models.Authentication;
@@ -13,7 +15,7 @@ namespace Rivr;
 public class PlatformClient(Client client) : IPlatformOperations
 {
     /// <inheritdoc />
-    public async Task<Health> GetHealthSecureAsync()
+    public async Task<Health> GetHealthSecureAsync(CancellationToken cancellationToken = default)
     {
         await RefreshClientCredentialsAsync();
 
@@ -21,13 +23,22 @@ public class PlatformClient(Client client) : IPlatformOperations
     }
 
     /// <inheritdoc />
-    public async Task<GetMerchantsResponse> GetMerchantsAsync()
+    public async Task<GetMerchantsResponse> GetMerchantsAsync(CancellationToken cancellationToken = default)
     {
         await RefreshClientCredentialsAsync();
 
-        var response = await client.ApiHttpClient.GetAsync("merchants");
+        var response = await client.ApiHttpClient.GetAsync("merchants", cancellationToken);
         await response.EnsureSuccessfulResponseAsync();
-        return await response.DeserialiseAsync<GetMerchantsResponse>();
+        return await response.DeserialiseAsync<GetMerchantsResponse>(cancellationToken: cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public async Task SendHeartbeat(SendHeartbeatRequest heartbeat, CancellationToken cancellationToken = default)
+    {
+        await RefreshClientCredentialsAsync();
+
+        var response = await client.ApiHttpClient.PutAsJsonAsync($"satellite-services/{heartbeat.UniqueServiceId}/heartbeat", heartbeat, cancellationToken: cancellationToken);
+        await response.EnsureSuccessfulResponseAsync();
     }
 
     private async Task RefreshClientCredentialsAsync()

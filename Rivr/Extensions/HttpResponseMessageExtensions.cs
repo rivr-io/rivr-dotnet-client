@@ -71,6 +71,6 @@ public static class HttpResponseMessageExtensions
     {
         return message.Content is not null
             ? await message.Content.DeserialiseAsync<T>(options, cancellationToken)
-            : throw new ArgumentNullException(nameof(message.Content));
+            : throw new ArgumentNullException(nameof(message));
     }
 }

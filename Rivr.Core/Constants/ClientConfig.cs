@@ -24,4 +24,14 @@ public class ClientConfig
     /// The base URI for the test API.
     /// </summary>
     public const string ApiBaseUriTest = "https://api.test.rivr.io/api/public/";
+
+    /// <summary>
+    /// The base URI for the Webhook Aggregator service.
+    /// </summary>
+    public const string WebhookAggregatorBaseUri = "https://webhook-aggregator.rivr.io/";
+
+    /// <summary>
+    /// The base URI for the test Webhook Aggregator service.
+    /// </summary>
+    public const string WebhookAggregatorBaseUriTest = "https://webhook-aggregator.test.rivr.io/";
 }

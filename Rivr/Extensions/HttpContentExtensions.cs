@@ -29,12 +29,12 @@ public static class HttpContentExtensions
         try
         {
             using var stream = await content.ReadAsStreamAsync().ConfigureAwait(false);
-            return await JsonSerializer.DeserializeAsync<T>(stream, options ?? new JsonSerializerOptions(), cancellationToken) ?? throw new Exception("Could not deserialise into the expected type");
+            return await JsonSerializer.DeserializeAsync<T>(stream, options, cancellationToken) ?? throw new Exception("Could not deserialise into the expected type");
         }
         catch (Exception e)
         {
             var response = await content.ReadAsStringAsync();
-            throw new SerializationException($"Could not deserialise into the expected type. Response: {response}", e);
+            throw new SerializationException($"Could not deserialise into the expected type ({e.Message}) Response: {response}", e);
         }
     }
 }

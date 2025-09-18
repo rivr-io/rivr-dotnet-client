@@ -61,10 +61,11 @@ public static class ServiceCollectionExtensions
 
             var authHttpClient = provider.GetRequiredService<IHttpClientFactory>().CreateClient("AuthClient");
             var apiHttpClient = provider.GetRequiredService<IHttpClientFactory>().CreateClient("ApiClient");
+            var webhookAggregatorHttpClient = provider.GetRequiredService<IHttpClientFactory>().CreateClient("WebhookAggregatorClient");
 
             var config = rivrClientBuilder.ToConfig();
 
-            return new Client(authHttpClient, apiHttpClient, config, memoryCache);
+            return new Client(authHttpClient, apiHttpClient, webhookAggregatorHttpClient, config, memoryCache);
         });
         return services;
     }

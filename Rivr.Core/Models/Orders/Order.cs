@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Rivr.Core.Models.Orders;
 
@@ -76,4 +77,9 @@ public class Order
     /// The checkout hints of the order.
     /// </summary>
     public CheckoutHint[] CheckoutHints { get; set; } = [];
+
+    /// <summary>
+    /// The metadata of the order.
+    /// </summary>
+    public Dictionary<string, string> Metadata { get; set; } = new();
 }

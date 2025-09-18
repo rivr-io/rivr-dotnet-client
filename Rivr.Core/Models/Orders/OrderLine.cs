@@ -19,7 +19,7 @@ public class OrderLine
     /// The quantity of the product or service
     /// </summary>
     /// <example>1</example>
-    public int Quantity { get; set; }
+    public decimal Quantity { get; set; }
 
     /// <summary>
     /// The price of the product or service including VAT
