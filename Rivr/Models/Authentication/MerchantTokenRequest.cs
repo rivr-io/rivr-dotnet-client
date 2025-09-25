@@ -4,17 +4,17 @@ using System.Text.Json.Serialization;
 namespace Rivr.Models.Authentication;
 
 /// <summary>
-/// Merchant credentials token request.
+/// Merchant token request.
 /// </summary>
 /// <param name="clientId"></param>
 /// <param name="clientSecret"></param>
 /// <param name="merchantId"></param>
-public class MerchantCredentialsTokenRequest(string clientId, string clientSecret, Guid merchantId) : TokenRequest
+public class MerchantTokenRequest(string clientId, string clientSecret, Guid merchantId) : TokenRequest
 {
     /// <summary>
     /// The grant type.
     /// </summary>
-    public override string GrantType => "merchant_token";
+    public override string GrantType => GrantTypes.MerchantToken;
 
     /// <summary>
     /// The client ID.

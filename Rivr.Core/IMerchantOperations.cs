@@ -1,11 +1,13 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Rivr.Core.Models;
 using Rivr.Core.Models.Devices;
+using Rivr.Core.Models.Heartbeats;
+using Rivr.Core.Models.Merchants;
 using Rivr.Core.Models.Orders;
 using Rivr.Core.Models.OrderSettlements;
 using Rivr.Core.Models.Subscriptions;
-using Rivr.Core.Models.Webhooks;
 
 namespace Rivr.Core;
 
@@ -78,39 +80,23 @@ public interface IMerchantOperations
     Task CreateOrUpdateSubscriptionAsync(CreateSubscriptionRequest createSubscriptionRequest);
 
     /// <summary>
+    /// Sends a heartbeat.
+    /// </summary>
+    /// <param name="heartbeat"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task SendHeartbeatAsync(SendHeartbeatRequest heartbeat, CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Operations for fetching webhooks via the webhook aggregator.
     /// </summary>
     IWebhookAggregatorOperations Webhooks { get; }
-}
-
-/// <summary>
-/// Represents the operations that can be performed on the webhook aggregator.
-/// </summary>
-public interface IWebhookAggregatorOperations
-{
-    /// <summary>
-    /// Creates a webhook aggregation bundle for the merchant.
-    /// </summary>
-    /// <returns></returns>
-    Task CreateBundleAsync();
 
     /// <summary>
-    /// Gets the bundles available for the merchant.
+    /// Gets the merchant details.
     /// </summary>
+    /// <param name="merchantId"></param>
+    /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<Bundle> GetNextUnreadBundleAsync();
-
-    /// <summary>
-    /// Gets the webhooks in a specific bundle.
-    /// </summary>
-    /// <param name="bundleId"></param>
-    /// <returns></returns>
-    Task<Bundle> GetBundleAsync(Guid bundleId);
-
-    /// <summary>
-    /// Marks a bundle as read.
-    /// </summary>
-    /// <param name="bundleId"></param>
-    /// <returns></returns>
-    Task MarkBundleAsReadAsync(Guid bundleId);
+    Task<Merchant> GetMerchantAsync(Guid merchantId, CancellationToken cancellationToken = default);
 }

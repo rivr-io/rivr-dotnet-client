@@ -43,7 +43,7 @@ public class PlatformClient(Client client) : IPlatformOperations
 
     private async Task RefreshClientCredentialsAsync()
     {
-        var clientCredentials = new ClientCredentialsTokenRequest(client.ClientId, client.ClientSecret);
+        var clientCredentials = new ClientCredentialsTokenRequest(client.Credentials.Id, client.Credentials.Secret);
 
         var clientCredentialsCacheKey = $"{nameof(Client)}-client-credentials";
         var response = await client.MemoryCache.GetOrCreateAsync(clientCredentialsCacheKey, async entry =>

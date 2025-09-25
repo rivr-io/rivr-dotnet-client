@@ -15,6 +15,16 @@ public interface IClient
     Config Config { get; }
 
     /// <summary>
+    /// Gets a value indicating whether the client can perform platform operations.
+    /// </summary>
+    bool IsConfiguredForSingleMerchant { get; }
+
+    /// <summary>
+    /// Gets or sets the configured merchantId.
+    /// </summary>
+    Guid ConfiguredMerchantId { get; }
+
+    /// <summary>
     /// Gets the health of the Rivr API.
     /// </summary>
     /// <returns></returns>
@@ -30,5 +40,5 @@ public interface IClient
     /// </summary>
     /// <param name="merchantId"></param>
     /// <returns></returns>
-    IMerchantOperations OnBehalfOfMerchant(Guid merchantId);
+    IMerchantOperations AsOrOnBehalfOfMerchant(Guid merchantId);
 }
