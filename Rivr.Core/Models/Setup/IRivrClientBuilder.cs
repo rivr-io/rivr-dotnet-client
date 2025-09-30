@@ -1,4 +1,6 @@
-﻿namespace Rivr.Core.Models.Setup;
+﻿using Rivr.Core.Models.Merchants;
+
+namespace Rivr.Core.Models.Setup;
 
 /// <summary>
 /// Represents the Rivr client builder.
@@ -14,6 +16,17 @@ public interface IRivrClientBuilder
     /// Gets the client secret.
     /// </summary>
     string ClientSecret { set; }
+
+
+    /// <summary>
+    /// The merchant_id to authenticate with the Rivr API.
+    /// </summary>
+    public string MerchantId { set; }
+
+    /// <summary>
+    /// The merchant_secret to authenticate with the Rivr API.
+    /// </summary>
+    public string MerchantSecret { set; }
 
     /// <summary>
     /// Gets the environment.

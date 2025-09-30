@@ -16,6 +16,16 @@ public class RivrClientOptions
     public string ClientSecret { get; set; }
 
     /// <summary>
+    /// Gets or sets the merchant ID.
+    /// </summary>
+    public string MerchantId { get; set; }
+
+    /// <summary>
+    /// Gets or sets the merchant secret.
+    /// </summary>
+    public string MerchantSecret { get; set; }
+
+    /// <summary>
     /// Gets or sets the environment.
     /// </summary>
     public Environment? Environment { get; set; }

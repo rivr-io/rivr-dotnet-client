@@ -12,6 +12,12 @@ public class RivrClientBuilder : IRivrClientBuilder
     public string ClientSecret { internal get; set; }
 
     /// <inheritdoc />
+    public string MerchantId { internal get; set; }
+
+    /// <inheritdoc />
+    public string MerchantSecret { internal get; set; }
+
+    /// <inheritdoc />
     public Environment? Environment { get; set; }
 
     /// <inheritdoc />
@@ -29,7 +35,15 @@ public class RivrClientBuilder : IRivrClientBuilder
     /// <returns></returns>
     public Config ToConfig()
     {
-        return new Config(ClientId, ClientSecret, AuthBaseUri, ApiBaseUri, WebhookAggregatorBaseUri, Environment);
+        return new Config(
+            ClientId,
+            ClientSecret,
+            MerchantId,
+            MerchantSecret,
+            authBaseUri: AuthBaseUri,
+            apiBaseUri: ApiBaseUri,
+            webhookAggregatorBaseUri: WebhookAggregatorBaseUri,
+            environment: Environment);
     }
 
     /// <summary>
@@ -45,6 +59,8 @@ public class RivrClientBuilder : IRivrClientBuilder
 
         ClientId ??= rivrClientOptions.ClientId;
         ClientSecret ??= rivrClientOptions.ClientSecret;
+        MerchantId ??= rivrClientOptions.MerchantId;
+        MerchantSecret ??= rivrClientOptions.MerchantSecret;
         Environment ??= rivrClientOptions.Environment;
         AuthBaseUri ??= rivrClientOptions.AuthBaseUri;
         ApiBaseUri ??= rivrClientOptions.ApiBaseUri;

@@ -11,11 +11,13 @@ namespace Rivr.Core.Models;
 public class Config(
     string clientId,
     string clientSecret,
+    string merchantId,
+    string merchantSecret,
     string authBaseUri = null,
     string apiBaseUri = null,
     string webhookAggregatorBaseUri = null,
-    Environment? environment = Environment.Production
-)
+    string uniqueServiceId = null,
+    Environment? environment = Environment.Production)
 {
     /// <summary>
     /// The client_id used to authenticate with the Rivr API.
@@ -26,6 +28,16 @@ public class Config(
     /// The client_secret used to authenticate with the Rivr API.
     /// </summary>
     public string ClientSecret { get; set; } = clientSecret;
+
+    /// <summary>
+    /// The merchant_id to authenticate with the Rivr API.
+    /// </summary>
+    public string MerchantId { get; set; } = merchantId;
+
+    /// <summary>
+    /// The merchant_secret to authenticate with the Rivr API.
+    /// </summary>
+    public string MerchantSecret { get; set; } = merchantSecret;
 
     /// <summary>
     /// The environment to use (Production is default).
