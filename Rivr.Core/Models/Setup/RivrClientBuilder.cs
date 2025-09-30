@@ -35,7 +35,15 @@ public class RivrClientBuilder : IRivrClientBuilder
     /// <returns></returns>
     public Config ToConfig()
     {
-        return new Config(ClientId, ClientSecret, MerchantId, MerchantSecret, authBaseUri: AuthBaseUri, apiBaseUri: ApiBaseUri, webhookAggregatorBaseUri: WebhookAggregatorBaseUri, environment: Environment);
+        return new Config(
+            ClientId,
+            ClientSecret,
+            MerchantId,
+            MerchantSecret,
+            authBaseUri: AuthBaseUri,
+            apiBaseUri: ApiBaseUri,
+            webhookAggregatorBaseUri: WebhookAggregatorBaseUri,
+            environment: Environment);
     }
 
     /// <summary>

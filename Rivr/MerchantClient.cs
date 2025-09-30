@@ -33,10 +33,9 @@ public class MerchantClient : IMerchantOperations
     public MerchantClient(Client client, Guid? merchantId = null)
     {
         _client = client;
-        _merchantId = client.Credentials.GrantType ==
-            GrantTypes.MerchantCredentials && Guid.TryParse(client.Credentials.Id, out var merchantIdFromId)
-                ? merchantIdFromId
-                : _merchantId;
+        _merchantId = client.IsConfiguredForSingleMerchant && Guid.TryParse(client.Credentials.Id, out var merchantIdFromId)
+            ? merchantIdFromId
+            : merchantId ?? throw new InvalidOperationException("MerchantId is required when client is not configured with Merchant Credentials.");
     }
 
 

@@ -16,6 +16,7 @@ public class Config(
     string authBaseUri = null,
     string apiBaseUri = null,
     string webhookAggregatorBaseUri = null,
+    string uniqueServiceId = null,
     Environment? environment = Environment.Production)
 {
     /// <summary>
