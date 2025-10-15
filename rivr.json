@@ -1,0 +1,26 @@
+{
+    "localFeed": null,
+    "output": "./artifacts/packages",
+    "suffix": null,
+    "configuration": "Debug",
+    "include": [
+        "Rivr.Core/Rivr.Core.csproj",
+        "Rivr/Rivr.csproj"
+    ],
+    "exclude": [
+        "bin",
+        "obj",
+        ".git",
+        ".github",
+        ".vs",
+        "node_modules",
+        "artifacts",
+        "packages",
+        "publish",
+        "Rivr.Test",
+        "Rivr.IntegrationTest"
+    ],
+    "symbolsEnabled": true,
+    "autoPush": true
+}
+
