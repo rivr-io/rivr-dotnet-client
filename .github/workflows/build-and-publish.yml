@@ -23,9 +23,6 @@ jobs:
         with:
           dotnet-version: "8.x"
 
-      - name: Install .NET Framework 4.8 Developer Pack
-        run: choco install netfx-4.8-devpack -y
-
       - name: Determine version
         id: determine_version
         shell: bash

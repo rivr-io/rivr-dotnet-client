@@ -55,14 +55,14 @@ var merchantId = merchantsResponse.Merchants.First().Id;
 
 Console.WriteLine("Checking API health (on behalf of merchant)");
 var healthOnBehalfOfMerchant = await client
-    .OnBehalfOfMerchant(merchantId)
+    .AsOrOnBehalfOfMerchant(merchantId)
     .GetHealthSecureAsync();
 Console.WriteLine("Result: " + healthOnBehalfOfMerchant.Message);
 Console.WriteLine();
 
 Console.WriteLine("Checking API health (on behalf of merchant)");
 var devices = await client
-    .OnBehalfOfMerchant(merchantId)
+    .AsOrOnBehalfOfMerchant(merchantId)
     .GetDevicesAsync();
 Console.WriteLine();
 foreach (var device in devices)
@@ -97,7 +97,7 @@ var order = new CreateOrderRequest
 };
 
 var orderResult = await client
-    .OnBehalfOfMerchant(merchantId)
+    .AsOrOnBehalfOfMerchant(merchantId)
     .CreateOrderAsync(order);
 Console.WriteLine("Order created with ID: " + orderResult.Id);
 Console.WriteLine();
@@ -105,7 +105,7 @@ Console.WriteLine();
 
 Console.WriteLine("Getting order");
 var orderResponse = await client
-    .OnBehalfOfMerchant(merchantId)
+    .AsOrOnBehalfOfMerchant(merchantId)
     .GetOrderAsync(orderResult.Id);
 Console.WriteLine("Order ID: " + orderResponse.Id);
 Console.WriteLine();
@@ -113,7 +113,7 @@ Console.WriteLine();
 
 Console.WriteLine("Refund order");
 await client
-    .OnBehalfOfMerchant(merchantId)
+    .AsOrOnBehalfOfMerchant(merchantId)
     .RefundAsync(orderResult.Id);
 Console.WriteLine("Order refunded");
 Console.WriteLine();

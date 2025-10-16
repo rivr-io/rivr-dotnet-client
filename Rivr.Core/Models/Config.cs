@@ -11,8 +11,8 @@ namespace Rivr.Core.Models;
 public class Config(
     string clientId,
     string clientSecret,
-    string merchantId,
-    string merchantSecret,
+    string merchantId = null,
+    string merchantSecret = null,
     string authBaseUri = null,
     string apiBaseUri = null,
     string webhookAggregatorBaseUri = null,
