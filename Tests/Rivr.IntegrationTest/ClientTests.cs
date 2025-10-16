@@ -84,7 +84,7 @@ public class ClientTests
 
         // Act
         var result = await client
-            .OnBehalfOfMerchant(merchantId)
+            .AsOrOnBehalfOfMerchant(merchantId)
             .GetHealthSecureAsync();
 
         // Assert
@@ -103,7 +103,7 @@ public class ClientTests
 
         // Act
         var result = await client
-            .OnBehalfOfMerchant(merchantId)
+            .AsOrOnBehalfOfMerchant(merchantId)
             .GetDevicesAsync();
 
         // Assert
@@ -154,7 +154,7 @@ public class ClientTests
 
         // Act
         var result = await client
-            .OnBehalfOfMerchant(merchantId)
+            .AsOrOnBehalfOfMerchant(merchantId)
             .CreateOrderAsync(order);
 
         // Assert
@@ -179,7 +179,7 @@ public class ClientTests
 
         // Act
         var result = await client
-            .OnBehalfOfMerchant(merchantId)
+            .AsOrOnBehalfOfMerchant(merchantId)
             .GetOrderAsync(orderId);
 
         // Assert
@@ -199,7 +199,7 @@ public class ClientTests
 
         // Act
         await client
-            .OnBehalfOfMerchant(merchantId)
+            .AsOrOnBehalfOfMerchant(merchantId)
             .RefundAsync(orderId);
     }
 
@@ -214,7 +214,7 @@ public class ClientTests
 
         // Act
         var result = await client
-            .OnBehalfOfMerchant(merchantId)
+            .AsOrOnBehalfOfMerchant(merchantId)
             .GetNextUnreadOrderSettlementAsNetsFile();
 
         // Assert

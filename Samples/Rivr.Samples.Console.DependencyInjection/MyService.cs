@@ -17,14 +17,14 @@ public class MyService(IClient client, ILogger<MyService> logger) : IHostedServi
         logger.LogInformation("Checking API health (authenticated)");
         var healthAsPlatform = await client
             .AsPlatform()
-            .GetHealthSecureAsync();
+            .GetHealthSecureAsync(cancellationToken);
         logger.LogInformation("Result: " + healthAsPlatform.Message);
 
 
         logger.LogInformation("Getting merchants");
         var merchantsResponse = await client
             .AsPlatform()
-            .GetMerchantsAsync();
+            .GetMerchantsAsync(cancellationToken);
 
 
         logger.LogInformation("Merchants:");
@@ -38,14 +38,14 @@ public class MyService(IClient client, ILogger<MyService> logger) : IHostedServi
 
         logger.LogInformation("Checking API health (on behalf of merchant)");
         var healthOnBehalfOfMerchant = await client
-            .OnBehalfOfMerchant(merchantId)
+            .AsOrOnBehalfOfMerchant(merchantId)
             .GetHealthSecureAsync();
         logger.LogInformation("Result: " + healthOnBehalfOfMerchant.Message);
 
 
         logger.LogInformation("Checking API health (on behalf of merchant)");
         var devices = await client
-            .OnBehalfOfMerchant(merchantId)
+            .AsOrOnBehalfOfMerchant(merchantId)
             .GetDevicesAsync();
 
         foreach (var device in devices)
@@ -78,7 +78,7 @@ public class MyService(IClient client, ILogger<MyService> logger) : IHostedServi
         };
 
         var orderResult = await client
-            .OnBehalfOfMerchant(merchantId)
+            .AsOrOnBehalfOfMerchant(merchantId)
             .CreateOrderAsync(order);
         logger.LogInformation("Order created with ID: " + orderResult.Id);
 
@@ -87,14 +87,14 @@ public class MyService(IClient client, ILogger<MyService> logger) : IHostedServi
 
         logger.LogInformation("Getting order");
         var orderResponse = await client
-            .OnBehalfOfMerchant(merchantId)
+            .AsOrOnBehalfOfMerchant(merchantId)
             .GetOrderAsync(orderResult.Id);
         logger.LogInformation("Order ID: " + orderResponse.Id);
 
 
         logger.LogInformation("Refund order");
         await client
-            .OnBehalfOfMerchant(merchantId)
+            .AsOrOnBehalfOfMerchant(merchantId)
             .RefundAsync(orderResult.Id);
         logger.LogInformation("Order refunded");
 

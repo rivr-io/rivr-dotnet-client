@@ -10,13 +10,12 @@
 		<Copyright>Rivr</Copyright>
 
 		<Version>$(Version)</Version>
-		<AssemblyVersion>$(Version)</AssemblyVersion>
-		<FileVersion>$(Version)</FileVersion>
 
 		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 		<IncludeSymbols>true</IncludeSymbols>
 		<IncludeSource>true</IncludeSource>
-		<Description>The Rivr API Library for .NET Standard 2.0 enables you to work with Rivr's APIs from within any .NET application.</Description>
+		<Description>The Rivr API Library for .NET Standard 2.0 enables you to work with Rivr's APIs
+			from within any .NET application.</Description>
 		<PackageProjectUrl>https://github.com/rivr-io/rivr-dotnet-client</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/rivr-io/rivr-dotnet-client</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
@@ -46,7 +45,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="System.Text.Json" Version="8.0.5" />
+		<PackageReference Include="System.Text.Json" Version="8.0.5" />
 	</ItemGroup>
 
 </Project>
