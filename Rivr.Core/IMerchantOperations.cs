@@ -7,6 +7,7 @@ using Rivr.Core.Models.Heartbeats;
 using Rivr.Core.Models.Merchants;
 using Rivr.Core.Models.Orders;
 using Rivr.Core.Models.OrderSettlements;
+using Rivr.Core.Models.SatelliteServices;
 using Rivr.Core.Models.Subscriptions;
 
 namespace Rivr.Core;
@@ -85,7 +86,7 @@ public interface IMerchantOperations
     /// <param name="heartbeat"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task SendHeartbeatAsync(SendHeartbeatRequest heartbeat, CancellationToken cancellationToken = default);
+    Task<HeartbeatResponse> SendHeartbeatAsync(SendHeartbeatRequest heartbeat, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Operations for fetching webhooks via the webhook aggregator.
@@ -99,4 +100,12 @@ public interface IMerchantOperations
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task<Merchant> GetMerchantAsync(Guid merchantId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Gets virtual terminals for a satellite service.
+    /// </summary>
+    /// <param name="uniqueServiceId"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<VirtualTerminal[]> GetVirtualTerminalsAsync(string uniqueServiceId, CancellationToken cancellationToken = default);
 }

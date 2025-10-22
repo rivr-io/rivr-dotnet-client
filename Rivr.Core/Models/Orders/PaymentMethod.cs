@@ -67,6 +67,11 @@ public enum PaymentMethod
     MedicalFinance = 1 << 13,
 
     /// <summary>
+    /// Resurs Bank payment.
+    /// </summary>
+    Resurs = 1 << 15,
+
+    /// <summary>
     /// Common instalment payment.
     /// </summary>
     Instalment = InstalmentDefault | InstalmentFullKyc | InstalmentInterestFree,

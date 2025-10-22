@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Rivr.Core.Models;
 using Rivr.Core.Models.Heartbeats;
 using Rivr.Core.Models.Merchants;
+using Rivr.Core.Models.SatelliteServices;
 
 namespace Rivr.Core;
 
@@ -31,5 +32,5 @@ public interface IPlatformOperations
     /// <param name="heartbeat"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task SendHeartbeat(SendHeartbeatRequest heartbeat, CancellationToken cancellationToken = default);
+    Task<HeartbeatResponse> SendHeartbeat(SendHeartbeatRequest heartbeat, CancellationToken cancellationToken = default);
 }

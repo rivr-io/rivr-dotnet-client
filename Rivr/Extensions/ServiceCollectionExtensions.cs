@@ -50,6 +50,13 @@ public static class ServiceCollectionExtensions
                 : new Uri(ClientConfig.ApiBaseUriTest);
         });
 
+        services.AddHttpClient("WebhookAggregatorClient", client =>
+        {
+            client.BaseAddress = rivrClientBuilder.Environment == Environment.Production
+                ? new Uri(ClientConfig.WebhookAggregatorBaseUri)
+                : new Uri(ClientConfig.WebhookAggregatorBaseUriTest);
+        });
+
         services.AddSingleton<IClient>(provider =>
         {
             var memoryCache = provider.GetRequiredService<IMemoryCache>();
