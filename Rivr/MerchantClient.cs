@@ -10,6 +10,7 @@ using Rivr.Core;
 using Rivr.Core.Models;
 using Rivr.Core.Models.Devices;
 using Rivr.Core.Models.Heartbeats;
+using Rivr.Core.Models.SatelliteServices;
 using Rivr.Core.Models.Merchants;
 using Rivr.Core.Models.Orders;
 using Rivr.Core.Models.OrderSettlements;
@@ -155,7 +156,7 @@ public class MerchantClient : IMerchantOperations
     }
 
     /// <inheritdoc />
-    public async Task SendHeartbeatAsync(SendHeartbeatRequest heartbeat, CancellationToken cancellationToken = default)
+    public async Task<HeartbeatResponse> SendHeartbeatAsync(SendHeartbeatRequest heartbeat, CancellationToken cancellationToken = default)
     {
         if (heartbeat is null)
         {
@@ -171,6 +172,7 @@ public class MerchantClient : IMerchantOperations
 
         var response = await _client.ApiHttpClient.PutAsJsonAsync($"satellite-services/{heartbeat.UniqueServiceId}/heartbeat", heartbeat, cancellationToken: cancellationToken);
         await response.EnsureSuccessfulResponseAsync();
+        return await response.DeserialiseAsync<HeartbeatResponse>(cancellationToken: cancellationToken);
     }
 
     /// <inheritdoc />
@@ -190,6 +192,17 @@ public class MerchantClient : IMerchantOperations
         await response.EnsureSuccessfulResponseAsync();
         var result = await response.DeserialiseAsync<GetMerchantByIdResponse>(cancellationToken: cancellationToken);
         return result.Merchant;
+    }
+
+    /// <inheritdoc />
+    public async Task<VirtualTerminal[]> GetVirtualTerminalsAsync(string uniqueServiceId, CancellationToken cancellationToken = default)
+    {
+        await RefreshAccessTokenAsync();
+
+        var response = await _client.ApiHttpClient.GetAsync($"satellite-services/{uniqueServiceId}/virtual-terminals", cancellationToken);
+        await response.EnsureSuccessfulResponseAsync();
+        var result = await response.DeserialiseAsync<GetVirtualTerminalsResponse>(cancellationToken: cancellationToken);
+        return result.VirtualTerminals;
     }
 
     private async Task RefreshAccessTokenAsync()

@@ -1,0 +1,18 @@
+{
+  "output": ".\\artifacts\\packages",
+  "suffix": "dev",
+  "configuration": "Debug",
+  "include": [],
+  "exclude": [
+    "bin",
+    "obj",
+    ".git",
+    ".github",
+    ".vs",
+    "node_modules",
+    "artifacts",
+    "packages"
+  ],
+  "symbolsEnabled": true,
+  "autoPush": true
+}
