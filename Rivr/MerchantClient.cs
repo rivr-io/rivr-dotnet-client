@@ -256,15 +256,6 @@ public class MerchantClient : IMerchantOperations
             });
         }
 
-        if (string.IsNullOrEmpty(createOrderRequest.PersonalNumber))
-        {
-            errorMessages.Add(new OrderRequestError
-            {
-                Message = "PersonalNumber is required",
-                PropertyName = nameof(createOrderRequest.PersonalNumber)
-            });
-        }
-
         if (createOrderRequest.Amount <= 0)
         {
             errorMessages.Add(new OrderRequestError
@@ -275,30 +266,12 @@ public class MerchantClient : IMerchantOperations
             );
         }
 
-        if (string.IsNullOrEmpty(createOrderRequest.Email))
-        {
-            errorMessages.Add(new OrderRequestError
-            {
-                Message = "Email is required",
-                PropertyName = nameof(createOrderRequest.Email)
-            });
-        }
-
         if (createOrderRequest.MerchantId == Guid.Empty)
         {
             errorMessages.Add(new OrderRequestError
             {
                 Message = "MerchantId is required",
                 PropertyName = nameof(createOrderRequest.MerchantId)
-            });
-        }
-
-        if (string.IsNullOrEmpty(createOrderRequest.Phone))
-        {
-            errorMessages.Add(new OrderRequestError
-            {
-                Message = "Phone is required",
-                PropertyName = nameof(createOrderRequest.Phone)
             });
         }
 
