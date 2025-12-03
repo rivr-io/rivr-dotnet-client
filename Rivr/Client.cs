@@ -3,6 +3,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Net.Http;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
 using Rivr.Core;
