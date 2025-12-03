@@ -1,8 +1,11 @@
-﻿namespace Rivr.Core.Models.Orders;
+﻿using System.Text.Json.Serialization;
+
+namespace Rivr.Core.Models.Orders;
 
 /// <summary>
 /// Represents the type of checkout hint.
 /// </summary>
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum CheckoutHintType
 {
     /// <summary>
