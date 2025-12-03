@@ -31,7 +31,7 @@ public class Client : IClient
     internal JsonSerializerOptions JsonSerializerOptions => new(JsonSerializerDefaults.Web)
     {
         PropertyNameCaseInsensitive = true,
-        //Converters = { new JsonStringEnumConverter() }
+        Converters = { new JsonStringEnumConverter() }
     };
 
     /// <summary>
