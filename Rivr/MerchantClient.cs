@@ -89,6 +89,16 @@ public class MerchantClient : IMerchantOperations
     }
 
     /// <inheritdoc />
+    public async Task<OrderStatusOnly> GetOrderStatusAsync(Guid orderId, CancellationToken cancellationToken = default)
+    {
+        await RefreshAccessTokenAsync();
+
+        var response = await _client.ApiHttpClient.GetAsync($"orders/{orderId}/status", cancellationToken);
+        await response.EnsureSuccessfulResponseAsync();
+        return await response.DeserialiseAsync<OrderStatusOnly>(_client.JsonSerializerOptions, cancellationToken);
+    }
+
+    /// <inheritdoc />
     public async Task RefundAsync(Guid orderId)
     {
         await RefreshAccessTokenAsync();

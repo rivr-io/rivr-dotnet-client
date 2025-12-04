@@ -44,6 +44,14 @@ public interface IMerchantOperations
     Task<Order> GetOrderAsync(Guid orderId);
 
     /// <summary>
+    /// Gets the status of an order (lightweight compared to GetOrderAsync).
+    /// </summary>
+    /// <param name="orderId"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<OrderStatusOnly> GetOrderStatusAsync(Guid orderId, CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Refunds or cancels an order depending on the current status.
     /// From the status <see cref="OrderStatus.Completed"/>, the order will be refunded.
     /// From the status <see cref="OrderStatus.Created"/>, the order will be cancelled.
