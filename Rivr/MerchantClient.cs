@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
@@ -96,6 +96,16 @@ public class MerchantClient : IMerchantOperations
         var response = await _client.ApiHttpClient.GetAsync($"orders/{orderId}/status", cancellationToken);
         await response.EnsureSuccessfulResponseAsync();
         return await response.DeserialiseAsync<OrderStatusOnly>(_client.JsonSerializerOptions, cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public async Task<OrderReceipts> GetOrderReceiptAsync(Guid orderId, Guid receiptId, CancellationToken cancellationToken = default)
+    {
+        await RefreshAccessTokenAsync();
+
+        var response = await _client.ApiHttpClient.GetAsync($"orders/{orderId}/receipts/{receiptId}", cancellationToken);
+        await response.EnsureSuccessfulResponseAsync();
+        return await response.DeserialiseAsync<OrderReceipts>(_client.JsonSerializerOptions, cancellationToken);
     }
 
     /// <inheritdoc />

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace Rivr.Core.Models.Orders;
@@ -82,4 +82,9 @@ public class Order
     /// The metadata of the order.
     /// </summary>
     public Dictionary<string, string> Metadata { get; set; } = new();
+
+    /// <summary>
+    /// The receipts of the order.
+    /// </summary>
+    public OrderReceiptInfo[] Receipts { get; set; } = [];
 }

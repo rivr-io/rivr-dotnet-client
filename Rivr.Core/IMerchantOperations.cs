@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Rivr.Core.Models;
@@ -50,6 +50,15 @@ public interface IMerchantOperations
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task<OrderStatusOnly> GetOrderStatusAsync(Guid orderId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Gets a specific receipt for an order.
+    /// </summary>
+    /// <param name="orderId">The ID of the order.</param>
+    /// <param name="receiptId">The ID of the receipt.</param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<OrderReceipts> GetOrderReceiptAsync(Guid orderId, Guid receiptId, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Refunds or cancels an order depending on the current status.
