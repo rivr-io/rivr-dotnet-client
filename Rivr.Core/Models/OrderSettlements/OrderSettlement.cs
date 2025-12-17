@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 
 namespace Rivr.Core.Models.OrderSettlements;
@@ -26,7 +26,7 @@ public class OrderSettlement
     /// <summary>
     /// The merchant name.
     /// </summary>
-    public string MerchantName { get; set; }
+    public string? MerchantName { get; set; }
 
     /// <summary>
     /// The date the order settlement was prepared.
@@ -51,12 +51,12 @@ public class OrderSettlement
     /// <summary>
     /// The reference.
     /// </summary>
-    public string Reference { get; set; }
+    public string? Reference { get; set; }
 
     /// <summary>
     /// The settlement number.
     /// </summary>
-    public string SettlementNumber { get; set; }
+    public string? SettlementNumber { get; set; }
 
     /// <summary>
     /// The orders by payment method.
@@ -66,7 +66,7 @@ public class OrderSettlement
     /// <summary>
     /// The OCR number.
     /// </summary>
-    public string OCR;
+    public string? OCR;
 
     /// <summary>
     /// Total amount of the settlement 

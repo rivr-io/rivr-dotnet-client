@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Rivr.Core.Models.Orders;
 
@@ -13,7 +13,7 @@ public class OrderLine
     /// The name of the product or service
     /// </summary>
     /// <example>Product 1</example>
-    public string Description { get; set; }
+    public string? Description { get; set; }
 
     /// <summary>
     /// The quantity of the product or service

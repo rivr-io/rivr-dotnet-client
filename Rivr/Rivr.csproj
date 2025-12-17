@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFrameworks>netstandard2.0</TargetFrameworks>
@@ -9,7 +9,9 @@
 		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 		<Copyright>Rivr</Copyright>
 
-		<Version>$(Version)</Version>
+		<!-- MinVer Configuration - version is determined from git tags -->
+		<MinVerTagPrefix>v</MinVerTagPrefix>
+		<MinVerMinimumMajorMinor>1.0</MinVerMinimumMajorMinor>
 
 		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 		<IncludeSymbols>true</IncludeSymbols>
@@ -20,7 +22,7 @@
 		<RepositoryUrl>https://github.com/rivr-io/rivr-dotnet-client</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 
-		<PackageTags>$(Version)</PackageTags>
+		<PackageTags>rivr;payments;api;client;dotnet</PackageTags>
 
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<Authors>Rivr</Authors>
@@ -33,15 +35,16 @@
 		<AssemblyOriginatorKeyFile>..\rivr-dotnet-client-key.snk</AssemblyOriginatorKeyFile>
 		<PackageIcon>rivr-logo.png</PackageIcon>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<PackageVersion>$(Version)</PackageVersion>
 
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<InternalsVisibleTo Include="Rivr.Test, PublicKey=00240000048000009400000006020000002400005253413100040000010001009d2fdff013a3fa13257310da5c3151d36233f6d579fc3d18e75d3b34590e720e2d9ae118b81c6c57af423231856236b3f62ebd4c1de729feb3ff4859be75cf4416d0f34edf29484120502db695ee52d39ff21ce79ed1a1298f03738012319d75382a92aba8d3ab791d0496842768b9f0ab552de519d1445ae29e0dd93a6192ea" />
-		<InternalsVisibleTo Include="Rivr.IntegrationTest, PublicKey=00240000048000009400000006020000002400005253413100040000010001009d2fdff013a3fa13257310da5c3151d36233f6d579fc3d18e75d3b34590e720e2d9ae118b81c6c57af423231856236b3f62ebd4c1de729feb3ff4859be75cf4416d0f34edf29484120502db695ee52d39ff21ce79ed1a1298f03738012319d75382a92aba8d3ab791d0496842768b9f0ab552de519d1445ae29e0dd93a6192ea" />
+		<InternalsVisibleTo
+			Include="Rivr.Test, PublicKey=00240000048000009400000006020000002400005253413100040000010001009d2fdff013a3fa13257310da5c3151d36233f6d579fc3d18e75d3b34590e720e2d9ae118b81c6c57af423231856236b3f62ebd4c1de729feb3ff4859be75cf4416d0f34edf29484120502db695ee52d39ff21ce79ed1a1298f03738012319d75382a92aba8d3ab791d0496842768b9f0ab552de519d1445ae29e0dd93a6192ea" />
+		<InternalsVisibleTo
+			Include="Rivr.IntegrationTest, PublicKey=00240000048000009400000006020000002400005253413100040000010001009d2fdff013a3fa13257310da5c3151d36233f6d579fc3d18e75d3b34590e720e2d9ae118b81c6c57af423231856236b3f62ebd4c1de729feb3ff4859be75cf4416d0f34edf29484120502db695ee52d39ff21ce79ed1a1298f03738012319d75382a92aba8d3ab791d0496842768b9f0ab552de519d1445ae29e0dd93a6192ea" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -55,13 +58,21 @@
 		<PackageReference Include="System.Text.Json" Version="8.0.5" />
 	</ItemGroup>
 
+	<!-- MinVer for automatic versioning from git tags -->
+	<ItemGroup>
+		<PackageReference Include="MinVer" Version="6.0.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
 	<ItemGroup>
 		<None Include="..\rivr-logo.png" Pack="true" Visible="false" PackagePath="" />
 		<None Include="..\README.md" Pack="true" Visible="false" PackagePath="" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Rivr.Core\Rivr.Core.csproj" />
+		<ProjectReference Include="..\Rivr.Core\Rivr.Core.csproj" />
 	</ItemGroup>
 
 </Project>

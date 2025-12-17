@@ -1,4 +1,4 @@
-﻿namespace Rivr.Core.Models.Setup;
+namespace Rivr.Core.Models.Setup;
 
 /// <summary>
 /// Represents the Rivr client configurator.
@@ -6,28 +6,28 @@
 public class RivrClientBuilder : IRivrClientBuilder
 {
     /// <inheritdoc />
-    public string ClientId { internal get; set; }
+    public string ClientId { internal get; set; } = string.Empty;
 
     /// <inheritdoc />
-    public string ClientSecret { internal get; set; }
+    public string ClientSecret { internal get; set; } = string.Empty;
 
     /// <inheritdoc />
-    public string MerchantId { internal get; set; }
+    public string? MerchantId { internal get; set; }
 
     /// <inheritdoc />
-    public string MerchantSecret { internal get; set; }
+    public string? MerchantSecret { internal get; set; }
 
     /// <inheritdoc />
     public Environment? Environment { get; set; }
 
     /// <inheritdoc />
-    public string AuthBaseUri { get; set; }
+    public string? AuthBaseUri { get; set; }
 
     /// <inheritdoc />
-    public string ApiBaseUri { get; set; }
+    public string? ApiBaseUri { get; set; }
 
     /// <inheritdoc />
-    public string WebhookAggregatorBaseUri { get; set; }
+    public string? WebhookAggregatorBaseUri { get; set; }
 
     /// <summary>
     /// Creates an instance of <see cref="Config"/>.

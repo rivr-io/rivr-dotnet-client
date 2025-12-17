@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Rivr.Core.Models.Merchants;
 
@@ -15,8 +15,15 @@ public class Merchant
     /// <summary>
     /// The name of the merchant.
     /// </summary>
-    public string Name { get; set; }
+    public string? Name { get; set; }
 
-    public string ExternalId { get; set; }
-    public string OrganisationNumber { get; set; }
+    /// <summary>
+    /// The external identifier for the merchant in third-party systems.
+    /// </summary>
+    public string? ExternalId { get; set; }
+
+    /// <summary>
+    /// The organization number (e.g., Swedish organisationsnummer).
+    /// </summary>
+    public string? OrganisationNumber { get; set; }
 }

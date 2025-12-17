@@ -8,15 +8,15 @@ public class OrderReceiptLine
     /// <summary>
     /// The key of the receipt line.
     /// </summary>
-    public string Key { get; set; } = string.Empty;
+    public string? Key { get; set; }
 
     /// <summary>
     /// The value of the receipt line.
     /// </summary>
-    public string Value { get; set; } = string.Empty;
+    public string? Value { get; set; }
 
     /// <summary>
     /// The name of the receipt line.
     /// </summary>
-    public string Name { get; set; } = string.Empty;
+    public string? Name { get; set; }
 }

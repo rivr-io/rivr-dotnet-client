@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Rivr.Core.Models.Devices;
 
@@ -15,12 +15,12 @@ public class Device
     /// <summary>
     /// The unique identifier of the device.
     /// </summary>
-    public string DeviceUniqueId { get; set; }
+    public string? DeviceUniqueId { get; set; }
 
     /// <summary>
     /// The name of the device.
     /// </summary>
-    public string Name { get; set; }
+    public string? Name { get; set; }
 
     /// <summary>
     /// Indicates whether the device is online.

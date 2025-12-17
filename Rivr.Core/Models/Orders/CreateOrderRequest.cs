@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -30,7 +30,7 @@ public class CreateOrderRequest
     /// A unique payment reference. This should be your internally unique payment reference (ie an order number or other reference).
     /// </summary>
     /// <example>order-1234</example>
-    public string Reference { get; set; } = null!;
+    public string? Reference { get; set; }
 
     /// <summary>
     /// Computed readonly amount of amount to pay.
@@ -41,17 +41,17 @@ public class CreateOrderRequest
     /// <summary>
     /// The Payer of the payment. This is the person that will pay for the payment request.
     /// </summary>
-    public string PersonalNumber { get; set; }
+    public string? PersonalNumber { get; set; }
 
     /// <summary>
     /// Email address of the Payer. This is the person that will pay for the payment request.
     /// </summary>
-    public string Email { get; set; }
+    public string? Email { get; set; }
 
     /// <summary>
     /// Phone number of the Payer. This is the person that will pay for the payment request.
     /// </summary>
-    public string Phone { get; set; }
+    public string? Phone { get; set; }
 
     /// <summary>
     /// The checkout hints that the payment request is for.
@@ -62,10 +62,10 @@ public class CreateOrderRequest
     /// URL that Rivr will use to notify caller about the outcome of the <see cref="CreateOrderRequest"/>. The URL has to use HTTPS.
     /// </summary>
     /// <example>https://www.example.com/my/callback</example>
-    public string CallbackUrl { get; set; }
+    public string? CallbackUrl { get; set; }
 
     /// <summary>
     /// A dictionary of key-value pairs that can be used to store additional information about the payment request.
     /// </summary>
-    public Dictionary<string, string> Metadata { get; set; } = [];
+    public Dictionary<string, string>? Metadata { get; set; }
 }

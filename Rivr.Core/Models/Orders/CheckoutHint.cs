@@ -1,4 +1,4 @@
-﻿namespace Rivr.Core.Models.Orders;
+namespace Rivr.Core.Models.Orders;
 
 /// <summary>
 /// Represents a hint for the checkout.
@@ -13,5 +13,5 @@ public class CheckoutHint
     /// <summary>
     /// The value of the checkout hint.
     /// </summary>
-    public string Value { get; set; }
+    public string? Value { get; set; }
 }

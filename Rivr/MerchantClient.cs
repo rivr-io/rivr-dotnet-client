@@ -41,26 +41,26 @@ public class MerchantClient : IMerchantOperations
 
 
     /// <inheritdoc />
-    public async Task<Health> GetHealthSecureAsync()
+    public async Task<Health> GetHealthSecureAsync(CancellationToken cancellationToken = default)
     {
         await RefreshAccessTokenAsync();
 
-        return await _client.GetHealthAsync();
+        return await _client.GetHealthAsync(cancellationToken);
     }
 
     /// <inheritdoc />
-    public async Task<Device[]> GetDevicesAsync()
+    public async Task<Device[]> GetDevicesAsync(CancellationToken cancellationToken = default)
     {
         await RefreshAccessTokenAsync();
 
-        var response = await _client.ApiHttpClient.GetAsync($"devices");
+        var response = await _client.ApiHttpClient.GetAsync("devices", cancellationToken);
         await response.EnsureSuccessfulResponseAsync();
-        var result = await response.DeserialiseAsync<GetDevicesResponse>();
+        var result = await response.DeserialiseAsync<GetDevicesResponse>(cancellationToken: cancellationToken);
         return result.Devices;
     }
 
     /// <inheritdoc />
-    public async Task<Order> CreateOrderAsync(CreateOrderRequest order)
+    public async Task<Order> CreateOrderAsync(CreateOrderRequest order, CancellationToken cancellationToken = default)
     {
         await RefreshAccessTokenAsync();
 
@@ -73,19 +73,19 @@ public class MerchantClient : IMerchantOperations
             throw new ValidationException(errors.CombineToString());
         }
 
-        var response = await _client.ApiHttpClient.PutAsJsonAsync($"orders/{order.Id}", order);
+        var response = await _client.ApiHttpClient.PutAsJsonAsync($"orders/{order.Id}", order, cancellationToken: cancellationToken);
         await response.EnsureSuccessfulResponseAsync();
-        return await response.DeserialiseAsync<Order>();
+        return await response.DeserialiseAsync<Order>(cancellationToken: cancellationToken);
     }
 
     /// <inheritdoc />
-    public async Task<Order> GetOrderAsync(Guid orderId)
+    public async Task<Order> GetOrderAsync(Guid orderId, CancellationToken cancellationToken = default)
     {
         await RefreshAccessTokenAsync();
 
-        var response = await _client.ApiHttpClient.GetAsync($"orders/{orderId}");
+        var response = await _client.ApiHttpClient.GetAsync($"orders/{orderId}", cancellationToken);
         await response.EnsureSuccessfulResponseAsync();
-        return await response.DeserialiseAsync<Order>(_client.JsonSerializerOptions);
+        return await response.DeserialiseAsync<Order>(_client.JsonSerializerOptions, cancellationToken);
     }
 
     /// <inheritdoc />
@@ -109,51 +109,50 @@ public class MerchantClient : IMerchantOperations
     }
 
     /// <inheritdoc />
-    public async Task RefundAsync(Guid orderId)
+    public async Task RefundAsync(Guid orderId, CancellationToken cancellationToken = default)
     {
         await RefreshAccessTokenAsync();
 
-        var response = await _client.ApiHttpClient.PostAsync($"orders/{orderId}/refund", null);
+        var response = await _client.ApiHttpClient.PostAsync($"orders/{orderId}/refund", null, cancellationToken);
         if (response.StatusCode == HttpStatusCode.BadRequest)
         {
-            var error = await response.DeserialiseAsync<ApiErrorResponse>();
-            throw new ApiCallException(error.Message);
+            var error = await response.DeserialiseAsync<ApiErrorResponse>(cancellationToken: cancellationToken);
+            throw new ApiCallException(error.Message ?? "Unknown error");
         }
 
         await response.EnsureSuccessfulResponseAsync();
     }
 
     /// <inheritdoc />
-    public async Task<OrderSettlementForLists[]> GetOrderSettlementsAsync()
+    public async Task<OrderSettlementForLists[]> GetOrderSettlementsAsync(CancellationToken cancellationToken = default)
     {
         await RefreshAccessTokenAsync();
 
-        var response = await _client.ApiHttpClient.GetAsync($"order-settlements");
+        var response = await _client.ApiHttpClient.GetAsync("order-settlements", cancellationToken);
         await response.EnsureSuccessfulResponseAsync();
 
-        var result = await response.DeserialiseAsync<GetOrderSettlementsResponse>();
+        var result = await response.DeserialiseAsync<GetOrderSettlementsResponse>(cancellationToken: cancellationToken);
 
         return result.OrderSettlements;
     }
 
-
     /// <inheritdoc />
-    public async Task<OrderSettlement> GetLastUnreadOrderSettlementAsync()
+    public async Task<OrderSettlement> GetLastUnreadOrderSettlementAsync(CancellationToken cancellationToken = default)
     {
         await RefreshAccessTokenAsync();
 
-        var response = await _client.ApiHttpClient.GetAsync($"order-settlements/last-unread");
+        var response = await _client.ApiHttpClient.GetAsync("order-settlements/last-unread", cancellationToken);
         await response.EnsureSuccessfulResponseAsync();
 
-        return await response.DeserialiseAsync<OrderSettlement>();
+        return await response.DeserialiseAsync<OrderSettlement>(cancellationToken: cancellationToken);
     }
 
     /// <inheritdoc />
-    public async Task<string?> GetNextUnreadOrderSettlementAsNetsFile()
+    public async Task<string?> GetNextUnreadOrderSettlementAsNetsFile(CancellationToken cancellationToken = default)
     {
         await RefreshAccessTokenAsync();
 
-        var response = await _client.ApiHttpClient.GetAsync($"order-settlements/next-unread?format=Nets");
+        var response = await _client.ApiHttpClient.GetAsync("order-settlements/next-unread?format=Nets", cancellationToken);
 
         if (response.StatusCode == HttpStatusCode.NotFound)
         {
@@ -166,11 +165,11 @@ public class MerchantClient : IMerchantOperations
     }
 
     /// <inheritdoc />
-    public async Task CreateOrUpdateSubscriptionAsync(CreateSubscriptionRequest createSubscriptionRequest)
+    public async Task CreateOrUpdateSubscriptionAsync(CreateSubscriptionRequest createSubscriptionRequest, CancellationToken cancellationToken = default)
     {
         await RefreshAccessTokenAsync();
 
-        var response = await _client.ApiHttpClient.PostAsJsonAsync($"subscriptions", createSubscriptionRequest);
+        var response = await _client.ApiHttpClient.PostAsJsonAsync("subscriptions", createSubscriptionRequest, cancellationToken: cancellationToken);
 
         await response.EnsureSuccessfulResponseAsync();
     }

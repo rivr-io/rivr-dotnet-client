@@ -21,17 +21,17 @@ public class Order
     /// <summary>
     /// The name of the merchant to which the order belongs.
     /// </summary>
-    public string MerchantName { get; set; }
+    public string? MerchantName { get; set; }
 
     /// <summary>
     /// The short ID of the order.
     /// </summary>
-    public string ShortId { get; set; }
+    public string? ShortId { get; set; }
 
     /// <summary>
     /// The customer of the order.
     /// </summary>
-    public Customer Customer { get; set; } = new();
+    public Customer? Customer { get; set; }
 
     /// <summary>
     /// The order lines of the order.
@@ -56,7 +56,7 @@ public class Order
     /// <summary>
     /// The order reference.
     /// </summary>
-    public string Reference { get; set; }
+    public string? Reference { get; set; }
 
     /// <summary>
     /// The payment method of the order.
@@ -71,7 +71,7 @@ public class Order
     /// <summary>
     /// The callback URL of the order.
     /// </summary>
-    public string CallbackUrl { get; set; }
+    public string? CallbackUrl { get; set; }
 
     /// <summary>
     /// The checkout hints of the order.
@@ -81,7 +81,7 @@ public class Order
     /// <summary>
     /// The metadata of the order.
     /// </summary>
-    public Dictionary<string, string> Metadata { get; set; } = new();
+    public Dictionary<string, string>? Metadata { get; set; }
 
     /// <summary>
     /// The receipts of the order.

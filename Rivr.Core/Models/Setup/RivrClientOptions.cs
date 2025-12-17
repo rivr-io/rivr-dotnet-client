@@ -1,4 +1,4 @@
-﻿namespace Rivr.Core.Models.Setup;
+namespace Rivr.Core.Models.Setup;
 
 /// <summary>
 /// Represents the Rivr client options.
@@ -8,22 +8,22 @@ public class RivrClientOptions
     /// <summary>
     /// Gets or sets the client ID.
     /// </summary>
-    public string ClientId { get; set; }
+    public string ClientId { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the client secret.
     /// </summary>
-    public string ClientSecret { get; set; }
+    public string ClientSecret { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the merchant ID.
     /// </summary>
-    public string MerchantId { get; set; }
+    public string? MerchantId { get; set; }
 
     /// <summary>
     /// Gets or sets the merchant secret.
     /// </summary>
-    public string MerchantSecret { get; set; }
+    public string? MerchantSecret { get; set; }
 
     /// <summary>
     /// Gets or sets the environment.
@@ -33,15 +33,15 @@ public class RivrClientOptions
     /// <summary>
     /// Gets or sets the API base URI for authentication.
     /// </summary>
-    public string AuthBaseUri { get; set; }
+    public string? AuthBaseUri { get; set; }
 
     /// <summary>
     /// Gets or sets the API base URI for the Rivr API.
     /// </summary>
-    public string ApiBaseUri { get; set; }
+    public string? ApiBaseUri { get; set; }
 
     /// <summary>
     /// Gets or sets the Webhook Aggregator base URI.
     /// </summary>
-    public string WebhookAggregatorBaseUri { get; set; }
+    public string? WebhookAggregatorBaseUri { get; set; }
 }

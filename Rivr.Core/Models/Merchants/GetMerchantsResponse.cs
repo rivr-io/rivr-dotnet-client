@@ -1,4 +1,4 @@
-﻿namespace Rivr.Core.Models.Merchants;
+namespace Rivr.Core.Models.Merchants;
 
 /// <summary>
 /// Represents the response from the GetMerchants operation.
@@ -13,5 +13,5 @@ public class GetMerchantsResponse
     /// <summary>
     /// The metadata of the response.
     /// </summary>
-    public Metadata Metadata { get; set; } = new();
+    public Metadata? Metadata { get; set; }
 }

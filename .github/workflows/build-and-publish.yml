@@ -16,45 +16,34 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Required for MinVer to read git history and tags
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "8.x"
-
-      - name: Determine version
-        id: determine_version
-        shell: bash
-        run: |
-          if [[ $GITHUB_REF == refs/tags/v* ]]; then
-            TAG=${GITHUB_REF#refs/tags/v}
-            echo "Using tag version: $TAG"
-            echo "VERSION=$TAG" >> $GITHUB_ENV
-          else
-            echo "No version tag found, skipping publish."
-            echo "VERSION=0.0.0" >> $GITHUB_ENV  # Dummy version to ensure build can still proceed
-          fi
 
       - name: Restore dependencies
         run: dotnet restore
 
       - name: Build
-        run: dotnet build --configuration Release /p:Version=${{ env.VERSION }}
+        run: dotnet build --configuration Release --no-restore
 
       - name: Run tests
-        run: dotnet test ./Tests/Rivr.Test/Rivr.Test.csproj
+        run: dotnet test ./Tests/Rivr.Test/Rivr.Test.csproj --no-build --configuration Release
 
       - name: Run sample tests
-        run: dotnet test ./Samples/Rivr.Samples.CallbackHandler.Test/Rivr.Samples.CallbackHandler.Test.csproj
+        run: dotnet test ./Samples/Rivr.Samples.CallbackHandler.Test/Rivr.Samples.CallbackHandler.Test.csproj --no-build --configuration Release
 
-      - name: Pack .NET Standard 2.0
-        run: dotnet pack ./Rivr/Rivr.csproj --configuration Release --output ./artifacts /p:PackageVersion=${{ env.VERSION }}
+      - name: Pack Rivr
+        run: dotnet pack ./Rivr/Rivr.csproj --configuration Release --no-build --output ./artifacts
 
-      - name: Pack Rivr Core
-        run: dotnet pack ./Rivr.Core/Rivr.Core.csproj --configuration Release --output ./artifacts /p:PackageVersion=${{ env.VERSION }}
+      - name: Pack Rivr.Core
+        run: dotnet pack ./Rivr.Core/Rivr.Core.csproj --configuration Release --no-build --output ./artifacts
 
-      - name: Publish regular package to NuGet
+      - name: Publish to NuGet
         if: startsWith(github.ref, 'refs/tags/')
         env:
           NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}

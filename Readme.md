@@ -148,7 +148,7 @@ Check that the API is online and operational using the `GetHealthSecureAsync` me
 ```C#
 var merchantId = Guid.Parse("...");
 var result = await client
-    .OnBehalfOfMerchant(merchantId)
+    .AsOrOnBehalfOfMerchant(merchantId)
     .GetHealthSecureAsync();
 // result.Message is "OK"
 ```
@@ -159,7 +159,7 @@ A merchant can be configured to have zero or more devices (checkout terminals). 
 
 ```C#
 var devices = await client
-    .OnBehalfOfMerchant(sdkMerchantId)
+    .AsOrOnBehalfOfMerchant(sdkMerchantId)
     .GetDevicesAsync();
 // devices contains an array of Device objects
 ```
@@ -206,7 +206,7 @@ order.CallbackUrl = "https://example.com/callback";
 
 var merchantId = Guid.Parse("...");
 var result = await client
-    .OnBehalfOfMerchant(merchantId)
+    .AsOrOnBehalfOfMerchant(merchantId)
     .CreateOrderAsync(order);
 // result contains an instance of an Order object
 ```
@@ -218,7 +218,7 @@ Using the `order.Id`, the order can be retrieved.
 ```C#
 var merchantId = Guid.Parse("...");
 var result = await client
-    .OnBehalfOfMerchant(merchantId)
+    .AsOrOnBehalfOfMerchant(merchantId)
     .GetOrderAsync(order.Id);
 // result contains an instance of an Order object
 ```
@@ -232,7 +232,7 @@ Note: There are certain payment methods that do not support refunds (some instal
 ```C#
 var merchantId = Guid.Parse("...");
 await client
-    .OnBehalfOfMerchant(merchantId)
+    .AsOrOnBehalfOfMerchant(merchantId)
     .RefundAsync(order.Id);
 ```
 

@@ -20,28 +20,32 @@ public interface IMerchantOperations
     /// <summary>
     /// Gets the health of the Rivr API.
     /// </summary>
-    /// <returns></returns>
-    Task<Health> GetHealthSecureAsync();
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The health status.</returns>
+    Task<Health> GetHealthSecureAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Gets the merchant's devices.
     /// </summary>
-    /// <returns></returns>
-    Task<Device[]> GetDevicesAsync();
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>An array of devices.</returns>
+    Task<Device[]> GetDevicesAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Creates an order.
     /// </summary>
-    /// <param name="order"></param>
-    /// <returns></returns>
-    Task<Order> CreateOrderAsync(CreateOrderRequest order);
+    /// <param name="order">The order to create.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The created order.</returns>
+    Task<Order> CreateOrderAsync(CreateOrderRequest order, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Gets an order.
     /// </summary>
-    /// <param name="orderId"></param>
-    /// <returns></returns>
-    Task<Order> GetOrderAsync(Guid orderId);
+    /// <param name="orderId">The order ID.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The order.</returns>
+    Task<Order> GetOrderAsync(Guid orderId, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Gets the status of an order (lightweight compared to GetOrderAsync).
@@ -67,35 +71,42 @@ public interface IMerchantOperations
     /// The calling system does not need to know the current status of the order.
     /// Note: There are certain payment methods that do not support refunds (some instalment products).
     /// </summary>
-    /// <param name="orderId"></param>
-    /// <returns></returns>
-    Task RefundAsync(Guid orderId);
+    /// <param name="orderId">The order ID.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    Task RefundAsync(Guid orderId, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Get a list of order settlements
+    /// Get a list of order settlements.
     /// </summary>
-    Task<OrderSettlementForLists[]> GetOrderSettlementsAsync();
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>An array of order settlements.</returns>
+    Task<OrderSettlementForLists[]> GetOrderSettlementsAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Get last unread order settlement
+    /// Get last unread order settlement.
     /// </summary>
-    Task<OrderSettlement> GetLastUnreadOrderSettlementAsync();
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The last unread order settlement.</returns>
+    Task<OrderSettlement> GetLastUnreadOrderSettlementAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Get the next unread order settlement as a Nets file.
     /// </summary>
+    /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>
     /// The content of the file as a string.
     /// If there are no more unread order settlements, <see langword="null"/> is returned.
     /// </returns>
-    Task<string> GetNextUnreadOrderSettlementAsNetsFile();
+    Task<string?> GetNextUnreadOrderSettlementAsNetsFile(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Creates or updates a subscription for the merchant.
     /// </summary>
-    /// <param name="createSubscriptionRequest"></param>
-    /// <returns></returns>
-    Task CreateOrUpdateSubscriptionAsync(CreateSubscriptionRequest createSubscriptionRequest);
+    /// <param name="createSubscriptionRequest">The subscription request.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    Task CreateOrUpdateSubscriptionAsync(CreateSubscriptionRequest createSubscriptionRequest, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Sends a heartbeat.

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Rivr.Core.Models.Callbacks;
 
@@ -20,10 +20,10 @@ public class Callback
     /// <summary>
     /// The status of the callback.
     /// </summary>
-    public string Status { get; set; }
+    public string? Status { get; set; }
 
     /// <summary>
     /// The data of the callback.
     /// </summary>
-    public string Data { get; set; }
+    public string? Data { get; set; }
 }

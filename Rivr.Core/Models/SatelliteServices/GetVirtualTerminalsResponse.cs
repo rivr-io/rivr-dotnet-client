@@ -1,9 +1,12 @@
-using System;
-
 namespace Rivr.Core.Models.SatelliteServices;
 
+/// <summary>
+/// Response containing a list of virtual terminals.
+/// </summary>
 public class GetVirtualTerminalsResponse
 {
-    public VirtualTerminal[] VirtualTerminals { get; set; } = Array.Empty<VirtualTerminal>();
+    /// <summary>
+    /// Array of virtual terminals.
+    /// </summary>
+    public VirtualTerminal[] VirtualTerminals { get; set; } = [];
 }
-

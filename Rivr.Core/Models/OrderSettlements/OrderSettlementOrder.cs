@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Rivr.Core.Models.Orders;
 
@@ -17,7 +17,7 @@ public class OrderSettlementOrder
     /// <summary>
     /// The order number.
     /// </summary>
-    public string OrderNumber { get; set; }
+    public string? OrderNumber { get; set; }
 
     /// <summary>
     /// The date the order was created.
@@ -27,7 +27,7 @@ public class OrderSettlementOrder
     /// <summary>
     /// Order description.
     /// </summary>
-    public string Description { get; set; }
+    public string? Description { get; set; }
 
     /// <summary>
     /// The total amount of the order including VAT.
@@ -52,10 +52,10 @@ public class OrderSettlementOrder
     /// <summary>
     /// The reference of the order.
     /// </summary>
-    public string Reference { get; set; }
+    public string? Reference { get; set; }
 
     /// <summary>
     /// The metadata of the order.
     /// </summary>
-    public Dictionary<string, string> Metadata { get; set; } = [];
+    public Dictionary<string, string>? Metadata { get; set; }
 }

@@ -1,9 +1,10 @@
-﻿using Rivr.Extensions;
+using Rivr.Extensions;
 using System;
 using System.Collections.Concurrent;
 using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
 using Rivr.Core;
@@ -84,11 +85,11 @@ public class Client : IClient
     public Guid ConfiguredMerchantId => IsConfiguredForSingleMerchant ? Guid.Parse(Credentials.Id) : throw new InvalidOperationException("Client is not configured with Merchant Credentials.");
 
     /// <inheritdoc />
-    public async Task<Health> GetHealthAsync()
+    public async Task<Health> GetHealthAsync(CancellationToken cancellationToken = default)
     {
-        var response = await ApiHttpClient.GetAsync("health");
+        var response = await ApiHttpClient.GetAsync("health", cancellationToken);
         await response.EnsureSuccessfulResponseAsync();
-        return await response.DeserialiseAsync<Health>();
+        return await response.DeserialiseAsync<Health>(cancellationToken: cancellationToken);
     }
 
     /// <inheritdoc />
@@ -102,9 +103,9 @@ public class Client : IClient
 
 internal class Credentials
 {
-    public string GrantType { get; set; }
-    public string Id { get; set; }
-    public string Secret { get; set; }
+    public string GrantType { get; }
+    public string Id { get; }
+    public string Secret { get; }
 
     public Credentials(Config config)
     {
@@ -136,20 +137,16 @@ internal class Credentials
         if (hasMerchantId)
         {
             GrantType = GrantTypes.MerchantCredentials;
-
-            Id = config.MerchantId;
-            Secret = config.MerchantSecret;
-
+            Id = config.MerchantId!;
+            Secret = config.MerchantSecret!;
             return;
         }
 
         if (hasClientId)
         {
             GrantType = GrantTypes.ClientCredentials;
-
             Id = config.ClientId;
             Secret = config.ClientSecret;
-
             return;
         }
 

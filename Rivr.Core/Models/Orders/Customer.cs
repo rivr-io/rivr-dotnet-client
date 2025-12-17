@@ -1,4 +1,4 @@
-﻿namespace Rivr.Core.Models.Orders;
+namespace Rivr.Core.Models.Orders;
 
 /// <summary>
 /// Represents a customer.
@@ -8,15 +8,15 @@ public class Customer
     /// <summary>
     /// The personal number of the customer.
     /// </summary>
-    public string PersonalNumber { get; set; }
+    public string? PersonalNumber { get; set; }
 
     /// <summary>
     /// The email address of the customer.
     /// </summary>
-    public string Email { get; set; }
+    public string? Email { get; set; }
 
     /// <summary>
     /// The phone number of the customer.
     /// </summary>
-    public string Phone { get; set; }
+    public string? Phone { get; set; }
 }

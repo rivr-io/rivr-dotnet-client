@@ -25,15 +25,15 @@ public class OrderReceipts
     /// <summary>
     /// The customer receipt lines.
     /// </summary>
-    public OrderReceiptLine[]? CustomerReceipt { get; set; }
+    public OrderReceiptLine[] CustomerReceipt { get; set; } = [];
 
     /// <summary>
     /// The cashier receipt lines.
     /// </summary>
-    public OrderReceiptLine[]? CashierReceipt { get; set; }
+    public OrderReceiptLine[] CashierReceipt { get; set; } = [];
 
     /// <summary>
     /// The refund receipt lines.
     /// </summary>
-    public OrderReceiptLine[]? RefundReceipt { get; set; }
+    public OrderReceiptLine[] RefundReceipt { get; set; } = [];
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Runtime.Serialization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -17,7 +17,7 @@ public static class StringExtensions
     /// <param name="options"></param>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
-    /// <exception cref="Exception"></exception>
+    /// <exception cref="JsonException"></exception>
     /// <exception cref="SerializationException"></exception>
     public static T Deserialise<T>(this string? content, JsonSerializerOptions? options = null)
     {
@@ -33,11 +33,11 @@ public static class StringExtensions
 
         try
         {
-            return JsonSerializer.Deserialize<T>(content, options) ?? throw new Exception("Could not deserialise into the expected type");
+            return JsonSerializer.Deserialize<T>(content, options) ?? throw new JsonException("Could not deserialize into the expected type");
         }
         catch (Exception e)
         {
-            throw new SerializationException($"Could not deserialise into the expected type. Content: {content}", e);
+            throw new SerializationException($"Could not deserialize into the expected type. Content: {content}", e);
         }
     }
 }

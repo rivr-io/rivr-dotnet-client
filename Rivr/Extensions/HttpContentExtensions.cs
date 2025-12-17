@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net.Http;
 using System.Runtime.Serialization;
 using System.Text.Json;
@@ -20,7 +20,7 @@ public static class HttpContentExtensions
     /// <param name="cancellationToken"></param>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
-    /// <exception cref="Exception"></exception>
+    /// <exception cref="JsonException"></exception>
     /// <exception cref="SerializationException"></exception>
     public static async Task<T> DeserialiseAsync<T>([NotNull] this HttpContent content, JsonSerializerOptions? options = null, CancellationToken cancellationToken = default)
     {
@@ -29,12 +29,12 @@ public static class HttpContentExtensions
         try
         {
             using var stream = await content.ReadAsStreamAsync().ConfigureAwait(false);
-            return await JsonSerializer.DeserializeAsync<T>(stream, options, cancellationToken) ?? throw new Exception("Could not deserialise into the expected type");
+            return await JsonSerializer.DeserializeAsync<T>(stream, options, cancellationToken) ?? throw new JsonException("Could not deserialize into the expected type");
         }
         catch (Exception e)
         {
             var response = await content.ReadAsStringAsync();
-            throw new SerializationException($"Could not deserialise into the expected type ({e.Message}) Response: {response}", e);
+            throw new SerializationException($"Could not deserialize into the expected type ({e.Message}) Response: {response}", e);
         }
     }
 }

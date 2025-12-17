@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Rivr.Core.Models.Webhooks;
 
@@ -18,15 +18,15 @@ public interface IWebhookAggregatorOperations
     /// <summary>
     /// Gets the bundles available for the merchant.
     /// </summary>
-    /// <returns></returns>
-    Task<Bundle> GetNextUnreadBundleAsync();
+    /// <returns>The next unread bundle, or null if there are no unread bundles.</returns>
+    Task<Bundle?> GetNextUnreadBundleAsync();
 
     /// <summary>
     /// Gets the webhooks in a specific bundle.
     /// </summary>
     /// <param name="bundleId"></param>
-    /// <returns></returns>
-    Task<Bundle> GetBundleAsync(Guid bundleId);
+    /// <returns>The bundle, or null if not found.</returns>
+    Task<Bundle?> GetBundleAsync(Guid bundleId);
 
     /// <summary>
     /// Marks a bundle as read.

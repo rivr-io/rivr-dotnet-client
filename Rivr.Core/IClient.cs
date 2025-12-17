@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Rivr.Core.Models;
 
@@ -27,8 +28,9 @@ public interface IClient
     /// <summary>
     /// Gets the health of the Rivr API.
     /// </summary>
-    /// <returns></returns>
-    Task<Health> GetHealthAsync();
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The health status of the API.</returns>
+    Task<Health> GetHealthAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Gets the operations that can be performed as a platform.

@@ -1,15 +1,17 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<RootNamespace>Rivr.Core</RootNamespace>
+		<Nullable>enable</Nullable>
 		<LangVersion>Latest</LangVersion>
-
 
 		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 		<Copyright>Rivr</Copyright>
 
-		<Version>$(Version)</Version>
+		<!-- MinVer Configuration - version is determined from git tags -->
+		<MinVerTagPrefix>v</MinVerTagPrefix>
+		<MinVerMinimumMajorMinor>1.0</MinVerMinimumMajorMinor>
 
 		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 		<IncludeSymbols>true</IncludeSymbols>
@@ -20,7 +22,7 @@
 		<RepositoryUrl>https://github.com/rivr-io/rivr-dotnet-client</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 
-		<PackageTags>$(Version)</PackageTags>
+		<PackageTags>rivr;payments;api;client;dotnet</PackageTags>
 
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<Authors>Rivr</Authors>
@@ -33,7 +35,6 @@
 		<AssemblyOriginatorKeyFile>..\rivr-dotnet-client-key.snk</AssemblyOriginatorKeyFile>
 		<PackageIcon>rivr-logo.png</PackageIcon>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<PackageVersion>$(Version)</PackageVersion>
 
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
@@ -46,6 +47,14 @@
 
 	<ItemGroup>
 		<PackageReference Include="System.Text.Json" Version="8.0.5" />
+	</ItemGroup>
+
+	<!-- MinVer for automatic versioning from git tags -->
+	<ItemGroup>
+		<PackageReference Include="MinVer" Version="6.0.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+		</PackageReference>
 	</ItemGroup>
 
 </Project>
