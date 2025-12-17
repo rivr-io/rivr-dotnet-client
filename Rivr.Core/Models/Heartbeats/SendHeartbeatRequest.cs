@@ -1,4 +1,4 @@
-﻿namespace Rivr.Core.Models.Heartbeats;
+namespace Rivr.Core.Models.Heartbeats;
 
 /// <summary>
 /// Represents a request to send a heartbeat.
@@ -16,7 +16,12 @@ public class SendHeartbeatRequest
     public string ServiceName { get; set; }
 
     /// <summary>
-    /// Gets or sets the service version.
+    /// Gets or sets the currently installed service version.
     /// </summary>
     public string Version { get; set; }
+    
+    /// <summary>
+    /// Gets or sets the latest available version from the update server.
+    /// </summary>
+    public string? LatestAvailableVersion { get; set; }
 }
