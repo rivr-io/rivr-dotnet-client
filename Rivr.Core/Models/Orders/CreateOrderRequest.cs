@@ -67,5 +67,5 @@ public class CreateOrderRequest
     /// <summary>
     /// A dictionary of key-value pairs that can be used to store additional information about the payment request.
     /// </summary>
-    public Dictionary<string, string>? Metadata { get; set; }
+    public Dictionary<string, string> Metadata { get; set; } = new();
 }

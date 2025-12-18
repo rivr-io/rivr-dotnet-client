@@ -1,9 +1,9 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 
-namespace Rivr.Models.Authentication;
+namespace Rivr.Core.Models;
 
 /// <summary>
-/// Represents an authentication error response from the API.
+/// Represents an error response from the API.
 /// </summary>
 public class ErrorResponse
 {

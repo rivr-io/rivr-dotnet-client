@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Net;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Threading;
-using Rivr.Models.Authentication;
+using Rivr.Core.Models;
 
 namespace Rivr.Extensions;
 

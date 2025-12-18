@@ -57,5 +57,5 @@ public class OrderSettlementOrder
     /// <summary>
     /// The metadata of the order.
     /// </summary>
-    public Dictionary<string, string>? Metadata { get; set; }
+    public Dictionary<string, string> Metadata { get; set; } = new();
 }

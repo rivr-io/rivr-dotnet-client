@@ -13,9 +13,13 @@
 		<MinVerTagPrefix>v</MinVerTagPrefix>
 		<MinVerMinimumMajorMinor>1.0</MinVerMinimumMajorMinor>
 
+		<!-- Deterministic build for reproducibility -->
+		<Deterministic>true</Deterministic>
+		<ContinuousIntegrationBuild Condition="'$(CI)' == 'true'">true</ContinuousIntegrationBuild>
+
 		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 		<IncludeSymbols>true</IncludeSymbols>
-		<IncludeSource>true</IncludeSource>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<Description>The Rivr API Library for .NET Standard 2.0 enables you to work with Rivr's APIs
 			from within any .NET application.</Description>
 		<PackageProjectUrl>https://github.com/rivr-io/rivr-dotnet-client</PackageProjectUrl>
@@ -52,6 +56,14 @@
 	<!-- MinVer for automatic versioning from git tags -->
 	<ItemGroup>
 		<PackageReference Include="MinVer" Version="6.0.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<!-- SourceLink for debugging into source code -->
+	<ItemGroup>
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
 		</PackageReference>

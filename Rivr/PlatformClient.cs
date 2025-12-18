@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
@@ -34,7 +34,7 @@ public class PlatformClient(Client client) : IPlatformOperations
     }
 
     /// <inheritdoc />
-    public async Task<HeartbeatResponse> SendHeartbeat(SendHeartbeatRequest heartbeat, CancellationToken cancellationToken = default)
+    public async Task<HeartbeatResponse> SendHeartbeatAsync(SendHeartbeatRequest heartbeat, CancellationToken cancellationToken = default)
     {
         await RefreshClientCredentialsAsync();
 

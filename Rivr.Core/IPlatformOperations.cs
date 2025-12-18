@@ -1,4 +1,4 @@
-﻿using System.Threading;
+using System.Threading;
 using System.Threading.Tasks;
 using Rivr.Core.Models;
 using Rivr.Core.Models.Heartbeats;
@@ -29,8 +29,8 @@ public interface IPlatformOperations
     /// <summary>
     /// Sends a heartbeat.
     /// </summary>
-    /// <param name="heartbeat"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    Task<HeartbeatResponse> SendHeartbeat(SendHeartbeatRequest heartbeat, CancellationToken cancellationToken = default);
+    /// <param name="heartbeat">The heartbeat request.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The heartbeat response.</returns>
+    Task<HeartbeatResponse> SendHeartbeatAsync(SendHeartbeatRequest heartbeat, CancellationToken cancellationToken = default);
 }
