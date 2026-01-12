@@ -29,7 +29,7 @@ public enum CheckoutHintType
     AdvancePayment = 1 << 3,
 
     /// <summary>
-    /// Represents an auto cancel checkout hint in minutes.
+    /// Represents an auto cancel checkout hint in seconds.
     /// </summary>
-    AutoCancelInMinutes = 1 << 4,
+    AutoCancelInSeconds = 1 << 4,
 }
