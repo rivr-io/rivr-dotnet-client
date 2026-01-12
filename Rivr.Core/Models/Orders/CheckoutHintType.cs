@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 
 namespace Rivr.Core.Models.Orders;
 
@@ -27,4 +27,9 @@ public enum CheckoutHintType
     /// Represents an advance payment checkout hint.
     /// </summary>
     AdvancePayment = 1 << 3,
+
+    /// <summary>
+    /// Represents an auto cancel checkout hint in minutes.
+    /// </summary>
+    AutoCancelInMinutes = 1 << 4,
 }
