@@ -229,11 +229,7 @@ public class MerchantClient : IMerchantOperations
         object merchantCredentials = _client.IsConfiguredForSingleMerchant
             ? new MerchantCredentialsRequest(_client.Credentials.Id, _client.Credentials.Secret)
             : new MerchantTokenRequest(_client.Credentials.Id, _client.Credentials.Secret, _merchantId);
-
-        var asd = JsonSerializer.Serialize(merchantCredentials, new JsonSerializerOptions(JsonSerializerDefaults.Web)
-        {
-        });
-
+        
         var merchantCredentialsCacheKey = $"{nameof(Client)}-merchant-token-{_merchantId}";
         var response = await _client.MemoryCache.GetOrCreateAsync(merchantCredentialsCacheKey, async entry =>
         {

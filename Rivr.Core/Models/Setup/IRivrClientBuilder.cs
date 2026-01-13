@@ -10,12 +10,12 @@ public interface IRivrClientBuilder
     /// <summary>
     /// Gets the client secret.
     /// </summary>
-    string ClientId { set; }
+    string? ClientId { set; }
 
     /// <summary>
     /// Gets the client secret.
     /// </summary>
-    string ClientSecret { set; }
+    string? ClientSecret { set; }
 
 
     /// <summary>
