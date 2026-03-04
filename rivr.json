@@ -1,4 +1,9 @@
 {
+  "version": {
+    "current": "1.3.0",
+    "scheme": "semver",
+    "autoIncrement": true
+  },
   "output": ".\\artifacts\\packages",
   "suffix": "dev",
   "configuration": "Debug",
