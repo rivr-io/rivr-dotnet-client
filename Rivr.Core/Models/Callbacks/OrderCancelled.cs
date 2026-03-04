@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 using Rivr.Core.Models.Orders;
 
 namespace Rivr.Core.Models.Callbacks;
@@ -22,4 +23,9 @@ public class OrderCancelled
     /// Gets or sets the cancellation reason.
     /// </summary>
     public CancellationReason Reason { get; set; }
+
+    /// <summary>
+    /// Gets or sets the metadata associated with the order.
+    /// </summary>
+    public Dictionary<string, string> Metadata { get; set; } = new();
 }

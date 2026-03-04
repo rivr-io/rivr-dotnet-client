@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 
 namespace Rivr.Core.Models.Callbacks;
 
@@ -16,4 +17,9 @@ public class OrderRefunded
     /// Gets or sets the refunded date.
     /// </summary>
     public DateTime RefundedDate { get; set; }
+
+    /// <summary>
+    /// Gets or sets the metadata associated with the order.
+    /// </summary>
+    public Dictionary<string, string> Metadata { get; set; } = new();
 }
