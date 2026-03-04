@@ -1,7 +1,7 @@
 namespace Rivr.Core.Models;
 
 /// <summary>
-/// Represents and error that occurred during an API call.
+/// Represents an error response from the Rivr API.
 /// </summary>
 public class ApiErrorResponse
 {

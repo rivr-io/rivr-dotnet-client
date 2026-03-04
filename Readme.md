@@ -6,9 +6,9 @@
 
 This is an API Client library for Rivr Order API. This library enables an application to send orders for processing.
 
-### Compability
+### Compatibility
 
-This library is built with support with [.NET Standard 2.0](https://learn.microsoft.com/en-us/dotnet/standard/net-standard?tabs=net-standard-2-0) which provides the following compability:
+This library is built with support for [.NET Standard 2.0](https://learn.microsoft.com/en-us/dotnet/standard/net-standard?tabs=net-standard-2-0) which provides the following compatibility:
 
 | .NET implementation | Version support                                  |
 | ------------------- | ------------------------------------------------ |
@@ -246,9 +246,11 @@ Example of a callback body:
 {
   "id": "84c3c4ad-63d8-4d49-a4ff-ed57bbd40a39",
   "type": "Order",
+  "merchantId": "c3073b9d-edd0-49f2-a28d-b7ded8ff9a8b",
   "status": "Created",
   "data": {
-    "createdDate": "2024-08-19 14:58:21"
+    "CreatedDate": "2024-08-19T14:58:21Z",
+    "Metadata": {}
   }
 }
 ```
@@ -289,24 +291,28 @@ Immediately after an order is created a callback is issued.
 {
   "id": "84c3c4ad-63d8-4d49-a4ff-ed57bbd40a39",
   "type": "Order",
+  "merchantId": "c3073b9d-edd0-49f2-a28d-b7ded8ff9a8b",
   "status": "Created",
   "data": {
-    "CreatedDate": "2024-04-24T16:45:30.582Z"
+    "CreatedDate": "2024-04-24T16:45:30.582Z",
+    "Metadata": {}
   }
 }
 ```
 
 ##### Pending
 
-If an order is tranferred to an invoice with recourse, the order state is set to pending meaning that there has been an action on it but it is not completed yet. The order will be completed when the invoice is paid in full.
+If an order is transferred to an invoice with recourse, the order state is set to pending meaning that there has been an action on it but it is not completed yet. The order will be completed when the invoice is paid in full.
 
 ```json
 {
   "id": "84c3c4ad-63d8-4d49-a4ff-ed57bbd40a39",
   "type": "Order",
+  "merchantId": "c3073b9d-edd0-49f2-a28d-b7ded8ff9a8b",
   "status": "Pending",
   "data": {
-    "CreatedDate": "2024-04-24T16:45:30.582Z"
+    "CreatedDate": "2024-04-24T16:45:30.582Z",
+    "Metadata": {}
   }
 }
 ```
@@ -317,15 +323,19 @@ A order is considered `Completed` when it has been paid. An Order can be paid wi
 
 ###### Card
 
+Includes Apple Pay and Google Pay which are also reported as `Card`.
+
 ```json
 {
   "id": "84c3c4ad-63d8-4d49-a4ff-ed57bbd40a39",
   "type": "Order",
+  "merchantId": "c3073b9d-edd0-49f2-a28d-b7ded8ff9a8b",
   "status": "Completed",
   "data": {
     "CreatedDate": "2024-04-24T16:45:30.582Z",
     "CompletedDate": "2024-04-24T16:45:52.54Z",
-    "PaymentMethod": "Card"
+    "PaymentMethod": "Card",
+    "Metadata": {}
   }
 }
 ```
@@ -336,11 +346,13 @@ A order is considered `Completed` when it has been paid. An Order can be paid wi
 {
   "id": "84c3c4ad-63d8-4d49-a4ff-ed57bbd40a39",
   "type": "Order",
+  "merchantId": "c3073b9d-edd0-49f2-a28d-b7ded8ff9a8b",
   "status": "Completed",
   "data": {
     "CreatedDate": "2024-04-24T16:45:30.582Z",
     "CompletedDate": "2024-04-24T16:45:52.54Z",
-    "PaymentMethod": "Swish"
+    "PaymentMethod": "Swish",
+    "Metadata": {}
   }
 }
 ```
@@ -351,11 +363,13 @@ A order is considered `Completed` when it has been paid. An Order can be paid wi
 {
   "id": "84c3c4ad-63d8-4d49-a4ff-ed57bbd40a39",
   "type": "Order",
+  "merchantId": "c3073b9d-edd0-49f2-a28d-b7ded8ff9a8b",
   "status": "Completed",
   "data": {
     "CreatedDate": "2024-04-24T16:45:30.582Z",
     "CompletedDate": "2024-04-24T16:45:52.54Z",
-    "PaymentMethod": "Invoice"
+    "PaymentMethod": "Invoice",
+    "Metadata": {}
   }
 }
 ```
@@ -368,11 +382,13 @@ Instalment comes in three flavours, Default, Full KYC and Interest Free.
 {
   "id": "84c3c4ad-63d8-4d49-a4ff-ed57bbd40a39",
   "type": "Order",
+  "merchantId": "c3073b9d-edd0-49f2-a28d-b7ded8ff9a8b",
   "status": "Completed",
   "data": {
     "CreatedDate": "2024-04-24T16:45:30.582Z",
     "CompletedDate": "2024-04-24T16:45:52.54Z",
-    "PaymentMethod": "Instalment"
+    "PaymentMethod": "Instalment",
+    "Metadata": {}
   }
 }
 ```
@@ -385,11 +401,13 @@ Orders can be cancelled.
 {
   "id": "84c3c4ad-63d8-4d49-a4ff-ed57bbd40a39",
   "type": "Order",
+  "merchantId": "c3073b9d-edd0-49f2-a28d-b7ded8ff9a8b",
   "status": "Cancelled",
   "data": {
     "CreatedDate": "2024-04-24T16:45:30.582Z",
     "CancelledDate": "2024-04-24T16:45:52.54Z",
-    "Reason": "Timeout | UserCancelled | MerchantCancelled"
+    "Reason": "Timeout | UserCancelled | MerchantCancelled",
+    "Metadata": {}
   }
 }
 ```
@@ -402,10 +420,12 @@ An order can be refunded and when successful this callback is sent.
 {
   "id": "84c3c4ad-63d8-4d49-a4ff-ed57bbd40a39",
   "type": "Order",
+  "merchantId": "c3073b9d-edd0-49f2-a28d-b7ded8ff9a8b",
   "status": "Refunded",
   "data": {
     "CreatedDate": "2024-04-24T16:45:30.582Z",
-    "RefundedDate": "2024-04-24T16:45:52.54Z"
+    "RefundedDate": "2024-04-24T16:45:52.54Z",
+    "Metadata": {}
   }
 }
 ```

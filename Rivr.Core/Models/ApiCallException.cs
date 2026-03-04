@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 
 namespace Rivr.Core.Models;
 
 /// <summary>
-/// Represents and error that occurred during an API call.
+/// Represents an error that occurred during an API call.
 /// </summary>
 public class ApiCallException : Exception
 {
