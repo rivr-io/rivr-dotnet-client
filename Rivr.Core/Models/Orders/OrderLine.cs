@@ -60,7 +60,7 @@ public class OrderLine
     /// <summary>
     /// The total price of the product or service excluding VAT
     /// </summary>
-    public decimal AmountExclVat => AmountInclVat / (1 + VatPercentage);
+    public decimal AmountExclVat => UnitPriceExclVat * Quantity;
 
     private decimal VatAmount => AmountInclVat - AmountExclVat;
 }

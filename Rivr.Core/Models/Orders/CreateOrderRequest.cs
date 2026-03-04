@@ -10,7 +10,7 @@ namespace Rivr.Core.Models.Orders;
 public class CreateOrderRequest
 {
     /// <summary>
-    /// Payment request ID (UUID). This is the same ID used as Path parameter named <code>paymentRequestId</code>/>
+    /// The unique order ID (UUID). If not set, a new ID will be generated.
     /// </summary>
     /// <example>497f6eca-6276-4993-bfeb-53cbbbba6f08</example>
     public Guid Id { get; set; }
@@ -33,7 +33,7 @@ public class CreateOrderRequest
     public string? Reference { get; set; }
 
     /// <summary>
-    /// Computed readonly amount of amount to pay.
+    /// Computed total amount to pay, calculated from the order lines.
     /// </summary>
     /// <example>42000</example>
     public int Amount => (int)OrderLines.Sum(o => o.Quantity * o.UnitPriceExclVat * (1 + o.VatPercentage / 100.0m));
@@ -52,6 +52,11 @@ public class CreateOrderRequest
     /// Phone number of the Payer. This is the person that will pay for the payment request.
     /// </summary>
     public string? Phone { get; set; }
+
+    /// <summary>
+    /// The ISO 4217 currency code (e.g. "SEK", "NOK", "EUR"). If omitted, the merchant's default currency is used.
+    /// </summary>
+    public string? CurrencyCode { get; set; }
 
     /// <summary>
     /// The checkout hints that the payment request is for.

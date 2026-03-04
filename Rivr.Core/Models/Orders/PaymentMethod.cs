@@ -1,4 +1,4 @@
-﻿namespace Rivr.Core.Models.Orders;
+namespace Rivr.Core.Models.Orders;
 
 /// <summary>
 /// Represents the payment method.
@@ -70,6 +70,21 @@ public enum PaymentMethod
     /// Resurs Bank payment.
     /// </summary>
     Resurs = 1 << 15,
+
+    /// <summary>
+    /// Vipps payment.
+    /// </summary>
+    Vipps = 1 << 16,
+
+    /// <summary>
+    /// Trustly payment.
+    /// </summary>
+    Trustly = 1 << 17,
+
+    /// <summary>
+    /// Unknown payment method.
+    /// </summary>
+    Unknown = 1 << 18,
 
     /// <summary>
     /// Common instalment payment.

@@ -54,6 +54,11 @@ public class Order
     public decimal VatAmount { get; set; }
 
     /// <summary>
+    /// The ISO 4217 currency code (e.g. "SEK", "NOK", "EUR").
+    /// </summary>
+    public string? CurrencyCode { get; set; }
+
+    /// <summary>
     /// The order reference.
     /// </summary>
     public string? Reference { get; set; }
