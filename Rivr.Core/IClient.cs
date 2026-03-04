@@ -8,7 +8,7 @@ namespace Rivr.Core;
 /// <summary>
 /// Represents the Rivr API client.
 /// </summary>
-public interface IClient
+public interface IClient : IDisposable
 {
     /// <summary>
     /// Gets the configuration of the client.

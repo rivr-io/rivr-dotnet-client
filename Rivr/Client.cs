@@ -99,6 +99,15 @@ public class Client : IClient
     public IMerchantOperations AsOrOnBehalfOfMerchant(Guid merchantId) => _merchantClients.ContainsKey(merchantId)
         ? _merchantClients[merchantId]
         : _merchantClients[merchantId] = new MerchantClient(this, merchantId);
+
+    /// <inheritdoc />
+    public void Dispose()
+    {
+        AuthHttpClient.Dispose();
+        ApiHttpClient.Dispose();
+        WebhookAggregatorHttpClient.Dispose();
+        GC.SuppressFinalize(this);
+    }
 }
 
 internal class Credentials

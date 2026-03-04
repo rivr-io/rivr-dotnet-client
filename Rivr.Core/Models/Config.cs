@@ -58,7 +58,7 @@ public class Config(
     /// <summary>
     /// The base URI for the authentication endpoint in the test environment. (Has a default value)
     /// </summary>
-    public string AuthBaseUriTest { get; set; } = authBaseUri ?? ClientConfig.AuthBaseUriTest;
+    public string AuthBaseUriTest { get; set; } = ClientConfig.AuthBaseUriTest;
 
     /// <summary>
     /// The base URI for the API endpoint. (Has a default value)
@@ -68,7 +68,7 @@ public class Config(
     /// <summary>
     /// The base URI for the API endpoint in the test environment. (Has a default value)
     /// </summary>
-    public string ApiBaseUriTest { get; set; } = apiBaseUri ?? ClientConfig.ApiBaseUriTest;
+    public string ApiBaseUriTest { get; set; } = ClientConfig.ApiBaseUriTest;
 
     /// <summary>
     /// The base URI for the Webhook Aggregator endpoint. (Has a default value)
@@ -78,7 +78,7 @@ public class Config(
     /// <summary>
     /// The base URI for the Webhook Aggregator endpoint in the test environment. (Has a default value)
     /// </summary>
-    public string WebhookAggregatorBaseUriTest { get; set; } = webhookAggregatorBaseUri ?? ClientConfig.WebhookAggregatorBaseUriTest;
+    public string WebhookAggregatorBaseUriTest { get; set; } = ClientConfig.WebhookAggregatorBaseUriTest;
 
     /// <summary>
     /// Optional unique service identifier for satellite services.
