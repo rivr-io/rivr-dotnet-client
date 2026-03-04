@@ -84,11 +84,11 @@ public interface IMerchantOperations
     Task<OrderSettlementForLists[]> GetOrderSettlementsAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Get last unread order settlement.
+    /// Get the next unread order settlement.
     /// </summary>
     /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns>The last unread order settlement.</returns>
-    Task<OrderSettlement> GetLastUnreadOrderSettlementAsync(CancellationToken cancellationToken = default);
+    /// <returns>The next unread order settlement.</returns>
+    Task<OrderSettlement> GetNextUnreadOrderSettlementAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Get the next unread order settlement as a Nets file.

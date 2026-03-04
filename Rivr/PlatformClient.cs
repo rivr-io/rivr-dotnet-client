@@ -1,4 +1,8 @@
 using System;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
@@ -13,14 +17,28 @@ using Rivr.Models.Authentication;
 namespace Rivr;
 
 /// <inheritdoc />
-public class PlatformClient(Client client) : IPlatformOperations
+public class PlatformClient : IPlatformOperations
 {
+    private readonly Client _client;
+    private string? _accessToken;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PlatformClient"/> class.
+    /// </summary>
+    /// <param name="client"></param>
+    public PlatformClient(Client client)
+    {
+        _client = client;
+    }
+
     /// <inheritdoc />
     public async Task<Health> GetHealthSecureAsync(CancellationToken cancellationToken = default)
     {
         await RefreshClientCredentialsAsync();
 
-        return await client.GetHealthAsync();
+        var response = await SendApiGetAsync("health-secure", cancellationToken);
+        await response.EnsureSuccessfulResponseAsync();
+        return await response.DeserialiseAsync<Health>(cancellationToken: cancellationToken);
     }
 
     /// <inheritdoc />
@@ -28,7 +46,7 @@ public class PlatformClient(Client client) : IPlatformOperations
     {
         await RefreshClientCredentialsAsync();
 
-        var response = await client.ApiHttpClient.GetAsync("merchants", cancellationToken);
+        var response = await SendApiGetAsync("merchants", cancellationToken);
         await response.EnsureSuccessfulResponseAsync();
         return await response.DeserialiseAsync<GetMerchantsResponse>(cancellationToken: cancellationToken);
     }
@@ -38,19 +56,30 @@ public class PlatformClient(Client client) : IPlatformOperations
     {
         await RefreshClientCredentialsAsync();
 
-        var response = await client.ApiHttpClient.PutAsJsonAsync($"satellite-services/{heartbeat.UniqueServiceId}/heartbeat", heartbeat, cancellationToken: cancellationToken);
+        var json = JsonSerializer.Serialize(heartbeat);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        var request = new HttpRequestMessage(HttpMethod.Put, $"satellite-services/{heartbeat.UniqueServiceId}/heartbeat") { Content = content };
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
+        var response = await _client.ApiHttpClient.SendAsync(request, cancellationToken);
         await response.EnsureSuccessfulResponseAsync();
         return await response.DeserialiseAsync<HeartbeatResponse>(cancellationToken: cancellationToken);
     }
 
+    private async Task<HttpResponseMessage> SendApiGetAsync(string url, CancellationToken cancellationToken = default)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Get, url);
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
+        return await _client.ApiHttpClient.SendAsync(request, cancellationToken);
+    }
+
     private async Task RefreshClientCredentialsAsync()
     {
-        var clientCredentials = new ClientCredentialsTokenRequest(client.Credentials.Id, client.Credentials.Secret);
+        var clientCredentials = new ClientCredentialsTokenRequest(_client.Credentials.Id, _client.Credentials.Secret);
 
         var clientCredentialsCacheKey = $"{nameof(Client)}-client-credentials";
-        var response = await client.MemoryCache.GetOrCreateAsync(clientCredentialsCacheKey, async entry =>
+        var response = await _client.MemoryCache.GetOrCreateAsync(clientCredentialsCacheKey, async entry =>
         {
-            var response = await client.AuthHttpClient.PostAsJsonAsync("connect/token", clientCredentials);
+            var response = await _client.AuthHttpClient.PostAsJsonAsync("connect/token", clientCredentials);
             await response.EnsureSuccessfulResponseAsync();
             var result = await response.DeserialiseAsync<TokenResponse>();
             entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(result.ExpiresIn);
@@ -62,6 +91,6 @@ public class PlatformClient(Client client) : IPlatformOperations
             throw new InvalidOperationException("Failed to get client credentials token.");
         }
 
-        client.ApiHttpClient.DefaultRequestHeaders.Authorization = new("Bearer", response.AccessToken);
+        _accessToken = response.AccessToken;
     }
 }
