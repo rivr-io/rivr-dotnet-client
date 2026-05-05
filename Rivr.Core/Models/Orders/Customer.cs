@@ -21,6 +21,11 @@ public class Customer
     public string? LastName { get; set; }
 
     /// <summary>
+    /// The full name of the customer (typically <see cref="FirstName"/> and <see cref="LastName"/> combined).
+    /// </summary>
+    public string? Name { get; set; }
+
+    /// <summary>
     /// The email address of the customer.
     /// </summary>
     public string? Email { get; set; }
@@ -31,17 +36,7 @@ public class Customer
     public string? Phone { get; set; }
 
     /// <summary>
-    /// The street address of the customer.
+    /// The postal address of the customer.
     /// </summary>
-    public string? Address { get; set; }
-
-    /// <summary>
-    /// The city of the customer.
-    /// </summary>
-    public string? City { get; set; }
-
-    /// <summary>
-    /// The postal/zip code of the customer.
-    /// </summary>
-    public string? PostalCode { get; set; }
+    public Address? Address { get; set; }
 }

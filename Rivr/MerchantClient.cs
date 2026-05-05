@@ -31,6 +31,12 @@ public class MerchantClient : IMerchantOperations
     private string? _accessToken;
 
     /// <summary>
+    /// Safety margin subtracted from the token's reported lifetime when caching, to avoid races
+    /// where the token expires between the cache lookup and the request landing at the API.
+    /// </summary>
+    private static readonly TimeSpan TokenCacheSafetyMargin = TimeSpan.FromSeconds(60);
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="MerchantClient"/> class.
     /// </summary>
     /// <param name="client"></param>
@@ -265,14 +271,14 @@ public class MerchantClient : IMerchantOperations
         object merchantCredentials = _client.IsConfiguredForSingleMerchant
             ? new MerchantCredentialsRequest(_client.Credentials.Id, _client.Credentials.Secret)
             : new MerchantTokenRequest(_client.Credentials.Id, _client.Credentials.Secret, _merchantId);
-        
+
         var merchantCredentialsCacheKey = $"{nameof(Client)}-merchant-token-{_merchantId}";
         var response = await _client.MemoryCache.GetOrCreateAsync(merchantCredentialsCacheKey, async entry =>
         {
             var response = await _client.AuthHttpClient.PostAsJsonAsync("connect/token", merchantCredentials);
             await response.EnsureSuccessfulResponseAsync();
             var result = await response.DeserialiseAsync<TokenResponse>();
-            entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(result.ExpiresIn);
+            entry.AbsoluteExpirationRelativeToNow = CalculateCacheLifetime(result.ExpiresIn);
             return result;
         });
 
@@ -282,6 +288,24 @@ public class MerchantClient : IMerchantOperations
         }
 
         _accessToken = response.AccessToken;
+    }
+
+    /// <summary>
+    /// Computes how long a token should be cached. Subtracts <see cref="TokenCacheSafetyMargin"/>
+    /// from the reported lifetime to avoid races where the token expires between the cache lookup
+    /// and the request landing at the API. Falls back to half the lifetime (minimum 1 second) when
+    /// the reported lifetime is shorter than the safety margin.
+    /// </summary>
+    private static TimeSpan CalculateCacheLifetime(int expiresInSeconds)
+    {
+        var lifetime = TimeSpan.FromSeconds(expiresInSeconds);
+        if (lifetime > TokenCacheSafetyMargin)
+        {
+            return lifetime - TokenCacheSafetyMargin;
+        }
+
+        var fallbackSeconds = Math.Max(1.0, expiresInSeconds / 2.0);
+        return TimeSpan.FromSeconds(fallbackSeconds);
     }
 
     static OrderRequestError[] Validate(CreateOrderRequest? createOrderRequest)
@@ -352,6 +376,24 @@ public class MerchantClient : IMerchantOperations
                 {
                     Message = "VatPercentage must be greater than or equal to 0",
                     PropertyName = nameof(orderLine.VatPercentage)
+                });
+            }
+
+            if (orderLine.DiscountExclVat < 0)
+            {
+                errorMessages.Add(new OrderRequestError
+                {
+                    Message = "DiscountExclVat must be greater than or equal to 0",
+                    PropertyName = nameof(orderLine.DiscountExclVat)
+                });
+            }
+
+            if (orderLine.DiscountExclVat > orderLine.UnitPriceExclVat * orderLine.Quantity)
+            {
+                errorMessages.Add(new OrderRequestError
+                {
+                    Message = "DiscountExclVat must not exceed the line total (UnitPriceExclVat * Quantity)",
+                    PropertyName = nameof(orderLine.DiscountExclVat)
                 });
             }
         }
