@@ -5,7 +5,7 @@ using System.Linq;
 namespace Rivr.Core.Models.Orders;
 
 /// <summary>
-/// The Payment Request Object is used in all payment request operations and the provided data object (body) should be in JSON format. 
+/// The Payment Request Object is used in all payment request operations and the provided data object (body) should be in JSON format.
 /// </summary>
 public class CreateOrderRequest
 {
@@ -36,7 +36,7 @@ public class CreateOrderRequest
     /// Computed total amount to pay, calculated from the order lines.
     /// </summary>
     /// <example>42000</example>
-    public int Amount => (int)OrderLines.Sum(o => o.Quantity * o.UnitPriceExclVat * (1 + o.VatPercentage / 100.0m));
+    public int Amount => (int)OrderLines.Sum(o => (o.Quantity * o.UnitPriceExclVat - o.DiscountExclVat) * (1 + o.VatPercentage / 100.0m));
 
     /// <summary>
     /// The Payer of the payment. This is the person that will pay for the payment request.

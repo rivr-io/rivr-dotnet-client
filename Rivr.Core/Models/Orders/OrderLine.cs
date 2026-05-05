@@ -48,19 +48,26 @@ public class OrderLine
     }
 
     /// <summary>
-    /// The price of the product or service excluding VAT
+    /// Optional discount amount excluding VAT applied to this line.
+    /// The discount is subtracted from the line total (UnitPriceExclVat * Quantity) before VAT is calculated.
+    /// </summary>
+    /// <example>0</example>
+    public decimal DiscountExclVat { get; set; }
+
+    /// <summary>
+    /// The unit price of the product or service including VAT
     /// </summary>
     public decimal UnitPriceInclVat => UnitPriceExclVat * (1 + VatPercentage / 100m);
 
     /// <summary>
-    /// The total price of the product or service including VAT
+    /// The total price of the product or service including VAT (after discount)
     /// </summary>
-    public decimal AmountInclVat => UnitPriceInclVat * Quantity;
+    public decimal AmountInclVat => AmountExclVat * (1 + VatPercentage / 100m);
 
     /// <summary>
-    /// The total price of the product or service excluding VAT
+    /// The total price of the product or service excluding VAT (after discount)
     /// </summary>
-    public decimal AmountExclVat => UnitPriceExclVat * Quantity;
+    public decimal AmountExclVat => UnitPriceExclVat * Quantity - DiscountExclVat;
 
     private decimal VatAmount => AmountInclVat - AmountExclVat;
 }

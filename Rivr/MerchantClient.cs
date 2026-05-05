@@ -271,7 +271,7 @@ public class MerchantClient : IMerchantOperations
         object merchantCredentials = _client.IsConfiguredForSingleMerchant
             ? new MerchantCredentialsRequest(_client.Credentials.Id, _client.Credentials.Secret)
             : new MerchantTokenRequest(_client.Credentials.Id, _client.Credentials.Secret, _merchantId);
-        
+
         var merchantCredentialsCacheKey = $"{nameof(Client)}-merchant-token-{_merchantId}";
         var response = await _client.MemoryCache.GetOrCreateAsync(merchantCredentialsCacheKey, async entry =>
         {
@@ -376,6 +376,24 @@ public class MerchantClient : IMerchantOperations
                 {
                     Message = "VatPercentage must be greater than or equal to 0",
                     PropertyName = nameof(orderLine.VatPercentage)
+                });
+            }
+
+            if (orderLine.DiscountExclVat < 0)
+            {
+                errorMessages.Add(new OrderRequestError
+                {
+                    Message = "DiscountExclVat must be greater than or equal to 0",
+                    PropertyName = nameof(orderLine.DiscountExclVat)
+                });
+            }
+
+            if (orderLine.DiscountExclVat > orderLine.UnitPriceExclVat * orderLine.Quantity)
+            {
+                errorMessages.Add(new OrderRequestError
+                {
+                    Message = "DiscountExclVat must not exceed the line total (UnitPriceExclVat * Quantity)",
+                    PropertyName = nameof(orderLine.DiscountExclVat)
                 });
             }
         }
