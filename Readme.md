@@ -277,6 +277,41 @@ However, if the callback isn't successful, a retry will be scheduled. A maximum 
 
 If the last iteration is not successful, no more attempts will be made.
 
+### Verifying the callback signature
+
+Every callback is signed so you can confirm it really came from Rivr. The request carries a
+`Rivr-Signature` header of the form `t=<unixSeconds>,v1=<hex>[,v1=<hex>…]`, where each `v1` is
+`HMAC-SHA256` over `"{t}.{rawBody}"` (lowercase hex). A callback may carry several `v1` values (a
+merchant key plus a platform-wide key, and old + new during key rotation) — accept it if **any** of
+them matches a key you hold.
+
+Use `RivrWebhookSignature` (in `Rivr.Core.Webhooks`) from your callback handler. Verify against the
+**raw** request body (do not re-serialize the JSON first):
+
+```csharp
+using Rivr.Core.Webhooks;
+
+[HttpPost("callbacks/rivr")]
+public async Task<IActionResult> Handle()
+{
+    using var reader = new StreamReader(Request.Body);
+    var rawBody = await reader.ReadToEndAsync();
+    var signature = Request.Headers["Rivr-Signature"].ToString();
+
+    if (!RivrWebhookSignature.IsValid(secret: _webhookSecret, rawBody: rawBody, rivrSignatureHeader: signature))
+    {
+        return Unauthorized();
+    }
+
+    // ...deserialize rawBody and handle the event
+    return Ok();
+}
+```
+
+`IsValid` enforces a ±5 minute timestamp tolerance by default (replay protection), uses a constant-time
+comparison, and never throws on malformed input (it returns `false`). Manage your webhook signing keys
+in the Rivr portal.
+
 Note: If the Callback URL is empty or malformatted there will be no attempts at all.
 
 #### Order
