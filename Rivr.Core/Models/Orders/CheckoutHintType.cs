@@ -46,6 +46,10 @@ public enum CheckoutHintType
     /// payment, a fee, an account deposit. Set it per order, and only for text you wrote
     /// yourself: whatever you put in the description is what the patient sees on the receipt and
     /// what clinic staff see in the portal.
+    /// <para>
+    /// Requires <c>Value = "true"</c>. Any other value — including none — leaves the line
+    /// encrypted, the same rule <see cref="DisableNotifications"/> follows.
+    /// </para>
     /// </remarks>
     DisableDescriptionEncryption = 1 << 6,
 }
