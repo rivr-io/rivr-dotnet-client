@@ -32,4 +32,20 @@ public enum CheckoutHintType
     /// Represents an auto cancel checkout hint in seconds.
     /// </summary>
     AutoCancelInSeconds = 1 << 4,
+
+    // 1 << 5 is ChargeStoredCard in the Rivr contracts. It is not exposed here yet; the value is
+    // reserved so the numbering stays aligned with the platform.
+
+    /// <summary>
+    /// Leave the order line descriptions in PLAIN TEXT for this order instead of encrypting them
+    /// as the merchant's sensitive-data setting would otherwise require.
+    /// </summary>
+    /// <remarks>
+    /// Without this hint a generic label ("Behandling / Åtgärd") is shown until the patient
+    /// unlocks the line — correct for a treatment, wrong for a line that is not one: an advance
+    /// payment, a fee, an account deposit. Set it per order, and only for text you wrote
+    /// yourself: whatever you put in the description is what the patient sees on the receipt and
+    /// what clinic staff see in the portal.
+    /// </remarks>
+    DisableDescriptionEncryption = 1 << 6,
 }
