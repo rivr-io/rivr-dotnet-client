@@ -1,6 +1,6 @@
 {
   "version": {
-    "current": "2.0.0",
+    "current": "2.1.0",
     "scheme": "semver",
     "autoIncrement": true
   },
