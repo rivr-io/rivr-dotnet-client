@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `IMerchantOperations.CancelAsync` — cancels an order that has not been paid and never refunds. When the order is not cancelled it throws `CancelOrderException` with `ErrorCode` (see `CancelOrderErrorCodes`), `StatusCode` and `IsRetryable`. Requires the `POST /api/public/orders/{orderId}/cancel` endpoint (RIV-2189).
+- `ApiErrorResponse.ErrorCode`
 - `CancellationToken` support for all async methods
 - SourceLink support for debugging into source code
 - Deterministic builds for reproducibility
