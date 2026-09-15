@@ -11,11 +11,15 @@ public class MockHttpMessageHandler(
 {
     public int PerformedRequestsCount { get; private set; }
     public string? RequestContent { get; private set; }
+    public HttpMethod? LastRequestMethod { get; private set; }
+    public Uri? LastRequestUri { get; private set; }
     public T? GetRequestContent<T>() => JsonSerializer.Deserialize<T>(RequestContent ?? string.Empty);
 
     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {
         PerformedRequestsCount++;
+        LastRequestMethod = request.Method;
+        LastRequestUri = request.RequestUri;
         if (request.Content != null)
         {
             RequestContent = await request.Content.ReadAsStringAsync(cancellationToken);

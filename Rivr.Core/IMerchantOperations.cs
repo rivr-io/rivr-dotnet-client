@@ -77,6 +77,23 @@ public interface IMerchantOperations
     Task RefundAsync(Guid orderId, CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Cancels an order that has not been paid.
+    /// Unlike <see cref="RefundAsync"/>, this never refunds anything: if the order can no longer be cancelled —
+    /// typically because the customer has already paid — nothing happens and a <see cref="CancelOrderException"/>
+    /// is thrown whose <see cref="CancelOrderException.ErrorCode"/> says why (see <see cref="CancelOrderErrorCodes"/>).
+    /// Cancelling an order that is already cancelled succeeds.
+    /// </summary>
+    /// <param name="orderId">The order ID.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    /// <exception cref="CancelOrderException">
+    /// The order was not cancelled. <see cref="CancelOrderException.IsRetryable"/> is <see langword="true"/> when the
+    /// same call can succeed later.
+    /// </exception>
+    /// <exception cref="ForbiddenException">The order belongs to a different merchant.</exception>
+    Task CancelAsync(Guid orderId, CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Get a list of order settlements.
     /// </summary>
     /// <param name="cancellationToken">The cancellation token.</param>

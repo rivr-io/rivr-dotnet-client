@@ -236,6 +236,40 @@ await client
     .RefundAsync(order.Id);
 ```
 
+#### Cancel an order
+
+`CancelAsync` cancels an order that has not been paid. Unlike `RefundAsync` it never refunds anything: if the order can no longer be cancelled — typically because the customer has already paid — nothing happens and a `CancelOrderException` is thrown. Its `ErrorCode` says what to do (see `CancelOrderErrorCodes`), and `IsRetryable` is `true` when the same call can succeed later. Cancelling an order that is already cancelled succeeds.
+
+| HTTP | `ErrorCode`             | Meaning                                                                            |
+| ---- | ----------------------- | ---------------------------------------------------------------------------------- |
+| 409  | `payment_in_progress`   | A payment is in progress right now, for example a card payment on a terminal. Retry. |
+| 409  | `order_changed`         | The order changed while it was being cancelled. Retry.                             |
+| 400  | `order_paid`            | The order has been paid. Use `RefundAsync` instead.                                |
+| 400  | `payment_pending`       | A payment has been started and can no longer be stopped. Follow the order status.  |
+| 400  | `order_refunded`        | The order has already been refunded.                                               |
+| 400  | `order_not_cancellable` | The order is in a status that cannot be cancelled.                                 |
+| 404  | `order_not_found`       | There is no order with the given id.                                               |
+
+The codes say what to do, not which payment method is involved; the exception message carries the details.
+
+```C#
+var merchantId = Guid.Parse("...");
+try
+{
+    await client
+        .AsOrOnBehalfOfMerchant(merchantId)
+        .CancelAsync(order.Id);
+}
+catch (CancelOrderException e) when (e.ErrorCode == CancelOrderErrorCodes.OrderPaid)
+{
+    // The customer has already paid. Refund the order if that is what you want.
+}
+catch (CancelOrderException e) when (e.IsRetryable)
+{
+    // A payment is in progress or the order changed. Try again shortly.
+}
+```
+
 ## Callbacks
 
 The integration is based on the calling system being able to receive callbacks (webhooks). The callback contains the orderId and the `OrderStatus` describing the event that occurred. Depending on the event, there may be more information provided. The callback is delivered to the `callbackUrl` that is set when creating the order.

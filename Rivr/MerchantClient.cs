@@ -136,6 +136,38 @@ public class MerchantClient : IMerchantOperations
     }
 
     /// <inheritdoc />
+    public async Task CancelAsync(Guid orderId, CancellationToken cancellationToken = default)
+    {
+        await RefreshAccessTokenAsync();
+
+        var response = await SendApiPostAsync($"orders/{orderId}/cancel", cancellationToken: cancellationToken);
+
+        // 400, 404 and 409 carry { propertyName, message, errorCode }. 401 and 403 are handled like every other call.
+        if (response.StatusCode is HttpStatusCode.BadRequest or HttpStatusCode.NotFound or HttpStatusCode.Conflict)
+        {
+            throw new CancelOrderException(response.StatusCode, await ReadApiErrorOrEmptyAsync(response, cancellationToken));
+        }
+
+        await response.EnsureSuccessfulResponseAsync();
+    }
+
+    /// <summary>
+    /// Reads the API error body. Returns an empty error when there is no readable body, for example a 404 from an
+    /// API version that does not have the endpoint, so the caller still gets a typed exception with the status code.
+    /// </summary>
+    private static async Task<ApiErrorResponse> ReadApiErrorOrEmptyAsync(HttpResponseMessage response, CancellationToken cancellationToken)
+    {
+        try
+        {
+            return await response.DeserialiseAsync<ApiErrorResponse>(cancellationToken: cancellationToken);
+        }
+        catch (System.Runtime.Serialization.SerializationException)
+        {
+            return new ApiErrorResponse();
+        }
+    }
+
+    /// <inheritdoc />
     public async Task<OrderSettlementForLists[]> GetOrderSettlementsAsync(CancellationToken cancellationToken = default)
     {
         await RefreshAccessTokenAsync();
