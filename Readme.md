@@ -270,6 +270,34 @@ catch (CancelOrderException e) when (e.IsRetryable)
 }
 ```
 
+### Error handling
+
+| Response | Exception |
+| -------- | --------- |
+| 401 | `UnauthorizedException` |
+| 403 | `ForbiddenException` (`Error`, `ErrorDescription`) |
+| Other unsuccessful status codes | `RivrHttpRequestException`, an `HttpRequestException` |
+
+The message of a `RivrHttpRequestException` contains the status code, the HTTP method, the host, the request path without query string and, when available, a correlation id:
+
+```text
+Response status code does not indicate success: 404 (Not Found). GET https://api.rivr.io/api/public/orders/1f3e2b7a-5c0d-4d8e-9a41-2b6f0c9d7e15. Correlation id: 4bf92f35-77b3-4da6-a3ce-929d0e0e4736.
+```
+
+It never contains the request or response body. Bodies can contain personal data, such as a customer's personal identity number, and exception messages end up in your logs. When you need the API's error details, read the properties:
+
+```C#
+catch (RivrHttpRequestException e) when (e.StatusCode == HttpStatusCode.BadRequest)
+{
+    // e.ResponseContent is the response body. It may contain personal data: do not log it.
+    // e.CorrelationId identifies the request if you contact Rivr support.
+}
+```
+
+Because the library targets .NET Standard 2.0, the base class's `HttpRequestException.StatusCode` is not set on .NET 5 and later. Use `RivrHttpRequestException.StatusCode`.
+
+The same applies to callbacks: log the callback's id, type and status, not the callback or its `Data`. See `Samples/Rivr.Samples.CallbackHandler`.
+
 ## Callbacks
 
 The integration is based on the calling system being able to receive callbacks (webhooks). The callback contains the orderId and the `OrderStatus` describing the event that occurred. Depending on the event, there may be more information provided. The callback is delivered to the `callbackUrl` that is set when creating the order.
