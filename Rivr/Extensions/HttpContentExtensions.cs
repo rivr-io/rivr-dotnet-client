@@ -15,6 +15,10 @@ public static class HttpContentExtensions
     /// <summary>
     /// Deserialise the content of the HttpContent into the specified type.
     /// </summary>
+    /// <remarks>
+    /// When deserialisation fails the <see cref="SerializationException"/> does not contain the content, since it can
+    /// contain personal data. The inner exception tells where in the JSON deserialisation failed.
+    /// </remarks>
     /// <param name="content"></param>
     /// <param name="options"></param>
     /// <param name="cancellationToken"></param>
@@ -33,8 +37,7 @@ public static class HttpContentExtensions
         }
         catch (Exception e)
         {
-            var response = await content.ReadAsStringAsync();
-            throw new SerializationException($"Could not deserialize into the expected type ({e.Message}) Response: {response}", e);
+            throw new SerializationException($"Could not deserialize the response into {typeof(T).Name}.", e);
         }
     }
 }

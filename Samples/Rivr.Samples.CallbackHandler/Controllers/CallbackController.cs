@@ -9,10 +9,18 @@ namespace Rivr.Samples.CallbackHandler.Controllers
     [Route("[controller]")]
     public class CallbackController(ILogger<CallbackController> logger) : ControllerBase
     {
+        // Log identifiers and statuses only, never the callback or its data. The data can contain personal
+        // data (customer details, metadata you attached to the order), and log files are kept, copied and
+        // shared far more widely than your database.
+
         [HttpPost]
         public Task Post([FromBody] Callback callback)
         {
-            logger.LogInformation("Received callback: {Callback}", callback);
+            // Only typed values: Status is a free-form string from the request, and logging it as-is would let a
+            // caller write arbitrary text (including line breaks) into your log. It is logged below once parsed.
+            logger.LogInformation(
+                "Received {CallbackType} callback {CallbackId} for merchant {MerchantId}",
+                callback.Type, callback.Id, callback.MerchantId);
 
             switch (callback.Type)
             {
@@ -35,23 +43,25 @@ namespace Rivr.Samples.CallbackHandler.Controllers
             {
                 case OrderStatus.Created:
                     var orderCreated = callback.Data.Deserialise<OrderCreated>();
-                    logger.LogInformation("Order created: {orderCreated}", orderCreated);
+                    logger.LogInformation("Order {OrderId} created at {CreatedDate}", callback.Id, orderCreated.CreatedDate);
                     break;
                 case OrderStatus.Pending:
                     var orderPending = callback.Data.Deserialise<OrderPending>();
-                    logger.LogInformation("Order pending: {orderPending}", orderPending);
+                    logger.LogInformation("Order {OrderId} pending since {CreatedDate}", callback.Id, orderPending.CreatedDate);
                     break;
                 case OrderStatus.Completed:
                     var orderCompleted = callback.Data.Deserialise<OrderCompleted>();
-                    logger.LogInformation("Order completed: {orderCompleted}", orderCompleted);
+                    logger.LogInformation("Order {OrderId} completed at {CompletedDate} with {PaymentMethod}",
+                        callback.Id, orderCompleted.CompletedDate, orderCompleted.PaymentMethod);
                     break;
                 case OrderStatus.Cancelled:
                     var orderCancelled = callback.Data.Deserialise<OrderCancelled>();
-                    logger.LogInformation("Order cancelled: {orderCancelled}", orderCancelled);
+                    logger.LogInformation("Order {OrderId} cancelled at {CancelledDate} ({Reason})",
+                        callback.Id, orderCancelled.CancelledDate, orderCancelled.Reason);
                     break;
                 case OrderStatus.Refunded:
                     var orderRefunded = callback.Data.Deserialise<OrderRefunded>();
-                    logger.LogInformation("Order refunded: {orderRefunded}", orderRefunded);
+                    logger.LogInformation("Order {OrderId} refunded at {RefundedDate}", callback.Id, orderRefunded.RefundedDate);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
