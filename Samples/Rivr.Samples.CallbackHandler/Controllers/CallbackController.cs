@@ -16,9 +16,11 @@ namespace Rivr.Samples.CallbackHandler.Controllers
         [HttpPost]
         public Task Post([FromBody] Callback callback)
         {
+            // Only typed values: Status is a free-form string from the request, and logging it as-is would let a
+            // caller write arbitrary text (including line breaks) into your log. It is logged below once parsed.
             logger.LogInformation(
-                "Received {CallbackType} callback {CallbackId} with status {CallbackStatus} for merchant {MerchantId}",
-                callback.Type, callback.Id, callback.Status, callback.MerchantId);
+                "Received {CallbackType} callback {CallbackId} for merchant {MerchantId}",
+                callback.Type, callback.Id, callback.MerchantId);
 
             switch (callback.Type)
             {

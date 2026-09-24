@@ -296,7 +296,7 @@ catch (RivrHttpRequestException e) when (e.StatusCode == HttpStatusCode.BadReque
 
 Because the library targets .NET Standard 2.0, the base class's `HttpRequestException.StatusCode` is not set on .NET 5 and later. Use `RivrHttpRequestException.StatusCode`.
 
-The same applies to callbacks: log the callback's id, type and status, not the callback or its `Data`. See `Samples/Rivr.Samples.CallbackHandler`.
+The same applies to callbacks: log the callback's id and type, not the callback or its `Data`. See `Samples/Rivr.Samples.CallbackHandler`.
 
 ## Callbacks
 

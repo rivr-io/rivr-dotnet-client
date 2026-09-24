@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 
 - Exception messages no longer contain request or response bodies. `EnsureSuccessfulResponseAsync` used to put the full request body and the full response body in `HttpRequestException.Message`, and deserialisation errors put the content in `SerializationException.Message`. Bodies can contain personal data, such as a customer's personal identity number, and exception messages end up in logs and error trackers. The message now contains the status code, the HTTP method, the host, the request path without query string and, when available, a correlation id.
-- The callback sample no longer logs the whole callback. It logs the callback's id, type and status, and selected fields from the order data.
+- The callback sample no longer logs the whole callback. It logs the callback's id, type and merchant, the parsed order status and selected fields from the order data.
 
 ### Added
 
