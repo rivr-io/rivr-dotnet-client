@@ -4,7 +4,16 @@
 version: 2
 updates:
   - package-ecosystem: nuget
-    directory: "/"
+    directories:
+      - "/Rivr"
+      - "/Rivr.Core"
+      - "/Samples/Rivr.Samples.CallbackHandler"
+      - "/Samples/Rivr.Samples.CallbackHandler.Test"
+      - "/Samples/Rivr.Samples.Console"
+      - "/Samples/Rivr.Samples.Console.DependencyInjection"
+      - "/Samples/Rivr.Samples.Console.DotNet6"
+      - "/Tests/Rivr.IntegrationTest"
+      - "/Tests/Rivr.Test"
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
