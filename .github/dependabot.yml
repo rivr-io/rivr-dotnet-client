@@ -1,0 +1,13 @@
+# FW-07: automatisk bevakning av sårbara och föråldrade beroenden.
+# Minor- och patch-uppdateringar grupperas till ett PR per ekosystem och vecka
+# så att flödet inte dränker repot.
+version: 2
+updates:
+  - package-ecosystem: nuget
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      nuget-minor-patch:
+        update-types: [minor, patch]
