@@ -1,0 +1,52 @@
+# SEC-08: hemlighetsskanning i CI.
+# Gitleaks läser bara PR:ens egna commits (merge-basen..HEAD) och bara TILLAGDA
+# rader, så redan incheckad historik gör inte grinden röd. Undantag läggs i en
+# .gitleaks.toml med en motivering per post.
+# Förlaga: rivr-monolith .github/workflows/ci.yml, jobbet scan-secrets.
+name: Hemlighetsgrind
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hemlighetsgrind-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gitleaks:
+    name: Hemlighetsgrind (gitleaks)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+        with:
+          # Hela historiken behövs för att kunna diffa mot merge-basen.
+          fetch-depth: 0
+
+      - name: Installera gitleaks
+        run: |
+          set -euo pipefail
+          curl -sSL -o gitleaks.tar.gz \
+            https://github.com/gitleaks/gitleaks/releases/download/v8.28.0/gitleaks_8.28.0_linux_x64.tar.gz
+          echo "a65b5253807a68ac0cafa4414031fd740aeb55f54fb7e55f386acb52e6a840eb  gitleaks.tar.gz" | sha256sum -c -
+          tar -xzf gitleaks.tar.gz gitleaks
+          ./gitleaks version
+
+      - name: Skanna PR:ens commits efter hemligheter
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin "$BASE_REF"
+          base=$(git merge-base "origin/$BASE_REF" HEAD)
+          echo "Skannar $base..HEAD"
+          # --redact: träffar loggas utan själva värdet. Exit 1 = träff.
+          ./gitleaks detect \
+            --source . \
+            --log-opts "$base..HEAD" \
+            --redact \
+            --no-banner \
+            --exit-code 1
