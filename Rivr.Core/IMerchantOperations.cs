@@ -94,6 +94,25 @@ public interface IMerchantOperations
     Task CancelAsync(Guid orderId, CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Sends an existing order to one of the merchant's devices (checkout terminals) so the customer can pay on it.
+    /// This is the same action as "Send to terminal" in the Rivr portal. Use it for an order that was created without
+    /// a device checkout hint, to send it again, or to send it to another device than the one in the hint.
+    /// The order must be in status <see cref="OrderStatus.Created"/>, and the device must belong to the merchant that
+    /// owns the order and be online (see <see cref="Device.IsOnline"/> in <see cref="GetDevicesAsync"/>).
+    /// Delivery is asynchronous: the payment result is reported through the order status and the order callback.
+    /// </summary>
+    /// <param name="orderId">The order ID.</param>
+    /// <param name="deviceId">The device ID (<see cref="Device.Id"/> from <see cref="GetDevicesAsync"/>).</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>A task that completes when the order has been pushed to the device.</returns>
+    /// <exception cref="SendOrderToDeviceException">
+    /// The order was not sent. <see cref="SendOrderToDeviceException.IsRetryable"/> is <see langword="true"/> when the
+    /// device is offline and the same call can succeed once it is online.
+    /// </exception>
+    /// <exception cref="ForbiddenException">The order belongs to a different merchant.</exception>
+    Task SendOrderToDeviceAsync(Guid orderId, Guid deviceId, CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Get a list of order settlements.
     /// </summary>
     /// <param name="cancellationToken">The cancellation token.</param>

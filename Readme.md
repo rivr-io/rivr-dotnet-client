@@ -211,6 +211,26 @@ var result = await client
 // result contains an instance of an Order object
 ```
 
+#### Send an order to a device
+
+`SendOrderToDeviceAsync` sends an existing order to one of the merchant's devices (checkout terminals) so the customer can pay on it — the same action as "Send to terminal" in the Rivr portal. Use it for an order that was created without a device checkout hint, to send it again, or to send it to another device. The order must be in status `OrderStatus.Created`, and the device must belong to the merchant and be online (`Device.IsOnline` from `GetDevicesAsync`). Delivery is asynchronous; the payment result is reported through the order status and the order callback.
+
+When the order is not sent a `SendOrderToDeviceException` is thrown. HTTP 400 means the order is not in status `Created` or the device is not one of the merchant's devices; 404 means the order was not found; 409 means the device is offline, and `IsRetryable` is `true`.
+
+```C#
+var merchantId = Guid.Parse("...");
+try
+{
+    await client
+        .AsOrOnBehalfOfMerchant(merchantId)
+        .SendOrderToDeviceAsync(order.Id, device.Id);
+}
+catch (SendOrderToDeviceException e) when (e.IsRetryable)
+{
+    // The device is offline. Try again when it is online.
+}
+```
+
 #### Fetch an order
 
 Using the `order.Id`, the order can be retrieved.
