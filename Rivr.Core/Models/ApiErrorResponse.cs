@@ -14,4 +14,9 @@ public class ApiErrorResponse
     /// Message stating what was invalid with the property
     /// </summary>
     public string? Message { get; set; }
+
+    /// <summary>
+    /// A machine-readable code identifying the error, if the API returned one.
+    /// </summary>
+    public string? ErrorCode { get; set; }
 }

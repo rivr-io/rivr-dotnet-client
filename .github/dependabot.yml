@@ -1,0 +1,22 @@
+# FW-07: automatisk bevakning av sårbara och föråldrade beroenden.
+# Minor- och patch-uppdateringar grupperas till ett PR per ekosystem och vecka
+# så att flödet inte dränker repot.
+version: 2
+updates:
+  - package-ecosystem: nuget
+    directories:
+      - "/Rivr"
+      - "/Rivr.Core"
+      - "/Samples/Rivr.Samples.CallbackHandler"
+      - "/Samples/Rivr.Samples.CallbackHandler.Test"
+      - "/Samples/Rivr.Samples.Console"
+      - "/Samples/Rivr.Samples.Console.DependencyInjection"
+      - "/Samples/Rivr.Samples.Console.DotNet6"
+      - "/Tests/Rivr.IntegrationTest"
+      - "/Tests/Rivr.Test"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      nuget-minor-patch:
+        update-types: [minor, patch]

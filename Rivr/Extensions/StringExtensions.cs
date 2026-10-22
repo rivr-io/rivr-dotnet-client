@@ -13,6 +13,9 @@ public static class StringExtensions
     /// <summary>
     /// Deserialise the content of the string into the specified type.
     /// </summary>
+    /// <remarks>
+    /// When deserialisation fails the <see cref="SerializationException"/> does not contain the content.
+    /// </remarks>
     /// <param name="content"></param>
     /// <param name="options"></param>
     /// <typeparam name="T"></typeparam>
@@ -37,7 +40,9 @@ public static class StringExtensions
         }
         catch (Exception e)
         {
-            throw new SerializationException($"Could not deserialize into the expected type. Content: {content}", e);
+            // The content is not included: a callback's data can contain personal data, and exception messages
+            // end up in logs. The inner exception tells where in the JSON deserialisation failed.
+            throw new SerializationException($"Could not deserialize the content into {typeof(T).Name}.", e);
         }
     }
 }

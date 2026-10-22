@@ -211,6 +211,26 @@ var result = await client
 // result contains an instance of an Order object
 ```
 
+#### Send an order to a device
+
+`SendOrderToDeviceAsync` sends an existing order to one of the merchant's devices (checkout terminals) so the customer can pay on it — the same action as "Send to terminal" in the Rivr portal. Use it for an order that was created without a device checkout hint, to send it again, or to send it to another device. The order must be in status `OrderStatus.Created`, and the device must belong to the merchant and be online (`Device.IsOnline` from `GetDevicesAsync`). Delivery is asynchronous; the payment result is reported through the order status and the order callback.
+
+When the order is not sent a `SendOrderToDeviceException` is thrown. HTTP 400 means the order is not in status `Created` or the device is not one of the merchant's devices; 404 means the order was not found; 409 means the device is offline, and `IsRetryable` is `true`.
+
+```C#
+var merchantId = Guid.Parse("...");
+try
+{
+    await client
+        .AsOrOnBehalfOfMerchant(merchantId)
+        .SendOrderToDeviceAsync(order.Id, device.Id);
+}
+catch (SendOrderToDeviceException e) when (e.IsRetryable)
+{
+    // The device is offline. Try again when it is online.
+}
+```
+
 #### Fetch an order
 
 Using the `order.Id`, the order can be retrieved.
@@ -235,6 +255,68 @@ await client
     .AsOrOnBehalfOfMerchant(merchantId)
     .RefundAsync(order.Id);
 ```
+
+#### Cancel an order
+
+`CancelAsync` cancels an order that has not been paid. Unlike `RefundAsync` it never refunds anything: if the order can no longer be cancelled — typically because the customer has already paid — nothing happens and a `CancelOrderException` is thrown. Its `ErrorCode` says what to do (see `CancelOrderErrorCodes`), and `IsRetryable` is `true` when the same call can succeed later. Cancelling an order that is already cancelled succeeds.
+
+| HTTP | `ErrorCode`             | Meaning                                                                            |
+| ---- | ----------------------- | ---------------------------------------------------------------------------------- |
+| 409  | `payment_in_progress`   | A payment is in progress right now, for example a card payment on a terminal. Retry. |
+| 409  | `order_changed`         | The order changed while it was being cancelled. Retry.                             |
+| 400  | `order_paid`            | The order has been paid. Use `RefundAsync` instead.                                |
+| 400  | `payment_pending`       | A payment has been started and can no longer be stopped. Follow the order status.  |
+| 400  | `order_refunded`        | The order has already been refunded.                                               |
+| 400  | `order_not_cancellable` | The order is in a status that cannot be cancelled.                                 |
+| 404  | `order_not_found`       | There is no order with the given id.                                               |
+
+The codes say what to do, not which payment method is involved; the exception message carries the details.
+
+```C#
+var merchantId = Guid.Parse("...");
+try
+{
+    await client
+        .AsOrOnBehalfOfMerchant(merchantId)
+        .CancelAsync(order.Id);
+}
+catch (CancelOrderException e) when (e.ErrorCode == CancelOrderErrorCodes.OrderPaid)
+{
+    // The customer has already paid. Refund the order if that is what you want.
+}
+catch (CancelOrderException e) when (e.IsRetryable)
+{
+    // A payment is in progress or the order changed. Try again shortly.
+}
+```
+
+### Error handling
+
+| Response | Exception |
+| -------- | --------- |
+| 401 | `UnauthorizedException` |
+| 403 | `ForbiddenException` (`Error`, `ErrorDescription`) |
+| Other unsuccessful status codes | `RivrHttpRequestException`, an `HttpRequestException` |
+
+The message of a `RivrHttpRequestException` contains the status code, the HTTP method, the host, the request path without query string and, when available, a correlation id:
+
+```text
+Response status code does not indicate success: 404 (Not Found). GET https://api.rivr.io/api/public/orders/1f3e2b7a-5c0d-4d8e-9a41-2b6f0c9d7e15. Correlation id: 4bf92f35-77b3-4da6-a3ce-929d0e0e4736.
+```
+
+It never contains the request or response body. Bodies can contain personal data, such as a customer's personal identity number, and exception messages end up in your logs. When you need the API's error details, read the properties:
+
+```C#
+catch (RivrHttpRequestException e) when (e.StatusCode == HttpStatusCode.BadRequest)
+{
+    // e.ResponseContent is the response body. It may contain personal data: do not log it.
+    // e.CorrelationId identifies the request if you contact Rivr support.
+}
+```
+
+Because the library targets .NET Standard 2.0, the base class's `HttpRequestException.StatusCode` is not set on .NET 5 and later. Use `RivrHttpRequestException.StatusCode`.
+
+The same applies to callbacks: log the callback's id and type, not the callback or its `Data`. See `Samples/Rivr.Samples.CallbackHandler`.
 
 ## Callbacks
 
