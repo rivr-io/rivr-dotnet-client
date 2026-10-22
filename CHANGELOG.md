@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `IMerchantOperations.CancelAsync` — cancels an order that has not been paid and never refunds. When the order is not cancelled it throws `CancelOrderException` with `ErrorCode` (see `CancelOrderErrorCodes`), `StatusCode` and `IsRetryable`. Requires the `POST /api/public/orders/{orderId}/cancel` endpoint (RIV-2189).
 - `ApiErrorResponse.ErrorCode`
+- `RivrWebhookSignature` (`Rivr.Core.Webhooks`) — verifies the `Rivr-Signature` header on a callback: `IsValid(secret, rawBody, header)` recomputes the HMAC-SHA256 over `{t}.{rawBody}`, accepts the callback when any `v1` signature in the header matches (the header carries more than one while a key is rotated), compares in constant time and rejects a timestamp outside the tolerance (5 minutes by default). `ComputeSignature` produces the same value. Verify against the raw request body, not a re-serialised one.
 - `IMerchantOperations.SendOrderToDeviceAsync` — sends an existing order in status `Created` to one of the merchant's devices (checkout terminals), the same action as "Send to terminal" in the Rivr portal. When the order is not sent it throws `SendOrderToDeviceException` with `StatusCode`, `PropertyName` and `IsRetryable` (409, the device is offline). Requires the `POST /api/public/orders/{orderId}/send-to-device` endpoint (RIV-1676).
 - `CancellationToken` support for all async methods
 - SourceLink support for debugging into source code
