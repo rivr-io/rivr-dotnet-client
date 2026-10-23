@@ -36,6 +36,12 @@ public class MerchantClient : IMerchantOperations
     /// </summary>
     private static readonly TimeSpan TokenCacheSafetyMargin = TimeSpan.FromSeconds(60);
 
+    /// <summary>The request header that makes a refund safe to retry.</summary>
+    internal const string IdempotencyKeyHeaderName = "Idempotency-Key";
+
+    /// <summary>The longest key the API accepts.</summary>
+    internal const int MaxIdempotencyKeyLength = 255;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="MerchantClient"/> class.
     /// </summary>
@@ -121,11 +127,20 @@ public class MerchantClient : IMerchantOperations
     }
 
     /// <inheritdoc />
-    public async Task RefundAsync(Guid orderId, CancellationToken cancellationToken = default)
+    public Task RefundAsync(Guid orderId, CancellationToken cancellationToken = default) =>
+        RefundAsync(orderId, idempotencyKey: null, cancellationToken);
+
+    /// <inheritdoc />
+    public async Task RefundAsync(Guid orderId, string? idempotencyKey, CancellationToken cancellationToken = default)
     {
+        // The key is settled here, once per call and before anything is sent, so every attempt that this call makes
+        // (including a retry made by a handler in the HttpClient pipeline, which resends the same request) carries the
+        // same key. A new call without a key gets a new key: pass your own key to retry across calls.
+        var key = idempotencyKey is null ? Guid.NewGuid().ToString("D") : ValidateIdempotencyKey(idempotencyKey);
+
         await RefreshAccessTokenAsync();
 
-        var response = await SendApiPostAsync($"orders/{orderId}/refund", cancellationToken: cancellationToken);
+        var response = await SendApiPostAsync($"orders/{orderId}/refund", cancellationToken: cancellationToken, idempotencyKey: key);
         if (response.StatusCode == HttpStatusCode.BadRequest)
         {
             var error = await response.DeserialiseAsync<ApiErrorResponse>(cancellationToken: cancellationToken);
@@ -291,11 +306,44 @@ public class MerchantClient : IMerchantOperations
         return await _client.ApiHttpClient.SendAsync(request, cancellationToken);
     }
 
-    private async Task<HttpResponseMessage> SendApiPostAsync(string url, HttpContent? content = null, CancellationToken cancellationToken = default)
+    private async Task<HttpResponseMessage> SendApiPostAsync(string url, HttpContent? content = null, CancellationToken cancellationToken = default, string? idempotencyKey = null)
     {
         var request = new HttpRequestMessage(HttpMethod.Post, url) { Content = content };
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
+        if (idempotencyKey is not null)
+        {
+            request.Headers.Add(IdempotencyKeyHeaderName, idempotencyKey);
+        }
+
         return await _client.ApiHttpClient.SendAsync(request, cancellationToken);
+    }
+
+    /// <summary>
+    /// Checks a caller-supplied idempotency key against what the API accepts (1 to 255 printable ASCII characters, not
+    /// only whitespace), so that a key the API would refuse is caught before a refund request is sent. The message
+    /// never contains the key.
+    /// </summary>
+    private static string ValidateIdempotencyKey(string idempotencyKey)
+    {
+        var valid = idempotencyKey.Length is > 0 and <= MaxIdempotencyKeyLength && !string.IsNullOrWhiteSpace(idempotencyKey);
+
+        if (valid)
+        {
+            foreach (var c in idempotencyKey)
+            {
+                if (c is < ' ' or > '~')
+                {
+                    valid = false;
+                    break;
+                }
+            }
+        }
+
+        return valid
+            ? idempotencyKey
+            : throw new ArgumentException(
+                $"The idempotency key must be 1 to {MaxIdempotencyKeyLength} printable ASCII characters and not only whitespace. A UUID is recommended.",
+                nameof(idempotencyKey));
     }
 
     private async Task<HttpResponseMessage> SendApiPostJsonAsync<T>(string url, T value, CancellationToken cancellationToken = default)

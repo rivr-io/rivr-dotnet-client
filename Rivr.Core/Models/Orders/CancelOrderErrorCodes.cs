@@ -22,7 +22,7 @@ public static class CancelOrderErrorCodes
     public const string OrderChanged = "order_changed";
 
     /// <summary>
-    /// 400 — the order has been paid. Use <see cref="Rivr.Core.IMerchantOperations.RefundAsync"/> to refund it.
+    /// 400 — the order has been paid. Use <see cref="Rivr.Core.IMerchantOperations.RefundAsync(System.Guid, System.Threading.CancellationToken)"/> to refund it.
     /// </summary>
     public const string OrderPaid = "order_paid";
 
