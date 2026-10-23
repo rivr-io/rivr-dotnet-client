@@ -71,14 +71,47 @@ public interface IMerchantOperations
     /// The calling system does not need to know the current status of the order.
     /// Note: There are certain payment methods that do not support refunds (some instalment products).
     /// </summary>
+    /// <remarks>
+    /// The request carries an <c>Idempotency-Key</c> header with a new random key (a GUID) for every call, so a
+    /// retry made by a handler in the <see cref="System.Net.Http.HttpClient"/> pipeline (for example a resilience
+    /// handler added through <c>IHttpClientFactory</c>) resends the same key and cannot refund twice. A retry made
+    /// by calling this method again gets a new key: to retry across calls, generate and store a key before the first
+    /// attempt and use <see cref="RefundAsync(Guid, string, CancellationToken)"/>.
+    /// </remarks>
     /// <param name="orderId">The order ID.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
     Task RefundAsync(Guid orderId, CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Refunds or cancels an order like <see cref="RefundAsync(Guid, CancellationToken)"/>, with an idempotency key
+    /// that you choose, so that the same refund can be retried safely, also from a new call or a new process.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// The key is sent in the <c>Idempotency-Key</c> header. The API stores the first successful response for 24
+    /// hours: a request with the same key for the same order returns that response (the header
+    /// <c>Idempotent-Replayed: true</c>) instead of a second refund. The key is scoped to your API client and to this
+    /// endpoint, and a key that has been used for another order is refused (422).
+    /// </para>
+    /// <para>
+    /// Use a new random key for every refund, store it before the first attempt, and reuse it for every retry of that
+    /// refund. The key must not contain personal data.
+    /// </para>
+    /// </remarks>
+    /// <param name="orderId">The order ID.</param>
+    /// <param name="idempotencyKey">
+    /// 1 to 255 printable ASCII characters, not only whitespace; a UUID is recommended. <see langword="null"/>
+    /// generates a new key for this call, which is what <see cref="RefundAsync(Guid, CancellationToken)"/> does.
+    /// </param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    /// <exception cref="ArgumentException"><paramref name="idempotencyKey"/> is not a key the API accepts. Nothing is sent.</exception>
+    Task RefundAsync(Guid orderId, string? idempotencyKey, CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Cancels an order that has not been paid.
-    /// Unlike <see cref="RefundAsync"/>, this never refunds anything: if the order can no longer be cancelled —
+    /// Unlike <see cref="RefundAsync(Guid, CancellationToken)"/>, this never refunds anything: if the order can no longer be cancelled —
     /// typically because the customer has already paid — nothing happens and a <see cref="CancelOrderException"/>
     /// is thrown whose <see cref="CancelOrderException.ErrorCode"/> says why (see <see cref="CancelOrderErrorCodes"/>).
     /// Cancelling an order that is already cancelled succeeds.

@@ -256,6 +256,51 @@ await client
     .RefundAsync(order.Id);
 ```
 
+#### Retry a refund safely
+
+A refund moves money, so a refund that may or may not have gone through must never be repeated blindly. `RefundAsync` therefore sends an `Idempotency-Key` header with every request, and the API uses it to recognise a retry: a request with the same key for the same order gets the stored response of the first request (with the header `Idempotent-Replayed: true`) instead of a second refund. A successful response is stored for 24 hours. The key is scoped to your API client and to the refund endpoint, and a key that has been used for another order is refused (422). An API version that does not know the header ignores it.
+
+- **Without a key from you**, `RefundAsync(order.Id)` generates a new GUID for every call. The library does not retry by itself, but if something in the HTTP pipeline does, for example a resilience handler that you add to the `ApiClient` named `HttpClient`, the retry resends the same request with the same key and cannot refund twice. **Calling `RefundAsync` again is a new call with a new key**: the API cannot see that it is a retry.
+- **With your own key**, retries from your own code, after a timeout, a crash or a restart, are safe. Generate the key once, store it with the refund request in your own system before the first attempt, and pass it every time.
+
+```C#
+// Generated once, and stored with the refund request before the first attempt.
+var idempotencyKey = Guid.NewGuid().ToString();
+
+var merchantId = Guid.Parse("...");
+await client
+    .AsOrOnBehalfOfMerchant(merchantId)
+    .RefundAsync(order.Id, idempotencyKey);
+// With a cancellation token: RefundAsync(order.Id, idempotencyKey, cancellationToken)
+```
+
+The key is 1 to 255 printable ASCII characters (a UUID is recommended), it must be random and it must not contain personal data. `RefundAsync` throws `ArgumentException` for a key that the API would refuse, before anything is sent; `null` means "generate one".
+
+What the API answers, with the same key:
+
+| HTTP | `errorCode`                   | Meaning                                                                                     | What to do                                                                                                        |
+| ---- | ----------------------------- | ------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| 409  | `idempotency_in_progress`     | A request with the same key is still being processed.                                       | Retry shortly with the same key. If it lasts more than a few minutes, check the order before you use a new key.   |
+| 503  | `idempotency_unavailable`     | The key could not be checked, so nothing was done.                                          | Retry with the same key.                                                                                          |
+| 422  | `idempotency_mismatch`        | The key has already been used for another order or another request. Nothing was done.       | Use a new key for every refund.                                                                                   |
+| 500  | `idempotency_outcome_unknown` | The request failed after the refund may have been started. The same key gives this answer for 24 hours. | Check the order (`GetOrderAsync`) before you retry with a new key.                                      |
+| 400  | `idempotency_key_invalid`     | The API did not accept the key.                                                             | Use a valid key. The library catches this before sending, so you should only see it for a token the API cannot scope a key to. |
+
+409, 422, 500 and 503 are thrown as `RivrHttpRequestException`: `StatusCode` tells them apart and `ResponseContent` holds the `errorCode`. 400 is thrown as `ApiCallException`, like every other bad request from `RefundAsync`. A 409 can also be one of the temporary refusals described for `CancelAsync` (`payment_in_progress`, `order_changed`) or `claim_check_unavailable`: retrying with the same key is right for all of them.
+
+```C#
+try
+{
+    await client
+        .AsOrOnBehalfOfMerchant(merchantId)
+        .RefundAsync(order.Id, idempotencyKey);
+}
+catch (RivrHttpRequestException e) when (e.StatusCode is HttpStatusCode.Conflict or HttpStatusCode.ServiceUnavailable)
+{
+    // Wait a moment and call RefundAsync again with the same idempotencyKey.
+}
+```
+
 #### Cancel an order
 
 `CancelAsync` cancels an order that has not been paid. Unlike `RefundAsync` it never refunds anything: if the order can no longer be cancelled — typically because the customer has already paid — nothing happens and a `CancelOrderException` is thrown. Its `ErrorCode` says what to do (see `CancelOrderErrorCodes`), and `IsRetryable` is `true` when the same call can succeed later. Cancelling an order that is already cancelled succeeds.
