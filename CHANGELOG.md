@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-Proposed version: **2.5.0** (minor). See "Breaking changes for implementers of `IMerchantOperations`" for why it is not a major.
+## [2.5.0] - 2026-10-27
+
+A minor release. See "Breaking changes for implementers of `IMerchantOperations`" for why it is not a major.
 
 ### Breaking changes for implementers of `IMerchantOperations`
 
