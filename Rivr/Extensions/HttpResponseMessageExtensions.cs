@@ -29,6 +29,10 @@ public static class HttpResponseMessageExtensions
     /// correlation id. It never carries the request or response body, since those can contain personal data and
     /// exception messages end up in logs. The response body is available in
     /// <see cref="RivrHttpRequestException.ResponseContent"/>.
+    /// <para>
+    /// When the answer has them, the exception also carries the API's error <c>Code</c> and <c>Type</c> (from the
+    /// body) and the <c>RequestId</c> (the <c>Rivr-Request-Id</c> header). They are on all three exception types.
+    /// </para>
     /// </remarks>
     /// <param name="message"></param>
     /// <exception cref="UnauthorizedException">The API responded 401.</exception>
@@ -41,9 +45,12 @@ public static class HttpResponseMessageExtensions
             return;
         }
 
+        var requestId = ApiErrorFields.RequestIdOf(message);
+
         if (message.StatusCode == HttpStatusCode.Unauthorized)
         {
-            throw new UnauthorizedException("Unauthorized. Please check your credentials.");
+            var (unauthorizedCode, unauthorizedType) = await ApiErrorFields.ReadBodyAsync(message);
+            throw new UnauthorizedException("Unauthorized. Please check your credentials.", unauthorizedCode, unauthorizedType, requestId);
         }
 
         if (message.StatusCode == HttpStatusCode.Forbidden)
@@ -52,14 +59,14 @@ public static class HttpResponseMessageExtensions
 
             if (errorResponse != null)
             {
-                throw new ForbiddenException(errorResponse);
+                throw new ForbiddenException(errorResponse.WithSafeFields(), requestId);
             }
 
             throw new ForbiddenException(new ErrorResponse
             {
                 Error = "Forbidden",
                 ErrorDescription = "The request is forbidden. Unknown reason."
-            });
+            }, requestId);
         }
 
         var method = message.RequestMessage?.Method.Method;
@@ -67,6 +74,7 @@ public static class HttpResponseMessageExtensions
         var requestPath = requestUri is null ? null : RedactPath(requestUri);
         var correlationId = CorrelationIdOf(message);
         var responseContent = message.Content is null ? null : await message.Content.ReadAsStringAsync();
+        var (code, type) = ApiErrorFields.ReadBody(responseContent);
 
         throw new RivrHttpRequestException(
             DescribeFailure(message, method, requestUri, requestPath, correlationId),
@@ -75,7 +83,10 @@ public static class HttpResponseMessageExtensions
             method,
             requestPath,
             correlationId,
-            responseContent);
+            responseContent,
+            code,
+            type,
+            requestId);
     }
 
     /// <summary>
@@ -223,6 +234,6 @@ public static class HttpResponseMessageExtensions
         return null;
     }
 
-    private static string? HeaderValue(HttpHeaders? headers, string name) =>
+    internal static string? HeaderValue(HttpHeaders? headers, string name) =>
         headers is not null && headers.TryGetValues(name, out var values) ? values.FirstOrDefault() : null;
 }

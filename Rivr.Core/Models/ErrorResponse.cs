@@ -18,4 +18,18 @@ public class ErrorResponse
     /// </summary>
     [JsonPropertyName("error_description")]
     public string? ErrorDescription { get; set; }
+
+    /// <summary>
+    /// The API's stable error code, for example <c>invalid_scope</c>, if the response carried one. Every error
+    /// answer under <c>/api/public</c> has carried it since 2026-10-25.
+    /// </summary>
+    [JsonPropertyName("code")]
+    public string? Code { get; set; }
+
+    /// <summary>
+    /// The address of the page that explains the error, <c>https://developers.rivr.io/errors/{code}</c>, if the
+    /// response carried one.
+    /// </summary>
+    [JsonPropertyName("type")]
+    public string? Type { get; set; }
 }

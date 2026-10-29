@@ -40,6 +40,34 @@ public class RivrHttpRequestException : HttpRequestException
         string? requestPath,
         string? correlationId,
         string? responseContent)
+        : this(message, statusCode, reasonPhrase, method, requestPath, correlationId, responseContent, code: null, type: null, requestId: null)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RivrHttpRequestException"/> class.
+    /// </summary>
+    /// <param name="message">A message without request or response bodies.</param>
+    /// <param name="statusCode">The HTTP status code returned by the API.</param>
+    /// <param name="reasonPhrase">The reason phrase returned by the API.</param>
+    /// <param name="method">The HTTP method of the request.</param>
+    /// <param name="requestPath">The request path without query string, with values that could identify a person masked.</param>
+    /// <param name="correlationId">The correlation id of the request, if one was available.</param>
+    /// <param name="responseContent">The response body. May contain personal data.</param>
+    /// <param name="code">The API's stable error code, if the response body carried one.</param>
+    /// <param name="type">The address of the error's page, if the response body carried one.</param>
+    /// <param name="requestId">The <c>Rivr-Request-Id</c> header of the response, if it carried one.</param>
+    public RivrHttpRequestException(
+        string message,
+        HttpStatusCode statusCode,
+        string? reasonPhrase,
+        string? method,
+        string? requestPath,
+        string? correlationId,
+        string? responseContent,
+        string? code,
+        string? type,
+        string? requestId)
         : base(message)
     {
         StatusCode = statusCode;
@@ -48,6 +76,9 @@ public class RivrHttpRequestException : HttpRequestException
         RequestPath = requestPath;
         CorrelationId = correlationId;
         ResponseContent = responseContent;
+        Code = code;
+        Type = type;
+        RequestId = requestId;
     }
 
     /// <summary>
@@ -86,4 +117,26 @@ public class RivrHttpRequestException : HttpRequestException
     /// <see cref="System.Exception.Message"/> or <see cref="System.Exception.ToString"/>.
     /// </summary>
     public string? ResponseContent { get; }
+
+    /// <summary>
+    /// The API's stable error code, for example <c>order_not_found</c>, read from the response body, or
+    /// <see langword="null"/> when the body had none (or was not a JSON object). Every error answer under
+    /// <c>/api/public</c> has carried a code since 2026-10-25. Decide what to do from this, not from
+    /// <see cref="System.Exception.Message"/> and not by parsing <see cref="ResponseContent"/> yourself: the message and
+    /// the text of the body are for people and can change.
+    /// </summary>
+    public string? Code { get; }
+
+    /// <summary>
+    /// The address of the page that explains the error, <c>https://developers.rivr.io/errors/{code}</c>, read from the
+    /// response body, or <see langword="null"/> when the body had none.
+    /// </summary>
+    public string? Type { get; }
+
+    /// <summary>
+    /// The <c>Rivr-Request-Id</c> header of the response, a GUID that identifies the call at Rivr, or
+    /// <see langword="null"/> when the response had none. Quote it when you contact Rivr support. It is not
+    /// <see cref="CorrelationId"/>, which is the <c>X-Correlation-Id</c> of the request.
+    /// </summary>
+    public string? RequestId { get; }
 }

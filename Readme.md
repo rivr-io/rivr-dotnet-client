@@ -361,6 +361,44 @@ catch (RivrHttpRequestException e) when (e.StatusCode == HttpStatusCode.BadReque
 
 Because the library targets .NET Standard 2.0, the base class's `HttpRequestException.StatusCode` is not set on .NET 5 and later. Use `RivrHttpRequestException.StatusCode`.
 
+#### Program against `Code`
+
+Every error answer under `/api/public` carries a stable `code` (for example `order_paid`, `token_expired` or `device_offline`) and a `type`, the address of the code's page in the developer portal: `https://developers.rivr.io/errors/{code}`. Since 2026-10-25 that holds for all of them: the token, the scope, a request that cannot be read and every operation's own errors. Answers from rivr-public-api also have the header `Rivr-Request-Id`, a GUID that identifies the call at Rivr.
+
+The exceptions expose all three, next to what they exposed before: `Code`, `Type` and `RequestId`. They are on `UnauthorizedException`, `ForbiddenException`, `RivrHttpRequestException`, `ApiCallException` (the 400 of `RefundAsync` is one) and its subclasses `CancelOrderException` and `SendOrderToDeviceException`.
+
+- **Decide what to do from `Code`.** `Message`, `ErrorDescription` and the text in `ResponseContent` are for people and can change; a code stays. New codes come over time, so keep a branch for a code you do not know, and take the status code as the broad answer.
+- **`Code` is `null` when the answer has none**: an API version from before 2026-10-25, the token endpoint (it answers with OAuth's `error`) or a gateway's own error page. `RequestId` is `null` when the answer has no `Rivr-Request-Id`. A value that does not look like what the API sends (a code is a short word) is not passed on, so the properties are safe to log.
+- **Log `RequestId` with the error and quote it when you contact Rivr support.** It is not `RivrHttpRequestException.CorrelationId`, which is the `X-Correlation-Id` of the request. The exception messages are as they were; the request id has its own property.
+- `ErrorCode` on `CancelOrderException` is still there and has the same value as `Code` where the answer has both. Use `Code`: it is there on every error.
+
+```C#
+try
+{
+    await client
+        .AsOrOnBehalfOfMerchant(merchantId)
+        .RefundAsync(order.Id, idempotencyKey);
+}
+catch (ApiCallException e) when (e.Code == "order_not_refundable")
+{
+    // 400: the order cannot be refunded. Nothing was done.
+}
+catch (RivrHttpRequestException e) when (e.Code == "idempotency_outcome_unknown")
+{
+    // Check the order with GetOrderAsync before you refund again with a new key.
+}
+catch (RivrHttpRequestException e) when (e.Code is "payment_in_progress" or "order_changed" or "claim_check_unavailable" or "idempotency_in_progress" or "idempotency_unavailable")
+{
+    // Temporary: call RefundAsync again with the same idempotencyKey.
+}
+catch (RivrHttpRequestException e)
+{
+    // Log what identifies the failure, never e.ResponseContent.
+    logger.LogError("Refund failed: {Status} {Code}, Rivr-Request-Id {RequestId}", e.StatusCode, e.Code, e.RequestId);
+    throw;
+}
+```
+
 The same applies to callbacks: log the callback's id and type, not the callback or its `Data`. See `Samples/Rivr.Samples.CallbackHandler`.
 
 ## Callbacks
@@ -412,8 +450,11 @@ Every callback is signed so you can confirm it really came from Rivr. The reques
 merchant key plus a platform-wide key, and old + new during key rotation) — accept it if **any** of
 them matches a key you hold.
 
-Use `RivrWebhookSignature` (in `Rivr.Core.Webhooks`) from your callback handler. Verify against the
-**raw** request body (do not re-serialize the JSON first):
+Use `WebhookSignature.Verify` (in `Rivr.Core.Webhooks`) from your callback handler. It follows the rules
+of the developer portal's guide "Verify the webhook signature" and passes the guide's test vectors, and it
+works the same for the `callbackUrl` and for your organisation's webhook endpoints. Pass the body **as the
+bytes that arrived**: JSON that has been parsed and written out again has other bytes (Rivr writes every
+character outside ASCII as a JSON escape), so model binding such as `[FromBody]` is not an option here.
 
 ```csharp
 using Rivr.Core.Webhooks;
@@ -421,23 +462,48 @@ using Rivr.Core.Webhooks;
 [HttpPost("callbacks/rivr")]
 public async Task<IActionResult> Handle()
 {
-    using var reader = new StreamReader(Request.Body);
-    var rawBody = await reader.ReadToEndAsync();
-    var signature = Request.Headers["Rivr-Signature"].ToString();
+    // The raw body, read before anything parses it.
+    using var buffer = new MemoryStream();
+    await Request.Body.CopyToAsync(buffer);
+    var rawBody = buffer.ToArray();
 
-    if (!RivrWebhookSignature.IsValid(secret: _webhookSecret, rawBody: rawBody, rivrSignatureHeader: signature))
+    // _webhookSecrets: your signing secret(s), whsec_ prefix included.
+    if (!WebhookSignature.Verify(rawBody, Request.Headers["Rivr-Signature"], _webhookSecrets))
     {
-        return Unauthorized();
+        return Unauthorized(); // not 400: Rivr never retries a 400, but it retries a 401 on schedule
     }
 
+    // Rivr-Webhook-Id is the delivery's id, the same on every retry. Store it under a unique key in the same
+    // transaction as the work and skip an id you have seen. It is not part of the signature: verify first.
+    string? webhookId = Request.Headers["Rivr-Webhook-Id"];
+
     // ...deserialize rawBody and handle the event
-    return Ok();
+    return Ok(); // within 5 seconds
 }
 ```
 
-`IsValid` enforces a ±5 minute timestamp tolerance by default (replay protection), uses a constant-time
-comparison, and never throws on malformed input (it returns `false`). Manage your webhook signing keys
-in the Rivr portal.
+- **What counts as valid.** The header is `t=<unix seconds>,v1=<hex>[,v1=<hex>…]`. `Verify` is `true` when one `v1`
+  is the `HMAC-SHA256` of `"{t}.{raw body}"` under one of your secrets (the **whole** secret is the key, `whsec_`
+  included) and `t` is within 5 minutes of your clock, in either direction. Pass another window as the
+  `tolerance` argument. The comparison takes the same time whatever the guess.
+- **Several secrets.** Pass them as a list while you rotate a key; one match is enough. A delivery on the
+  `callbackUrl` path carries one `v1` per active key on the clinic and on its platform, and you can hold
+  just one of them. Remove the old secret once Rivr has stopped signing with it.
+- **It answers `false`, it does not throw,** for anything a caller on the network can send wrong: no header, a
+  broken header, a body that was changed, a timestamp that is not a number, another key. An empty secret, such
+  as a setting that exists but is not filled in, never verifies (anyone can sign with an empty key); a `null`
+  secret does not either. It throws `ArgumentNullException` for a `null` body and `ArgumentOutOfRangeException`
+  for a negative tolerance, since only your own code gets those wrong.
+- **No header.** On the `callbackUrl` path signing is optional: a delivery arrives unsigned when no signing key
+  is active, and `Verify` answers `false` for it. Decide what you do with that on purpose. Organisation
+  endpoints are always signed.
+- **A body as a string.** `Verify` also takes the body as a `string`, read as UTF-8. Prefer the bytes: they are
+  exactly what was signed.
+- **Tests.** The guide publishes made-up test vectors. Put them in your own test suite, with `now` set to the
+  vector's clock (`Verify(body, header, secrets, now: ...)`); this library's tests run all of them.
+
+`RivrWebhookSignature.IsValid` (one secret, a string body) is still there and behaves as before. New code
+should use `WebhookSignature.Verify`. Manage your webhook signing keys in the Rivr portal.
 
 Note: If the Callback URL is empty or malformatted there will be no attempts at all.
 

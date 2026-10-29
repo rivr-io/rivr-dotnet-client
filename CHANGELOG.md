@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `WebhookSignature.Verify` (in `Rivr.Core.Webhooks`) — verifies the `Rivr-Signature` header of a webhook delivery with the rules of the developer portal's guide "Verify the webhook signature" and the guide's test vectors (RIV-3327). It takes the body as the bytes that arrived or as a string, one secret or several (for a key rotation), and a tolerance (5 minutes either way by default; `tolerance` and `now` are arguments), compares in constant time, and answers `false`, never throws, for a missing or broken header, a changed body, another key and an empty secret. `RivrWebhookSignature.IsValid` is unchanged. See "Verifying the callback signature" in the README.
+- `Code`, `Type` and `RequestId` on `ApiCallException` (and so on `CancelOrderException` and `SendOrderToDeviceException`), `UnauthorizedException`, `ForbiddenException` and `RivrHttpRequestException`: the API's stable error `code` and its `type` (the address of the code's page), read from the answer's body (every error answer under `/api/public` has had them since 2026-10-25), and the `Rivr-Request-Id` header of the answer. `null` when the answer has none, and a value that is not shaped like the API's is dropped. New constructors take the three values; the constructors that were there before are unchanged and leave them `null`. `ApiErrorResponse` and `ErrorResponse` have `Code` and `Type`. The messages of the exceptions are unchanged, and `ErrorCode` on `CancelOrderException` is still what it was. See "Program against `Code`" in the README.
+
 ## [2.5.0] - 2026-10-27
 
 A minor release. See "Breaking changes for implementers of `IMerchantOperations`" for why it is not a major.

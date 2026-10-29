@@ -16,6 +16,11 @@ namespace Rivr.Core.Webhooks
     /// may carry several <c>v1</c> values (a merchant key + a platform-wide key, and old+new during key
     /// rotation); accept the webhook if <em>any</em> of them matches a key you hold. Always verify against
     /// the <b>raw</b> request body (do not re-serialize the JSON first), and reject stale timestamps.
+    /// <para>
+    /// New code should use <see cref="WebhookSignature.Verify(byte[], string, string, TimeSpan?, DateTimeOffset?)"/>: it
+    /// takes the body as bytes, takes several secrets (for a key rotation) and parses the header exactly as the developer
+    /// portal's guide and test vectors describe. <see cref="IsValid"/> is kept as it is.
+    /// </para>
     /// </remarks>
     public static class RivrWebhookSignature
     {
