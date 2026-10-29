@@ -143,8 +143,8 @@ public class MerchantClient : IMerchantOperations
         var response = await SendApiPostAsync($"orders/{orderId}/refund", cancellationToken: cancellationToken, idempotencyKey: key);
         if (response.StatusCode == HttpStatusCode.BadRequest)
         {
-            var error = await response.DeserialiseAsync<ApiErrorResponse>(cancellationToken: cancellationToken);
-            throw new ApiCallException(error.Message ?? "Unknown error");
+            var error = (await response.DeserialiseAsync<ApiErrorResponse>(cancellationToken: cancellationToken)).WithSafeFields();
+            throw new ApiCallException(error.Message ?? "Unknown error", error.Code, error.Type, ApiErrorFields.RequestIdOf(response));
         }
 
         await response.EnsureSuccessfulResponseAsync();
@@ -160,7 +160,7 @@ public class MerchantClient : IMerchantOperations
         // 400, 404 and 409 carry { propertyName, message, errorCode }. 401 and 403 are handled like every other call.
         if (response.StatusCode is HttpStatusCode.BadRequest or HttpStatusCode.NotFound or HttpStatusCode.Conflict)
         {
-            throw new CancelOrderException(response.StatusCode, await ReadApiErrorOrEmptyAsync(response, cancellationToken));
+            throw new CancelOrderException(response.StatusCode, await ReadApiErrorOrEmptyAsync(response, cancellationToken), ApiErrorFields.RequestIdOf(response));
         }
 
         await response.EnsureSuccessfulResponseAsync();
@@ -176,7 +176,7 @@ public class MerchantClient : IMerchantOperations
         // 400, 404 and 409 carry { propertyName, message }. 401 and 403 are handled like every other call.
         if (response.StatusCode is HttpStatusCode.BadRequest or HttpStatusCode.NotFound or HttpStatusCode.Conflict)
         {
-            throw new SendOrderToDeviceException(response.StatusCode, await ReadApiErrorOrEmptyAsync(response, cancellationToken));
+            throw new SendOrderToDeviceException(response.StatusCode, await ReadApiErrorOrEmptyAsync(response, cancellationToken), ApiErrorFields.RequestIdOf(response));
         }
 
         await response.EnsureSuccessfulResponseAsync();
@@ -190,7 +190,7 @@ public class MerchantClient : IMerchantOperations
     {
         try
         {
-            return await response.DeserialiseAsync<ApiErrorResponse>(cancellationToken: cancellationToken);
+            return (await response.DeserialiseAsync<ApiErrorResponse>(cancellationToken: cancellationToken)).WithSafeFields();
         }
         catch (System.Runtime.Serialization.SerializationException)
         {

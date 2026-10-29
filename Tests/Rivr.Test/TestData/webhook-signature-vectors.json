@@ -1,0 +1,344 @@
+{
+  "about": "Made-up test vectors for the Rivr-Signature header. Every secret, id and body in this file is invented and used nowhere else.",
+  "header": "Rivr-Signature: t=<unix seconds>,v1=<hex>[,v1=<hex>...]  (one v1 per active signing key)",
+  "algorithm": "v1 = lowercase hex of HMAC-SHA256(key: the UTF-8 bytes of the whole secret, whsec_ included; message: the UTF-8 bytes of \"<t>.<raw body>\")",
+  "toleranceSeconds": 300,
+  "howToUse": "For every vector, verify(headers[\"Rivr-Signature\"] (absent means missing), body, secrets, now) must return valid. \"signing\" says how Rivr made the header; you do not need it to verify.",
+  "vectors": [
+    {
+      "name": "one-key",
+      "path": "both",
+      "about": "One active key. The common case on both delivery paths.",
+      "signing": {
+        "keys": [
+          "whsec_TESTVEKTOR-A-pahittad-nyckel-inte-riktig-00"
+        ],
+        "timestamp": 1789640080
+      },
+      "headers": {
+        "Rivr-Signature": "t=1789640080,v1=1e506d9e1195a98089bbb902f1a0b4c04fe39d39b50f33cf7f8f0e6c22c7ab0d"
+      },
+      "body": "{\"id\":\"7b1e7c3a-2f4d-4a51-9c7e-5d0a6b8e2c14\",\"type\":\"Order\",\"merchantId\":\"e26f9eeb-dd71-4f40-a508-d7344409430d\",\"status\":\"Completed\",\"data\":{\"CreatedDate\":\"2026-09-17T10:12:03Z\",\"Reference\":\"visit-48213\",\"CompletedDate\":\"2026-09-17T10:14:38Z\",\"PaymentMethod\":\"Swish\",\"Metadata\":{\"bookingId\":\"48213\"}}}",
+      "secrets": [
+        "whsec_TESTVEKTOR-A-pahittad-nyckel-inte-riktig-00"
+      ],
+      "now": 1789640092,
+      "valid": true
+    },
+    {
+      "name": "organization-endpoint",
+      "path": "organization",
+      "about": "An organization's endpoint: always signed, and Rivr-Webhook-Id comes along. The id is not part of what is signed.",
+      "signing": {
+        "keys": [
+          "whsec_TESTVEKTOR-A-pahittad-nyckel-inte-riktig-00"
+        ],
+        "timestamp": 1789640140
+      },
+      "headers": {
+        "Rivr-Signature": "t=1789640140,v1=dee71e2d4501c5daa145610df2ac01e11cf8cd0fbf935d96f860ca17a9f68fdf",
+        "Rivr-Webhook-Id": "d7c83c3b-2694-49df-b703-022a5440bcd8"
+      },
+      "body": "{\"id\":\"7b1e7c3a-2f4d-4a51-9c7e-5d0a6b8e2c14\",\"type\":\"Order\",\"merchantId\":\"e26f9eeb-dd71-4f40-a508-d7344409430d\",\"status\":\"Pending\",\"data\":{\"CreatedDate\":\"2026-09-17T10:12:03Z\",\"Reference\":\"visit-48213\",\"Metadata\":{\"bookingId\":\"48213\"}}}",
+      "secrets": [
+        "whsec_TESTVEKTOR-A-pahittad-nyckel-inte-riktig-00"
+      ],
+      "now": 1789640152,
+      "valid": true
+    },
+    {
+      "name": "clinic-and-platform",
+      "path": "callbackUrl",
+      "about": "The callbackUrl path signs once per active key on the clinic and on its platform. You hold only the platform key: one matching v1 is enough.",
+      "signing": {
+        "keys": [
+          "whsec_TESTVEKTOR-K-pahittad-nyckel-inte-riktig-00",
+          "whsec_TESTVEKTOR-P-pahittad-nyckel-inte-riktig-00"
+        ],
+        "timestamp": 1789640080
+      },
+      "headers": {
+        "Rivr-Signature": "t=1789640080,v1=9da00f8f153e4bb177e9b77812b56ba87105b31ae0583eb509bb1c6a5cafbe14,v1=d92f0c9586e8f4a0aa5cd4e7a40d54f3855ccc122501e01ab9070db3980d2feb"
+      },
+      "body": "{\"id\":\"7b1e7c3a-2f4d-4a51-9c7e-5d0a6b8e2c14\",\"type\":\"Order\",\"merchantId\":\"e26f9eeb-dd71-4f40-a508-d7344409430d\",\"status\":\"Completed\",\"data\":{\"CreatedDate\":\"2026-09-17T10:12:03Z\",\"Reference\":\"visit-48213\",\"CompletedDate\":\"2026-09-17T10:14:38Z\",\"PaymentMethod\":\"Swish\",\"Metadata\":{\"bookingId\":\"48213\"}}}",
+      "secrets": [
+        "whsec_TESTVEKTOR-P-pahittad-nyckel-inte-riktig-00"
+      ],
+      "now": 1789640092,
+      "valid": true
+    },
+    {
+      "name": "rotation-by-rivr",
+      "path": "organization",
+      "about": "The key is being rotated: Rivr signs with the old and the new key. You have already switched to the new one.",
+      "signing": {
+        "keys": [
+          "whsec_TESTVEKTOR-G-pahittad-nyckel-inte-riktig-00",
+          "whsec_TESTVEKTOR-N-pahittad-nyckel-inte-riktig-00"
+        ],
+        "timestamp": 1789640080
+      },
+      "headers": {
+        "Rivr-Signature": "t=1789640080,v1=a8ae751e27ee1357098490b290177b10f41acef995d123792ad4e7fcd8e1aa89,v1=251602a0e69adf5731ee1bdbd57a9becafe2dc1b5b034557af60b9ee93a242ad",
+        "Rivr-Webhook-Id": "885b416d-ffe0-47a4-91a7-e42d9f1a424b"
+      },
+      "body": "{\"id\":\"7b1e7c3a-2f4d-4a51-9c7e-5d0a6b8e2c14\",\"type\":\"Order\",\"merchantId\":\"e26f9eeb-dd71-4f40-a508-d7344409430d\",\"status\":\"Completed\",\"data\":{\"CreatedDate\":\"2026-09-17T10:12:03Z\",\"Reference\":\"visit-48213\",\"CompletedDate\":\"2026-09-17T10:14:38Z\",\"PaymentMethod\":\"Swish\",\"Metadata\":{\"bookingId\":\"48213\"}}}",
+      "secrets": [
+        "whsec_TESTVEKTOR-N-pahittad-nyckel-inte-riktig-00"
+      ],
+      "now": 1789640092,
+      "valid": true
+    },
+    {
+      "name": "rotation-by-you",
+      "path": "both",
+      "about": "Rivr signs with the new key only; you still hold both while you roll out the new one.",
+      "signing": {
+        "keys": [
+          "whsec_TESTVEKTOR-N-pahittad-nyckel-inte-riktig-00"
+        ],
+        "timestamp": 1789640080
+      },
+      "headers": {
+        "Rivr-Signature": "t=1789640080,v1=251602a0e69adf5731ee1bdbd57a9becafe2dc1b5b034557af60b9ee93a242ad"
+      },
+      "body": "{\"id\":\"7b1e7c3a-2f4d-4a51-9c7e-5d0a6b8e2c14\",\"type\":\"Order\",\"merchantId\":\"e26f9eeb-dd71-4f40-a508-d7344409430d\",\"status\":\"Completed\",\"data\":{\"CreatedDate\":\"2026-09-17T10:12:03Z\",\"Reference\":\"visit-48213\",\"CompletedDate\":\"2026-09-17T10:14:38Z\",\"PaymentMethod\":\"Swish\",\"Metadata\":{\"bookingId\":\"48213\"}}}",
+      "secrets": [
+        "whsec_TESTVEKTOR-G-pahittad-nyckel-inte-riktig-00",
+        "whsec_TESTVEKTOR-N-pahittad-nyckel-inte-riktig-00"
+      ],
+      "now": 1789640092,
+      "valid": true
+    },
+    {
+      "name": "escaped-unicode",
+      "path": "both",
+      "about": "Rivr writes every character outside ASCII as a JSON escape (Å is six characters: backslash, u, 00C5). Verify the bytes you received, escapes and all.",
+      "signing": {
+        "keys": [
+          "whsec_TESTVEKTOR-A-pahittad-nyckel-inte-riktig-00"
+        ],
+        "timestamp": 1789640080
+      },
+      "headers": {
+        "Rivr-Signature": "t=1789640080,v1=031fee715cf709d70f1c15e048d677fcc317bb52927f1127945e74a092f88399"
+      },
+      "body": "{\"id\":\"7b1e7c3a-2f4d-4a51-9c7e-5d0a6b8e2c14\",\"type\":\"Order\",\"merchantId\":\"e26f9eeb-dd71-4f40-a508-d7344409430d\",\"status\":\"Created\",\"data\":{\"CreatedDate\":\"2026-09-17T10:12:03Z\",\"Reference\":\"visit-48213\",\"Metadata\":{\"bookingId\":\"48213\",\"visitType\":\"\\u00C5terbes\\u00F6k\"}}}",
+      "secrets": [
+        "whsec_TESTVEKTOR-A-pahittad-nyckel-inte-riktig-00"
+      ],
+      "now": 1789640092,
+      "valid": true
+    },
+    {
+      "name": "re-serialised-body",
+      "path": "both",
+      "about": "The same delivery after JSON.parse + JSON.stringify: the escapes became real characters, so the bytes differ and the signature no longer matches.",
+      "signing": {
+        "keys": [
+          "whsec_TESTVEKTOR-A-pahittad-nyckel-inte-riktig-00"
+        ],
+        "timestamp": 1789640080,
+        "body": "{\"id\":\"7b1e7c3a-2f4d-4a51-9c7e-5d0a6b8e2c14\",\"type\":\"Order\",\"merchantId\":\"e26f9eeb-dd71-4f40-a508-d7344409430d\",\"status\":\"Created\",\"data\":{\"CreatedDate\":\"2026-09-17T10:12:03Z\",\"Reference\":\"visit-48213\",\"Metadata\":{\"bookingId\":\"48213\",\"visitType\":\"\\u00C5terbes\\u00F6k\"}}}"
+      },
+      "headers": {
+        "Rivr-Signature": "t=1789640080,v1=031fee715cf709d70f1c15e048d677fcc317bb52927f1127945e74a092f88399"
+      },
+      "body": "{\"id\":\"7b1e7c3a-2f4d-4a51-9c7e-5d0a6b8e2c14\",\"type\":\"Order\",\"merchantId\":\"e26f9eeb-dd71-4f40-a508-d7344409430d\",\"status\":\"Created\",\"data\":{\"CreatedDate\":\"2026-09-17T10:12:03Z\",\"Reference\":\"visit-48213\",\"Metadata\":{\"bookingId\":\"48213\",\"visitType\":\"Återbesök\"}}}",
+      "secrets": [
+        "whsec_TESTVEKTOR-A-pahittad-nyckel-inte-riktig-00"
+      ],
+      "now": 1789640092,
+      "valid": false
+    },
+    {
+      "name": "tampered-body",
+      "path": "both",
+      "about": "Rivr signed a Pending body; someone changed it to Completed on the way.",
+      "signing": {
+        "keys": [
+          "whsec_TESTVEKTOR-A-pahittad-nyckel-inte-riktig-00"
+        ],
+        "timestamp": 1789640080,
+        "body": "{\"id\":\"7b1e7c3a-2f4d-4a51-9c7e-5d0a6b8e2c14\",\"type\":\"Order\",\"merchantId\":\"e26f9eeb-dd71-4f40-a508-d7344409430d\",\"status\":\"Pending\",\"data\":{\"CreatedDate\":\"2026-09-17T10:12:03Z\",\"Reference\":\"visit-48213\",\"Metadata\":{\"bookingId\":\"48213\"}}}"
+      },
+      "headers": {
+        "Rivr-Signature": "t=1789640080,v1=ba5faf4268c9666ce86db4c3bb2291299715de3cc427ea9e0f6775770fb80b80"
+      },
+      "body": "{\"id\":\"7b1e7c3a-2f4d-4a51-9c7e-5d0a6b8e2c14\",\"type\":\"Order\",\"merchantId\":\"e26f9eeb-dd71-4f40-a508-d7344409430d\",\"status\":\"Completed\",\"data\":{\"CreatedDate\":\"2026-09-17T10:12:03Z\",\"Reference\":\"visit-48213\",\"CompletedDate\":\"2026-09-17T10:14:38Z\",\"PaymentMethod\":\"Swish\",\"Metadata\":{\"bookingId\":\"48213\"}}}",
+      "secrets": [
+        "whsec_TESTVEKTOR-A-pahittad-nyckel-inte-riktig-00"
+      ],
+      "now": 1789640092,
+      "valid": false
+    },
+    {
+      "name": "wrong-secret",
+      "path": "both",
+      "about": "Signed with a key you don't hold.",
+      "signing": {
+        "keys": [
+          "whsec_TESTVEKTOR-A-pahittad-nyckel-inte-riktig-00"
+        ],
+        "timestamp": 1789640080
+      },
+      "headers": {
+        "Rivr-Signature": "t=1789640080,v1=1e506d9e1195a98089bbb902f1a0b4c04fe39d39b50f33cf7f8f0e6c22c7ab0d"
+      },
+      "body": "{\"id\":\"7b1e7c3a-2f4d-4a51-9c7e-5d0a6b8e2c14\",\"type\":\"Order\",\"merchantId\":\"e26f9eeb-dd71-4f40-a508-d7344409430d\",\"status\":\"Completed\",\"data\":{\"CreatedDate\":\"2026-09-17T10:12:03Z\",\"Reference\":\"visit-48213\",\"CompletedDate\":\"2026-09-17T10:14:38Z\",\"PaymentMethod\":\"Swish\",\"Metadata\":{\"bookingId\":\"48213\"}}}",
+      "secrets": [
+        "whsec_TESTVEKTOR-X-pahittad-nyckel-inte-riktig-00"
+      ],
+      "now": 1789640092,
+      "valid": false
+    },
+    {
+      "name": "secret-without-prefix",
+      "path": "both",
+      "about": "The whsec_ prefix is part of the key. Stripping it gives another key.",
+      "signing": {
+        "keys": [
+          "whsec_TESTVEKTOR-A-pahittad-nyckel-inte-riktig-00"
+        ],
+        "timestamp": 1789640080
+      },
+      "headers": {
+        "Rivr-Signature": "t=1789640080,v1=1e506d9e1195a98089bbb902f1a0b4c04fe39d39b50f33cf7f8f0e6c22c7ab0d"
+      },
+      "body": "{\"id\":\"7b1e7c3a-2f4d-4a51-9c7e-5d0a6b8e2c14\",\"type\":\"Order\",\"merchantId\":\"e26f9eeb-dd71-4f40-a508-d7344409430d\",\"status\":\"Completed\",\"data\":{\"CreatedDate\":\"2026-09-17T10:12:03Z\",\"Reference\":\"visit-48213\",\"CompletedDate\":\"2026-09-17T10:14:38Z\",\"PaymentMethod\":\"Swish\",\"Metadata\":{\"bookingId\":\"48213\"}}}",
+      "secrets": [
+        "TESTVEKTOR-A-pahittad-nyckel-inte-riktig-00"
+      ],
+      "now": 1789640092,
+      "valid": false
+    },
+    {
+      "name": "empty-secret",
+      "path": "both",
+      "about": "Your secret is empty, such as a variable that is set but not filled in yet. Anyone can compute HMAC-SHA256 with an empty key, and this header was made that way, not by Rivr. Skip empty secrets.",
+      "headers": {
+        "Rivr-Signature": "t=1789640080,v1=00a91d1ff09341be96f094542243caf36723e2d72f0ac3dd5fb65ca7f8050170"
+      },
+      "body": "{\"id\":\"7b1e7c3a-2f4d-4a51-9c7e-5d0a6b8e2c14\",\"type\":\"Order\",\"merchantId\":\"e26f9eeb-dd71-4f40-a508-d7344409430d\",\"status\":\"Completed\",\"data\":{\"CreatedDate\":\"2026-09-17T10:12:03Z\",\"Reference\":\"visit-48213\",\"CompletedDate\":\"2026-09-17T10:14:38Z\",\"PaymentMethod\":\"Swish\",\"Metadata\":{\"bookingId\":\"48213\"}}}",
+      "secrets": [
+        ""
+      ],
+      "now": 1789640092,
+      "valid": false
+    },
+    {
+      "name": "edge-of-window",
+      "path": "both",
+      "about": "300 seconds old: still inside the window.",
+      "signing": {
+        "keys": [
+          "whsec_TESTVEKTOR-A-pahittad-nyckel-inte-riktig-00"
+        ],
+        "timestamp": 1789640080
+      },
+      "headers": {
+        "Rivr-Signature": "t=1789640080,v1=1e506d9e1195a98089bbb902f1a0b4c04fe39d39b50f33cf7f8f0e6c22c7ab0d"
+      },
+      "body": "{\"id\":\"7b1e7c3a-2f4d-4a51-9c7e-5d0a6b8e2c14\",\"type\":\"Order\",\"merchantId\":\"e26f9eeb-dd71-4f40-a508-d7344409430d\",\"status\":\"Completed\",\"data\":{\"CreatedDate\":\"2026-09-17T10:12:03Z\",\"Reference\":\"visit-48213\",\"CompletedDate\":\"2026-09-17T10:14:38Z\",\"PaymentMethod\":\"Swish\",\"Metadata\":{\"bookingId\":\"48213\"}}}",
+      "secrets": [
+        "whsec_TESTVEKTOR-A-pahittad-nyckel-inte-riktig-00"
+      ],
+      "now": 1789640380,
+      "valid": true
+    },
+    {
+      "name": "too-old",
+      "path": "both",
+      "about": "301 seconds old: outside the window, even though the signature matches.",
+      "signing": {
+        "keys": [
+          "whsec_TESTVEKTOR-A-pahittad-nyckel-inte-riktig-00"
+        ],
+        "timestamp": 1789640080
+      },
+      "headers": {
+        "Rivr-Signature": "t=1789640080,v1=1e506d9e1195a98089bbb902f1a0b4c04fe39d39b50f33cf7f8f0e6c22c7ab0d"
+      },
+      "body": "{\"id\":\"7b1e7c3a-2f4d-4a51-9c7e-5d0a6b8e2c14\",\"type\":\"Order\",\"merchantId\":\"e26f9eeb-dd71-4f40-a508-d7344409430d\",\"status\":\"Completed\",\"data\":{\"CreatedDate\":\"2026-09-17T10:12:03Z\",\"Reference\":\"visit-48213\",\"CompletedDate\":\"2026-09-17T10:14:38Z\",\"PaymentMethod\":\"Swish\",\"Metadata\":{\"bookingId\":\"48213\"}}}",
+      "secrets": [
+        "whsec_TESTVEKTOR-A-pahittad-nyckel-inte-riktig-00"
+      ],
+      "now": 1789640381,
+      "valid": false
+    },
+    {
+      "name": "from-the-future",
+      "path": "both",
+      "about": "301 seconds ahead of your clock: outside the window too.",
+      "signing": {
+        "keys": [
+          "whsec_TESTVEKTOR-A-pahittad-nyckel-inte-riktig-00"
+        ],
+        "timestamp": 1789640080
+      },
+      "headers": {
+        "Rivr-Signature": "t=1789640080,v1=1e506d9e1195a98089bbb902f1a0b4c04fe39d39b50f33cf7f8f0e6c22c7ab0d"
+      },
+      "body": "{\"id\":\"7b1e7c3a-2f4d-4a51-9c7e-5d0a6b8e2c14\",\"type\":\"Order\",\"merchantId\":\"e26f9eeb-dd71-4f40-a508-d7344409430d\",\"status\":\"Completed\",\"data\":{\"CreatedDate\":\"2026-09-17T10:12:03Z\",\"Reference\":\"visit-48213\",\"CompletedDate\":\"2026-09-17T10:14:38Z\",\"PaymentMethod\":\"Swish\",\"Metadata\":{\"bookingId\":\"48213\"}}}",
+      "secrets": [
+        "whsec_TESTVEKTOR-A-pahittad-nyckel-inte-riktig-00"
+      ],
+      "now": 1789639779,
+      "valid": false
+    },
+    {
+      "name": "missing-header",
+      "path": "callbackUrl",
+      "about": "No Rivr-Signature at all. On the callbackUrl path that is what a delivery looks like when no signing key exists; decide on purpose what you do with it.",
+      "headers": {},
+      "body": "{\"id\":\"7b1e7c3a-2f4d-4a51-9c7e-5d0a6b8e2c14\",\"type\":\"Order\",\"merchantId\":\"e26f9eeb-dd71-4f40-a508-d7344409430d\",\"status\":\"Completed\",\"data\":{\"CreatedDate\":\"2026-09-17T10:12:03Z\",\"Reference\":\"visit-48213\",\"CompletedDate\":\"2026-09-17T10:14:38Z\",\"PaymentMethod\":\"Swish\",\"Metadata\":{\"bookingId\":\"48213\"}}}",
+      "secrets": [
+        "whsec_TESTVEKTOR-A-pahittad-nyckel-inte-riktig-00"
+      ],
+      "now": 1789640092,
+      "valid": false
+    },
+    {
+      "name": "no-timestamp",
+      "path": "both",
+      "about": "A v1 without t.",
+      "headers": {
+        "Rivr-Signature": "v1=1e506d9e1195a98089bbb902f1a0b4c04fe39d39b50f33cf7f8f0e6c22c7ab0d"
+      },
+      "body": "{\"id\":\"7b1e7c3a-2f4d-4a51-9c7e-5d0a6b8e2c14\",\"type\":\"Order\",\"merchantId\":\"e26f9eeb-dd71-4f40-a508-d7344409430d\",\"status\":\"Completed\",\"data\":{\"CreatedDate\":\"2026-09-17T10:12:03Z\",\"Reference\":\"visit-48213\",\"CompletedDate\":\"2026-09-17T10:14:38Z\",\"PaymentMethod\":\"Swish\",\"Metadata\":{\"bookingId\":\"48213\"}}}",
+      "secrets": [
+        "whsec_TESTVEKTOR-A-pahittad-nyckel-inte-riktig-00"
+      ],
+      "now": 1789640092,
+      "valid": false
+    },
+    {
+      "name": "bad-timestamp",
+      "path": "both",
+      "about": "t is not a number.",
+      "headers": {
+        "Rivr-Signature": "t=soon,v1=1e506d9e1195a98089bbb902f1a0b4c04fe39d39b50f33cf7f8f0e6c22c7ab0d"
+      },
+      "body": "{\"id\":\"7b1e7c3a-2f4d-4a51-9c7e-5d0a6b8e2c14\",\"type\":\"Order\",\"merchantId\":\"e26f9eeb-dd71-4f40-a508-d7344409430d\",\"status\":\"Completed\",\"data\":{\"CreatedDate\":\"2026-09-17T10:12:03Z\",\"Reference\":\"visit-48213\",\"CompletedDate\":\"2026-09-17T10:14:38Z\",\"PaymentMethod\":\"Swish\",\"Metadata\":{\"bookingId\":\"48213\"}}}",
+      "secrets": [
+        "whsec_TESTVEKTOR-A-pahittad-nyckel-inte-riktig-00"
+      ],
+      "now": 1789640092,
+      "valid": false
+    },
+    {
+      "name": "no-signature",
+      "path": "both",
+      "about": "t without any v1.",
+      "headers": {
+        "Rivr-Signature": "t=1789640080"
+      },
+      "body": "{\"id\":\"7b1e7c3a-2f4d-4a51-9c7e-5d0a6b8e2c14\",\"type\":\"Order\",\"merchantId\":\"e26f9eeb-dd71-4f40-a508-d7344409430d\",\"status\":\"Completed\",\"data\":{\"CreatedDate\":\"2026-09-17T10:12:03Z\",\"Reference\":\"visit-48213\",\"CompletedDate\":\"2026-09-17T10:14:38Z\",\"PaymentMethod\":\"Swish\",\"Metadata\":{\"bookingId\":\"48213\"}}}",
+      "secrets": [
+        "whsec_TESTVEKTOR-A-pahittad-nyckel-inte-riktig-00"
+      ],
+      "now": 1789640092,
+      "valid": false
+    }
+  ]
+}

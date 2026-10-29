@@ -16,7 +16,22 @@ public class CancelOrderException : ApiCallException
     /// <param name="statusCode">The HTTP status code returned by the API.</param>
     /// <param name="error">The error returned by the API. Its fields are empty when the response had no body.</param>
     public CancelOrderException(HttpStatusCode statusCode, ApiErrorResponse error)
-        : base(error.Message ?? $"The order was not cancelled ({(int)statusCode} {statusCode}).")
+        : this(statusCode, error, requestId: null)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CancelOrderException"/> class.
+    /// </summary>
+    /// <param name="statusCode">The HTTP status code returned by the API.</param>
+    /// <param name="error">The error returned by the API. Its fields are empty when the response had no body.</param>
+    /// <param name="requestId">The <c>Rivr-Request-Id</c> header of the response, if it carried one.</param>
+    public CancelOrderException(HttpStatusCode statusCode, ApiErrorResponse error, string? requestId)
+        : base(
+            error.Message ?? $"The order was not cancelled ({(int)statusCode} {statusCode}).",
+            error.Code,
+            error.Type,
+            requestId)
     {
         StatusCode = statusCode;
         ErrorCode = error.ErrorCode;
