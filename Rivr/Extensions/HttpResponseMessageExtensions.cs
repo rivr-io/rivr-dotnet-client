@@ -55,7 +55,16 @@ public static class HttpResponseMessageExtensions
 
         if (message.StatusCode == HttpStatusCode.Forbidden)
         {
-            var errorResponse = await message.DeserialiseAsync<ErrorResponse>();
+            // A 403 can come without a body, or with one that is not JSON (the webhook aggregator answers a bare 403).
+            // It is still a ForbiddenException, never a deserialisation error.
+            ErrorResponse? errorResponse = null;
+            try
+            {
+                errorResponse = await message.DeserialiseAsync<ErrorResponse>();
+            }
+            catch (Exception ex) when (ex is System.Runtime.Serialization.SerializationException or JsonException or ArgumentNullException)
+            {
+            }
 
             if (errorResponse != null)
             {

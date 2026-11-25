@@ -270,7 +270,17 @@ public class MerchantClient : IMerchantOperations
     }
 
     /// <inheritdoc />
-    public IWebhookAggregatorOperations Webhooks => new WebhookAggregatorClient(_client, _merchantId);
+    public IWebhookAggregatorOperations Webhooks => new WebhookAggregatorClient(_client, _merchantId, GetAccessTokenAsync);
+
+    /// <summary>
+    /// The merchant's access token, fetched or taken from the cache like before every call to the API. Used by
+    /// <see cref="WebhookAggregatorClient"/>, which sends the same token to the webhook aggregator.
+    /// </summary>
+    internal async Task<string?> GetAccessTokenAsync()
+    {
+        await RefreshAccessTokenAsync();
+        return _accessToken;
+    }
 
     /// <inheritdoc />
     public async Task<Merchant> GetMerchantAsync(Guid merchantId, CancellationToken cancellationToken = default)

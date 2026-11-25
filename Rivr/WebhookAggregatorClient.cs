@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Rivr.Core;
 using Rivr.Core.Models.Webhooks;
@@ -8,14 +10,51 @@ using Rivr.Extensions;
 namespace Rivr;
 
 /// <inheritdoc />
-public class WebhookAggregatorClient(Client client, Guid merchantId) : IWebhookAggregatorOperations
+/// <remarks>
+/// Every call carries the merchant's access token, the same token as the calls to the API. The webhook aggregator
+/// answers 401 without a token and 403 for a token that belongs to another merchant.
+/// </remarks>
+public class WebhookAggregatorClient : IWebhookAggregatorOperations
 {
-    private string BaseAddress { get; set; } = $"merchants/{merchantId}/webhook-bundles/";
+    private readonly Client _client;
+    private readonly Func<Task<string?>> _getAccessToken;
+    private readonly string _baseAddress;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WebhookAggregatorClient"/> class. The access token is fetched with
+    /// the credentials of <paramref name="client"/>, for <paramref name="merchantId"/>.
+    /// </summary>
+    /// <param name="client"></param>
+    /// <param name="merchantId"></param>
+    /// <exception cref="ArgumentNullException"><paramref name="client"/> is null.</exception>
+    /// <exception cref="ArgumentException">
+    /// The client is configured with merchant credentials and <paramref name="merchantId"/> is another merchant. The
+    /// token would belong to the configured merchant, and the aggregator would answer 403.
+    /// </exception>
+    public WebhookAggregatorClient(Client client, Guid merchantId)
+        : this(
+            client ?? throw new ArgumentNullException(nameof(client)),
+            RequireConfiguredMerchant(client, merchantId),
+            new MerchantClient(client, merchantId).GetAccessTokenAsync)
+    {
+    }
+
+    private static Guid RequireConfiguredMerchant(Client client, Guid merchantId) =>
+        client.IsConfiguredForSingleMerchant && client.ConfiguredMerchantId != merchantId
+            ? throw new ArgumentException("The client is configured with merchant credentials for another merchant.", nameof(merchantId))
+            : merchantId;
+
+    internal WebhookAggregatorClient(Client client, Guid merchantId, Func<Task<string?>> getAccessToken)
+    {
+        _client = client ?? throw new ArgumentNullException(nameof(client));
+        _getAccessToken = getAccessToken ?? throw new ArgumentNullException(nameof(getAccessToken));
+        _baseAddress = $"merchants/{merchantId}/webhook-bundles/";
+    }
 
     /// <inheritdoc />
     public async Task CreateBundleAsync()
     {
-        var response = await client.WebhookAggregatorHttpClient.PostAsync(BaseAddress, null);
+        var response = await SendAsync(HttpMethod.Post, _baseAddress);
 
         await response.EnsureSuccessfulResponseAsync();
     }
@@ -23,7 +62,7 @@ public class WebhookAggregatorClient(Client client, Guid merchantId) : IWebhookA
     /// <inheritdoc />
     public async Task<Bundle?> GetNextUnreadBundleAsync()
     {
-        var response = await client.WebhookAggregatorHttpClient.GetAsync(BaseAddress + "unread");
+        var response = await SendAsync(HttpMethod.Get, _baseAddress + "unread");
         await response.EnsureSuccessfulResponseAsync();
 
         if (response.StatusCode == HttpStatusCode.NoContent)
@@ -43,16 +82,17 @@ public class WebhookAggregatorClient(Client client, Guid merchantId) : IWebhookA
     /// <inheritdoc />
     public async Task<Bundle?> GetBundleAsync(Guid bundleId)
     {
-        var response = await client.WebhookAggregatorHttpClient.GetAsync(BaseAddress + bundleId);
+        var response = await SendAsync(HttpMethod.Get, _baseAddress + bundleId);
 
         await response.EnsureSuccessfulResponseAsync();
 
-        var result = await response.DeserialiseAsync<GetBundleResponse>();
-
+        // 204 has no body, so it is checked before the body is read.
         if (response.StatusCode == HttpStatusCode.NoContent)
         {
             return null;
         }
+
+        var result = await response.DeserialiseAsync<GetBundleResponse>();
 
         return new Bundle
         {
@@ -64,8 +104,22 @@ public class WebhookAggregatorClient(Client client, Guid merchantId) : IWebhookA
     /// <inheritdoc />
     public async Task MarkBundleAsReadAsync(Guid bundleId)
     {
-        var response = await client.WebhookAggregatorHttpClient.PutAsync(BaseAddress + bundleId, null);
+        var response = await SendAsync(HttpMethod.Put, _baseAddress + bundleId);
 
         await response.EnsureSuccessfulResponseAsync();
+    }
+
+    private async Task<HttpResponseMessage> SendAsync(HttpMethod method, string url)
+    {
+        var accessToken = await _getAccessToken();
+        if (string.IsNullOrEmpty(accessToken))
+        {
+            // Never send the request without a token: the aggregator would answer 401, and the reason would be hidden.
+            throw new InvalidOperationException("Failed to get merchant token.");
+        }
+
+        var request = new HttpRequestMessage(method, url);
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+        return await _client.WebhookAggregatorHttpClient.SendAsync(request);
     }
 }
