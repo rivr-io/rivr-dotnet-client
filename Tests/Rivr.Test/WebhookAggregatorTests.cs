@@ -150,13 +150,77 @@ public class WebhookAggregatorTests
         aggregator.Requests.ShouldBeEmpty();
     }
 
-    [TestCase(HttpStatusCode.Unauthorized)]
-    [TestCase(HttpStatusCode.Forbidden)]
-    public async Task RejectedToken_Throws(HttpStatusCode statusCode)
+    [Test]
+    public async Task NoToken_ThrowsUnauthorized()
     {
-        var (client, _, _) = Create(statusCode);
+        var (client, _, _) = Create(HttpStatusCode.Unauthorized);
 
-        await Should.ThrowAsync<Exception>(
+        await Should.ThrowAsync<UnauthorizedException>(
             () => client.AsOrOnBehalfOfMerchant(MerchantId).Webhooks.GetNextUnreadBundleAsync());
+    }
+
+    [Test]
+    public async Task AnotherMerchantsToken_ThrowsForbidden_ThoughTheAnswerHasNoBody()
+    {
+        // The aggregator answers a bare 403.
+        var (client, _, _) = Create(HttpStatusCode.Forbidden);
+
+        await Should.ThrowAsync<ForbiddenException>(
+            () => client.AsOrOnBehalfOfMerchant(MerchantId).Webhooks.GetNextUnreadBundleAsync());
+    }
+
+    [Test]
+    public void PublicConstructor_RefusesAnotherMerchantThanTheConfiguredOne()
+    {
+        var config = new Config(clientId: "", clientSecret: "", merchantId: MerchantId.ToString(), merchantSecret: "merchantSecret");
+        var (client, _, _) = Create(HttpStatusCode.NoContent, config: config);
+
+        Should.Throw<ArgumentException>(() => new WebhookAggregatorClient(client, Guid.NewGuid()));
+        Should.NotThrow(() => new WebhookAggregatorClient(client, MerchantId));
+        Should.Throw<ArgumentNullException>(() => new WebhookAggregatorClient(null!, MerchantId));
+    }
+
+    [Test]
+    public async Task TwoMerchants_EachCallCarriesItsOwnToken()
+    {
+        // A real cache, and an auth service that answers with a token that names the merchant it was asked for.
+        var other = Guid.Parse("22222222-2222-4222-8222-222222222222");
+        var auth = new PerMerchantTokenHandler();
+        var aggregator = new RecordingHandler(HttpStatusCode.NoContent);
+        var client = new Client(
+            new HttpClient(auth),
+            new HttpClient(new MockHttpMessageHandler()),
+            new HttpClient(aggregator),
+            new Config(clientId: "clientId", clientSecret: "clientSecret"),
+            new MemoryCache(new MemoryCacheOptions()));
+
+        await client.AsOrOnBehalfOfMerchant(MerchantId).Webhooks.GetNextUnreadBundleAsync();
+        await client.AsOrOnBehalfOfMerchant(other).Webhooks.GetNextUnreadBundleAsync();
+        await client.AsOrOnBehalfOfMerchant(MerchantId).Webhooks.GetNextUnreadBundleAsync();
+
+        aggregator.Requests.Count.ShouldBe(3);
+        foreach (var (_, uri, authorization) in aggregator.Requests)
+        {
+            var merchantInPath = uri!.AbsolutePath.Split('/')[2];
+            authorization!.Parameter.ShouldBe($"token-for-{merchantInPath}");
+        }
+
+        auth.Requests.ShouldBe(2, "the token is cached per merchant");
+    }
+
+    private sealed class PerMerchantTokenHandler : HttpMessageHandler
+    {
+        public int Requests { get; private set; }
+
+        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            Requests++;
+            using var body = JsonDocument.Parse(await request.Content!.ReadAsStringAsync(cancellationToken));
+            var merchantId = body.RootElement.GetProperty("merchant_id").GetString();
+            return new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent(JsonSerializer.Serialize(new TokenResponse { AccessToken = $"token-for-{merchantId}", ExpiresIn = 3600 }))
+            };
+        }
     }
 }

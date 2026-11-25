@@ -26,10 +26,23 @@ public class WebhookAggregatorClient : IWebhookAggregatorOperations
     /// </summary>
     /// <param name="client"></param>
     /// <param name="merchantId"></param>
+    /// <exception cref="ArgumentNullException"><paramref name="client"/> is null.</exception>
+    /// <exception cref="ArgumentException">
+    /// The client is configured with merchant credentials and <paramref name="merchantId"/> is another merchant. The
+    /// token would belong to the configured merchant, and the aggregator would answer 403.
+    /// </exception>
     public WebhookAggregatorClient(Client client, Guid merchantId)
-        : this(client, merchantId, new MerchantClient(client, merchantId).GetAccessTokenAsync)
+        : this(
+            client ?? throw new ArgumentNullException(nameof(client)),
+            RequireConfiguredMerchant(client, merchantId),
+            new MerchantClient(client, merchantId).GetAccessTokenAsync)
     {
     }
+
+    private static Guid RequireConfiguredMerchant(Client client, Guid merchantId) =>
+        client.IsConfiguredForSingleMerchant && client.ConfiguredMerchantId != merchantId
+            ? throw new ArgumentException("The client is configured with merchant credentials for another merchant.", nameof(merchantId))
+            : merchantId;
 
     internal WebhookAggregatorClient(Client client, Guid merchantId, Func<Task<string?>> getAccessToken)
     {
