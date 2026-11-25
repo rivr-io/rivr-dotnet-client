@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **The webhook bundle calls send the merchant's access token** (RIV-4597). `Webhooks.CreateBundleAsync`, `GetNextUnreadBundleAsync`, `GetBundleAsync` and `MarkBundleAsReadAsync` now fetch the same access token as the calls to the API and send it as `Authorization: Bearer`. The webhook aggregator requires it: it answers 401 without a token and 403 for a token that belongs to another merchant than the one in the address. **A version before this one gets 401 on every bundle call**, so upgrade to use the bundles. Nothing changes in how the client is configured. The public constructor `WebhookAggregatorClient(Client, Guid)` is still there and fetches the token with the client's credentials. When no token can be fetched the call throws `InvalidOperationException` and nothing is sent.
+
+### Fixed
+
+- `Webhooks.GetBundleAsync` returns `null` for a bundle that does not exist. It read the empty body of the 204 answer before it checked the status, and threw.
+- The webhook aggregator's address in the test environment is `https://webhook-aggregator.test.rivr.tech/`. The address before, `webhook-aggregator.test.rivr.io`, has no DNS record, so the bundle calls could not reach the test environment.
+
 ### Added
 
 - `WebhookSignature.Verify` (in `Rivr.Core.Webhooks`) — verifies the `Rivr-Signature` header of a webhook delivery with the rules of the developer portal's guide "Verify the webhook signature" and the guide's test vectors (RIV-3327). It takes the body as the bytes that arrived or as a string, one secret or several (for a key rotation), and a tolerance (5 minutes either way by default; `tolerance` and `now` are arguments), compares in constant time, and answers `false`, never throws, for a missing or broken header, a changed body, another key and an empty secret. `RivrWebhookSignature.IsValid` is unchanged. See "Verifying the callback signature" in the README.
